@@ -67,43 +67,49 @@ Each menu item can have a photo. Click **Add photo** (or **Change photo**) on an
 choose an image from your computer, then drag and zoom to crop it &mdash; the crop preview
 matches exactly how the photo appears on the site (a 4:3 card). When you click **Use
 photo**, the cropped image is sent to the server, where it's automatically resized
-(max 1600px) and converted to an optimised WebP file in `public/uploads/`.
+(max 1600px) and converted to an optimised WebP file (stored in `public/uploads/`
+locally, or in Vercel Blob storage once that's connected &mdash; see Deploying below).
 
 You can re-crop or replace a photo at any time from the same **Edit** panel.
 
 ## Deploying
 
-### Vercel
+### Vercel (with persistent admin edits)
 
-This project deploys to Vercel like any Next.js app:
+This project supports **Vercel Blob** for storage, so edits made in `/admin` on your
+live site &mdash; menu changes, theme changes, uploaded photos &mdash; persist permanently,
+even though Vercel's filesystem itself is read-only and ephemeral.
 
-1. Push the project to a GitHub repository.
-2. Import it in Vercel.
-3. Add the `ADMIN_PASSWORD` and `ADMIN_SECRET` environment variables in the Vercel
-   project settings.
-4. Deploy.
+1. Push the project to a GitHub repository and import it in Vercel.
+2. In your Vercel project, go to the **Storage** tab and create a new **Blob** store,
+   then connect it to this project. Vercel automatically adds a
+   `BLOB_READ_WRITE_TOKEN` environment variable for you &mdash; you don't need to copy
+   anything manually.
+3. In **Settings &rarr; Environment Variables**, add:
+   - `ADMIN_PASSWORD` &mdash; your chosen admin password
+   - `ADMIN_SECRET` &mdash; a random string (generate one with the command below)
+4. Deploy (or redeploy if you already deployed before adding the Blob store).
 
-> **Important &mdash; persistence on Vercel.** Vercel's serverless filesystem is
-> **read-only and ephemeral** in production. That means edits made through `/admin`
-> (menu changes, theme changes, uploaded photos) will work for the current request but
-> **will not persist** across deployments or new server instances.
->
-> For a site that's mostly edited before launch, this is fine: make your edits with
-> `npm run dev` locally (or on a VPS, see below), commit the updated `data/*.json`
-> files and any new files in `public/uploads/`, and redeploy.
->
-> If you need to edit the live site frequently after launch, the cleanest upgrade
-> path is to swap the JSON file storage in `lib/data.js` and the file write in
-> `app/api/upload/route.js` for a database and object storage (e.g. Vercel Postgres /
-> Vercel Blob, or any equivalent). The admin UI and the rest of the site would not need
-> to change.
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Once the Blob store is connected, every save in `/admin` (menu items, categories,
+theme colours, fonts, site info, opening hours, and uploaded/cropped photos) is
+written to Blob storage and shows up on the live site right away (menu and settings
+changes can take up to about a minute to appear everywhere due to caching; photos
+appear immediately).
+
+> **Without a Blob store connected**, the app still deploys and runs fine, but admin
+> edits behave as before: they apply to the running instance but don't survive a
+> redeploy. Connecting Blob (step 2 above) is the only thing that changes this.
 
 ### Self-hosted (Node server / VPS)
 
 Run `npm run build` then `npm start` on a server with a persistent filesystem (and
-Node.js 20.9+). Admin edits write directly to `data/menu.json`, `data/settings.json`
-and `public/uploads/`, and are reflected immediately &mdash; this is the simplest way to
-get a fully working admin panel with no extra setup.
+Node.js 20.9+), and don't set `BLOB_READ_WRITE_TOKEN`. Admin edits write directly to
+`data/menu.json`, `data/settings.json` and `public/uploads/` on disk, and are
+reflected immediately.
 
 ## Opening in Google Antigravity (or any AI IDE)
 
@@ -134,7 +140,8 @@ data/
   menu.json            Menu items and categories (editable via /admin)
   settings.json        Site info, hours and theme (editable via /admin)
 lib/
-  data.js              Reads/writes the JSON files above
+  data.js              Reads/writes menu + settings (Blob storage if connected,
+                        otherwise the JSON files above)
   auth.js              Admin session helpers
   hours.js             Opening-hours formatting helpers
   fonts.js             Font pairing definitions used by the layout and admin UI
@@ -147,5 +154,5 @@ proxy.js               Protects /admin and the admin API routes
 - The "open now" badge is computed using the Asia/Dhaka timezone, based on the hours
   set in the Site info tab.
 - Uploaded photos are not automatically deleted when replaced; if you swap a lot of
-  photos, periodically check `public/uploads/` and remove any files no longer
-  referenced in `data/menu.json`.
+  photos, periodically check `public/uploads/` (or the Blob store's dashboard on
+  Vercel) and remove any files no longer referenced in the menu.

@@ -43,8 +43,8 @@
     }
   },
   "theme": {
-    "accent": "#c4a264",
+    "accent": "#B6862C",
     "secondary": "#54614A",
-    "fontPair": "editorial"
+    "fontPair": "heritage"
   }
 }
