@@ -1,0 +1,50 @@
+{
+  "siteName": "Crown Coffee",
+  "tagline": "A quiet corner for proper coffee in Uttara.",
+  "description": "Crown Coffee is a neighbourhood cafe on Shah Makdum Avenue in Sector 13, Uttara, serving specialty coffee, light breakfast and pastries baked fresh every morning. Pull up a chair, slow down, and stay as long as you like.",
+  "address": "6, Shah Makdum Avenue, Sector 13, Uttara, Dhaka",
+  "phone": "01806576024",
+  "mapUrl": "https://www.google.com/maps/place/crown+coffee/data=!4m2!3m1!1s0x3755c500765dcd2d:0x213d6d981f311869?sa=X&ved=1t:242&ictx=111",
+  "hours": {
+    "sun": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    },
+    "mon": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    },
+    "tue": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    },
+    "wed": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    },
+    "thu": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    },
+    "fri": {
+      "open": "14:30",
+      "close": "23:00",
+      "closed": false
+    },
+    "sat": {
+      "open": "08:00",
+      "close": "22:00",
+      "closed": false
+    }
+  },
+  "theme": {
+    "accent": "#c4a264",
+    "secondary": "#54614A",
+    "fontPair": "editorial"
+  }
+}
