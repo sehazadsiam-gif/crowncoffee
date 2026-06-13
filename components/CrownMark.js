@@ -7,21 +7,24 @@ export default function CrownMark({ className = "w-6 h-6" }) {
       aria-hidden="true"
       focusable="false"
     >
-      <g stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round">
-        <path
-          d="M 11 4 L 19 4 L 22 9 L 15 21 L 8 9 Z"
-          fill="currentColor"
-          fillOpacity="0.12"
-        />
-        <path d="M 8 9 L 22 9" />
-        <path d="M 11 4 L 15 9 L 19 4" />
-        <path d="M 11 9 L 15 21 L 19 9" />
+      {/* Clear Diamond (Outlines Only) */}
+      <g stroke="currentColor" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round">
+        <path d="M 10 4 L 18 4 L 22 9 L 14 21 L 6 9 Z" />
+        <path d="M 6 9 L 22 9" />
+        <path d="M 10 4 L 10 9" />
+        <path d="M 10 4 L 14 9" />
+        <path d="M 18 4 L 14 9" />
+        <path d="M 18 4 L 18 9" />
+        <path d="M 14 21 L 10 9" />
+        <path d="M 14 21 L 14 9" />
+        <path d="M 14 21 L 18 9" />
       </g>
-      <g stroke="currentColor" strokeWidth="0.8" strokeLinecap="round">
-        <path d="M 5 5 L 5 11 M 2 8 L 8 8" />
-        <path d="M 3.5 10.5 L 3.5 14.5 M 1.5 12.5 L 5.5 12.5" />
-        <path d="M 8.5 12.5 L 8.5 18.5 M 5.5 15.5 L 11.5 15.5" />
-        <path d="M 22 3 L 22 7 M 20 5 L 24 5" />
+      {/* Solid Sparkles */}
+      <g fill="currentColor">
+        <path d="M 6.5 11 Q 6.5 13.5 9 13.5 Q 6.5 13.5 6.5 16 Q 6.5 13.5 4 13.5 Q 6.5 13.5 6.5 11 Z" />
+        <path d="M 3 8 Q 3 9.5 4.5 9.5 Q 3 9.5 3 11 Q 3 9.5 1.5 9.5 Q 3 9.5 3 8 Z" />
+        <path d="M 4.5 16 Q 4.5 17.5 6 17.5 Q 4.5 17.5 4.5 19 Q 4.5 17.5 3 17.5 Q 4.5 17.5 4.5 16 Z" />
+        <path d="M 20.5 3 Q 20.5 4.5 22 4.5 Q 20.5 4.5 20.5 6 Q 20.5 4.5 19 4.5 Q 20.5 4.5 20.5 3 Z" />
       </g>
     </svg>
   );
