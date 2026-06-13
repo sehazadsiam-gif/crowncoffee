@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isValidSession, SESSION_COOKIE } from "@/lib/auth";
 
-export function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   const isProtectedPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
