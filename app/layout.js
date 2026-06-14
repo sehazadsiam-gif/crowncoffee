@@ -8,10 +8,11 @@ import "@fontsource/spectral/500.css";
 import "@fontsource/spectral/600.css";
 import "@fontsource/spectral/700.css";
 import "./globals.css";
-import { getSettings } from "@/lib/data";
+import { getSettings, getBanners } from "@/lib/data";
 import { FONT_PAIRS } from "@/lib/fonts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BannerStrip from "@/components/BannerStrip";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,8 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const settings = await getSettings();
+  const [settings, bannersData] = await Promise.all([getSettings(), getBanners()]);
+  const activeBanners = (bannersData.banners || []).filter((b) => b.active);
   const theme = settings.theme;
   const pair = FONT_PAIRS[theme.fontPair] || FONT_PAIRS.heritage;
 
@@ -35,6 +37,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className="flex min-h-screen flex-col antialiased">
         <Header settings={settings} />
+        <BannerStrip initialBanners={activeBanners} />
         <main className="flex-1">{children}</main>
         <Footer settings={settings} />
       </body>

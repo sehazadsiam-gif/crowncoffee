@@ -299,7 +299,17 @@ export default function MenuManager({ initialMenu }) {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{item.name || "Untitled item"}</p>
+                    <p className="flex items-center gap-1.5 truncate font-medium">
+                      {item.name || "Untitled item"}
+                      {item.bestSeller && (
+                        <span
+                          className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide"
+                          style={{ background: "var(--accent)", color: "#fff" }}
+                        >
+                          ★
+                        </span>
+                      )}
+                    </p>
                     <p className="text-sm text-[var(--ink-soft)]">&#2547;{item.price}</p>
                   </div>
 
@@ -432,6 +442,24 @@ export default function MenuManager({ initialMenu }) {
                           </select>
                         </label>
                       </div>
+
+                        {/* Best Seller toggle */}
+                        <label
+                          className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[var(--line)] px-3 py-2.5 text-sm transition hover:border-[var(--accent)]"
+                          style={item.bestSeller ? { borderColor: "var(--accent)", background: "rgba(182,134,44,0.06)" } : {}}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!item.bestSeller}
+                            onChange={(e) => updateItem(item.id, { bestSeller: e.target.checked })}
+                            className="h-4 w-4 rounded"
+                            style={{ accentColor: "var(--accent)" }}
+                          />
+                          <span className="font-semibold" style={{ color: item.bestSeller ? "var(--accent)" : "inherit" }}>
+                            ★ Best Seller
+                          </span>
+                          <span className="text-[var(--mute)] text-xs">shows on homepage</span>
+                        </label>
                     </div>
                   </div>
                 )}

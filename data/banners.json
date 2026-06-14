@@ -1,0 +1,12 @@
+{
+  "banners": [
+    {
+      "id": "welcome",
+      "text": "☕ Welcome to Crown Coffee — specialty coffee, fresh pastries, calm vibes.",
+      "type": "news",
+      "active": true,
+      "link": "",
+      "linkLabel": ""
+    }
+  ]
+}

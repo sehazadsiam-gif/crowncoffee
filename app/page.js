@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getMenu, getSettings, groupMenuByCategory } from "@/lib/data";
 import MenuCard from "@/components/MenuCard";
+import BestSellerCard from "@/components/BestSellerCard";
 import StatusBadge from "@/components/StatusBadge";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,7 @@ export default async function HomePage() {
   const [settings, menu] = await Promise.all([getSettings(), getMenu()]);
   const groups = groupMenuByCategory(menu);
   const preview = groups.map((group) => group.items[0]).filter(Boolean).slice(0, 4);
+  const bestSellers = (menu.items || []).filter((item) => item.bestSeller);
 
   return (
     <>
@@ -50,21 +52,39 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* About strip */}
-      <section className="border-y border-[var(--line)] bg-[var(--card)]">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:px-10 lg:py-20">
-          <p className="font-display text-3xl leading-snug sm:text-4xl">
-            Good coffee, made without hurry &mdash; a calm room to read, work or talk.
-          </p>
-          <div className="flex flex-col gap-4 text-[var(--ink-soft)]">
-            <p className="leading-relaxed">{settings.description}</p>
-            <div className="mt-2 flex flex-col gap-1 text-sm">
-              <span className="font-medium text-[var(--ink)]">{settings.address}</span>
-              {settings.phone && <span>{settings.phone}</span>}
+
+      {/* Best Sellers */}
+      {bestSellers.length > 0 && (
+        <section
+          className="border-y border-amber-100"
+          style={{ background: "linear-gradient(180deg, #fffbf0 0%, #fff8e7 100%)" }}
+        >
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-10 lg:py-20">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold tracking-[0.3em] uppercase" style={{ color: "var(--accent)" }}>
+                  Crowd favourites
+                </p>
+                <h2 className="mt-2 font-display text-3xl sm:text-4xl">
+                  ★ Our Best Sellers
+                </h2>
+              </div>
+              <Link
+                href="/menu"
+                className="text-sm font-semibold tracking-wide hover:underline"
+                style={{ color: "var(--accent)" }}
+              >
+                See full menu &rarr;
+              </Link>
+            </div>
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {bestSellers.map((item) => (
+                <BestSellerCard key={item.id} item={item} />
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Menu preview */}
       {preview.length > 0 && (

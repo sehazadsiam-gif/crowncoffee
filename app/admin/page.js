@@ -1,4 +1,4 @@
-import { getMenu, getSettings } from "@/lib/data";
+import { getMenu, getSettings, getBanners } from "@/lib/data";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,17 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  const [menu, settings] = await Promise.all([getMenu(), getSettings()]);
+  const [menu, settings, banners] = await Promise.all([
+    getMenu(),
+    getSettings(),
+    getBanners(),
+  ]);
 
-  return <AdminDashboard initialMenu={menu} initialSettings={settings} />;
+  return (
+    <AdminDashboard
+      initialMenu={menu}
+      initialSettings={settings}
+      initialBanners={banners}
+    />
+  );
 }

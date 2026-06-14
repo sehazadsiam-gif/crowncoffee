@@ -7,14 +7,16 @@ import CrownMark from "@/components/CrownMark";
 import MenuManager from "./MenuManager";
 import AppearanceForm from "./AppearanceForm";
 import SiteInfoForm from "./SiteInfoForm";
+import BannerManager from "./BannerManager";
 
 const TABS = [
   { id: "menu", label: "Menu" },
   { id: "appearance", label: "Appearance" },
   { id: "info", label: "Site info" },
+  { id: "banners", label: "Banners" },
 ];
 
-export default function AdminDashboard({ initialMenu, initialSettings }) {
+export default function AdminDashboard({ initialMenu, initialSettings, initialBanners }) {
   const [tab, setTab] = useState("menu");
   const router = useRouter();
 
@@ -73,6 +75,7 @@ export default function AdminDashboard({ initialMenu, initialSettings }) {
         {tab === "menu" && <MenuManager initialMenu={initialMenu} />}
         {tab === "appearance" && <AppearanceForm initialTheme={initialSettings.theme} />}
         {tab === "info" && <SiteInfoForm initialSettings={initialSettings} />}
+        {tab === "banners" && <BannerManager initialBanners={initialBanners} />}
       </div>
     </div>
   );
