@@ -105,11 +105,20 @@ a {
 }
 
 .animate-marquee {
-  animation: marquee 25s linear infinite;
+  animation: marquee 12s linear infinite;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* ── Utilities ───────────────────────────────────────────── */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
