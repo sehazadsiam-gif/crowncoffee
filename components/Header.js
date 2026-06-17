@@ -12,6 +12,8 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+const MEMBERSHIP_URL = "https://ccadmin.online/membership";
+
 export default function Header({ settings }) {
   const pathname = usePathname();
 
@@ -32,6 +34,7 @@ export default function Header({ settings }) {
           </span>
         </Link>
 
+        {/* Desktop nav */}
         <nav className="hidden items-center gap-8 text-sm font-medium tracking-[0.18em] text-[var(--ink-soft)] uppercase md:flex">
           {NAV_LINKS.map((link) => (
             <Link
@@ -46,6 +49,19 @@ export default function Header({ settings }) {
               {renderLabel(link)}
             </Link>
           ))}
+
+          {/* Membership badge */}
+          <a
+            href={MEMBERSHIP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Enjoy lifetime discounts"
+            aria-label="Membership — enjoy lifetime discounts"
+          >
+            <span className="membership-highlight">
+              ♛ Membership
+            </span>
+          </a>
         </nav>
 
         <div className="hidden shrink-0 sm:block">
@@ -53,7 +69,8 @@ export default function Header({ settings }) {
         </div>
       </div>
 
-      <nav className="flex items-center justify-center gap-6 border-t border-[var(--line)] py-2.5 text-xs font-medium tracking-[0.18em] text-[var(--ink-soft)] uppercase md:hidden">
+      {/* Mobile nav */}
+      <nav className="flex flex-wrap items-center justify-center gap-4 border-t border-[var(--line)] py-2.5 text-xs font-medium tracking-[0.18em] text-[var(--ink-soft)] uppercase md:hidden">
         {NAV_LINKS.map((link) => (
           <Link
             key={link.href}
@@ -67,6 +84,17 @@ export default function Header({ settings }) {
             {renderLabel(link)}
           </Link>
         ))}
+
+        {/* Membership badge — mobile */}
+        <a
+          href={MEMBERSHIP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Enjoy lifetime discounts"
+          aria-label="Membership — enjoy lifetime discounts"
+        >
+          <span className="membership-highlight">♛ Membership</span>
+        </a>
       </nav>
     </header>
   );

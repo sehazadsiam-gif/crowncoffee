@@ -52,6 +52,46 @@ a {
   font-weight: 700;
 }
 
+/* ── Membership nav badge ─────────────────────────────────── */
+@keyframes membership-shine {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes membership-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
+  50%       { box-shadow: 0 0 14px 5px rgba(182, 134, 44, 0.45); }
+}
+
+.membership-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  background: linear-gradient(
+    110deg,
+    #b6862c 0%,
+    #e8c04a 40%,
+    #b6862c 60%,
+    #d4a017 100%
+  );
+  background-size: 200% auto;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.22em 0.9em;
+  font-weight: 700;
+  font-size: 0.82em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation:
+    membership-shine 3s linear infinite,
+    membership-pulse 2.5s ease-in-out infinite;
+  transition: filter 0.2s;
+}
+
+.membership-highlight:hover {
+  filter: brightness(1.12);
+}
+
 /* ── BestSellerCard shimmer ──────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -200% center; }
