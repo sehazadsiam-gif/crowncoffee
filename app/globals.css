@@ -98,14 +98,18 @@ a {
   100% { background-position:  200% center; }
 }
 
-/* ── BannerStrip slide-in ────────────────────────────────── */
-@keyframes slide-down {
-  from { transform: translateY(-100%); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
+/* ── BannerStrip Marquee ─────────────────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
-.banner-strip-enter {
-  animation: slide-down 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
