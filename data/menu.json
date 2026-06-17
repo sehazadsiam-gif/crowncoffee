@@ -1,107 +1,457 @@
 {
   "categories": [
     "Coffee",
-    "Cold Brew & Tea",
-    "Breakfast",
-    "Pastries & Desserts"
+    "Boba Specials",
+    "Shakes",
+    "Iced Coffee",
+    "Smoothie",
+    "Hot Chocolate",
+    "Mocktails",
+    "Frappe",
+    "Fresh Juices",
+    "Ice Cream",
+    "Add On(s) Flavours",
+    "Traditionals"
   ],
   "items": [
     {
-      "id": "esp",
+      "id": "espresso",
       "name": "Espresso",
       "description": "A double shot, pulled slow for a syrupy, balanced finish.",
-      "price": 180,
+      "price": 190,
       "category": "Coffee",
       "image": "",
       "order": 0
     },
     {
-      "id": "cap",
-      "name": "Cappuccino",
-      "description": "Espresso with steamed milk and a thick layer of microfoam.",
-      "price": 230,
+      "id": "macchiato",
+      "name": "Macchiato",
+      "description": "Espresso stained with a dollop of warm, microfoamed milk.",
+      "price": 195,
       "category": "Coffee",
       "image": "",
       "order": 1
     },
     {
-      "id": "latte",
-      "name": "Caffè Latte",
-      "description": "Smooth espresso rounded out with steamed milk.",
-      "price": 250,
+      "id": "americano",
+      "name": "Americano",
+      "description": "Rich espresso shots topped with hot water.",
+      "price": 199,
       "category": "Coffee",
       "image": "",
       "order": 2
     },
     {
-      "id": "mocha",
-      "name": "Mocha",
-      "description": "Espresso, steamed milk and dark chocolate, lightly sweetened.",
-      "price": 270,
+      "id": "cappucino",
+      "name": "Cappucino",
+      "description": "Espresso with steamed milk and a thick layer of microfoam.",
+      "price": 280,
       "category": "Coffee",
       "image": "",
       "order": 3
     },
     {
-      "id": "coldbrew",
-      "name": "Cold Brew",
-      "description": "Steeped for 18 hours and served over ice.",
-      "price": 260,
-      "category": "Cold Brew & Tea",
+      "id": "cappuccino_small",
+      "name": "Cappuccino (Small)",
+      "description": "A smaller serving of our classic espresso and microfoam.",
+      "price": 180,
+      "category": "Coffee",
+      "image": "",
+      "order": 4
+    },
+    {
+      "id": "latte",
+      "name": "Latte",
+      "description": "Smooth espresso rounded out with steamed milk.",
+      "price": 310,
+      "category": "Coffee",
+      "image": "",
+      "order": 5
+    },
+    {
+      "id": "affogato",
+      "name": "Affogato",
+      "description": "A scoop of vanilla ice cream drowned in a hot shot of espresso.",
+      "price": 229,
+      "category": "Coffee",
+      "image": "",
+      "order": 6
+    },
+    {
+      "id": "flat_white",
+      "name": "Flat White",
+      "description": "Bold espresso with a velvety layer of microfoam.",
+      "price": 240,
+      "category": "Coffee",
+      "image": "",
+      "order": 7
+    },
+    {
+      "id": "iced_coffee_boba",
+      "name": "Iced Coffee Boba Milk Tea",
+      "description": "Special iced coffee milk tea served with chewy tapioca pearls.",
+      "price": 289,
+      "category": "Boba Specials",
       "image": "",
       "order": 0
     },
     {
-      "id": "icedlatte",
-      "name": "Iced Latte",
-      "description": "Chilled espresso and milk, served over ice.",
-      "price": 270,
-      "category": "Cold Brew & Tea",
+      "id": "shake_nutella",
+      "name": "Nutella Shake",
+      "description": "Rich milk shake blended with premium Nutella chocolate spread.",
+      "price": 399,
+      "category": "Shakes",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "shake_vanilla",
+      "name": "Vanilla Shake",
+      "description": "Creamy shake flavored with premium vanilla extract.",
+      "price": 299,
+      "category": "Shakes",
       "image": "",
       "order": 1
     },
     {
-      "id": "masala",
-      "name": "Masala Chai",
-      "description": "Black tea simmered slowly with whole spices and milk.",
-      "price": 150,
-      "category": "Cold Brew & Tea",
+      "id": "shake_chocolate",
+      "name": "Chocolate Shake",
+      "description": "Indulgent shake made with rich Belgian chocolate cocoa.",
+      "price": 299,
+      "category": "Shakes",
       "image": "",
       "order": 2
     },
     {
-      "id": "sandwich",
-      "name": "Grilled Chicken Sandwich",
-      "description": "Grilled chicken, cheddar and house sauce on sourdough.",
-      "price": 420,
-      "category": "Breakfast",
+      "id": "shake_oreo",
+      "name": "Oreo Shake",
+      "description": "Classic thick shake blended with Oreo cookie crumbs.",
+      "price": 299,
+      "category": "Shakes",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "shake_mango",
+      "name": "Mango Shake",
+      "description": "Refreshing shake blended with sweet pulp of ripe mangoes.",
+      "price": 299,
+      "category": "Shakes",
+      "image": "",
+      "order": 4
+    },
+    {
+      "id": "shake_blueberry",
+      "name": "Blueberry Shake",
+      "description": "Creamy shake loaded with the flavor of fresh blueberries.",
+      "price": 299,
+      "category": "Shakes",
+      "image": "",
+      "order": 5
+    },
+    {
+      "id": "shake_strawberry",
+      "name": "Strawberry Shake",
+      "description": "Creamy shake loaded with the flavor of sweet strawberries.",
+      "price": 299,
+      "category": "Shakes",
+      "image": "",
+      "order": 6
+    },
+    {
+      "id": "iced_americano",
+      "name": "Iced Americano",
+      "description": "Espresso shots topped with cold water and served over ice.",
+      "price": 230,
+      "category": "Iced Coffee",
       "image": "",
       "order": 0
     },
     {
-      "id": "eggsbenny",
-      "name": "Eggs Benedict",
-      "description": "Poached eggs and hollandaise on a toasted muffin.",
-      "price": 480,
-      "category": "Breakfast",
+      "id": "iced_cappuccino",
+      "name": "Iced Cappuccino",
+      "description": "Chilled espresso with cold milk and a light foam top.",
+      "price": 290,
+      "category": "Iced Coffee",
       "image": "",
       "order": 1
     },
     {
-      "id": "croissant",
-      "name": "Butter Croissant",
-      "description": "Laminated in-house and baked fresh every morning.",
-      "price": 190,
-      "category": "Pastries & Desserts",
+      "id": "iced_latte",
+      "name": "Iced Latte",
+      "description": "Chilled espresso and milk served over ice.",
+      "price": 330,
+      "category": "Iced Coffee",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "smoothie_mango",
+      "name": "Mango Smoothie",
+      "description": "A thick, icy blend of sweet ripe mangoes.",
+      "price": 399,
+      "category": "Smoothie",
       "image": "",
       "order": 0
     },
     {
-      "id": "cheesecake",
-      "name": "New York Cheesecake",
-      "description": "Dense and creamy, with a buttery biscuit base.",
-      "price": 350,
-      "category": "Pastries & Desserts",
+      "id": "smoothie_strawberry",
+      "name": "Strawberry Smoothie",
+      "description": "A refreshing icy blend of sweet strawberries.",
+      "price": 399,
+      "category": "Smoothie",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "smoothie_peach",
+      "name": "Peach Smoothie",
+      "description": "Velvety blend of juicy sweet peaches.",
+      "price": 419,
+      "category": "Smoothie",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "hot_chocolate_regular",
+      "name": "Regular Hot Chocolate",
+      "description": "Rich cocoa steamed with fresh milk and served warm.",
+      "price": 289,
+      "category": "Hot Chocolate",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "hot_chocolate_frozen",
+      "name": "Frozen Hot Chocolate",
+      "description": "An icy blend of rich chocolate topped with whipped cream.",
+      "price": 299,
+      "category": "Hot Chocolate",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "mocktail_mint_lemonade",
+      "name": "Mint Lemonade",
+      "description": "Zesty lemon juice blended with fresh mint leaves and ice.",
+      "price": 239,
+      "category": "Mocktails",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "mocktail_blue_ocean",
+      "name": "Blu Ocean",
+      "description": "A vibrant blue orange beverage with a sparkling finish.",
+      "price": 299,
+      "category": "Mocktails",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "mocktail_hurricane",
+      "name": "Hurricane",
+      "description": "A fruity mocktail blend with passion fruit and lime juice.",
+      "price": 399,
+      "category": "Mocktails",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "mocktail_crown_special",
+      "name": "Crown Coffee Special",
+      "description": "Our signature premium mocktail made with secret house ingredients.",
+      "price": 410,
+      "category": "Mocktails",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "frappe_hazelnut",
+      "name": "Hazelnut Frappe",
+      "description": "Blended iced coffee with rich hazelnut syrup and whipped cream.",
+      "price": 409,
+      "category": "Frappe",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "frappe_caramel",
+      "name": "Caramel Frappe",
+      "description": "Blended coffee drink with sweet caramel syrup and drizzle.",
+      "price": 409,
+      "category": "Frappe",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "frappe_salted_caramel",
+      "name": "Salted Caramel Frappe",
+      "description": "Perfect balance of sweet caramel and sea salt blended with coffee.",
+      "price": 409,
+      "category": "Frappe",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "frappe_vanilla",
+      "name": "Vanilla Frappe",
+      "description": "Icy blend of coffee and sweet premium vanilla syrup.",
+      "price": 399,
+      "category": "Frappe",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "frappe_mocha",
+      "name": "Mocha Frappe",
+      "description": "Decadent blend of coffee, chocolate syrup, and ice.",
+      "price": 399,
+      "category": "Frappe",
+      "image": "",
+      "order": 4
+    },
+    {
+      "id": "frappe_tiramisu",
+      "name": "Tiramisu Frappe",
+      "description": "Dessert-inspired frappe flavored with coffee, cocoa, and mascarpone note.",
+      "price": 415,
+      "category": "Frappe",
+      "image": "",
+      "order": 5
+    },
+    {
+      "id": "juice_orange",
+      "name": "Orange Juice",
+      "description": "Freshly squeezed sweet and tangy orange juice.",
+      "price": 289,
+      "category": "Fresh Juices",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "juice_pineapple",
+      "name": "Pineapple Juice",
+      "description": "Freshly pressed tropical pineapple juice.",
+      "price": 209,
+      "category": "Fresh Juices",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "juice_papaya",
+      "name": "Papaya Juice",
+      "description": "Nutritious and fresh sweet papaya juice.",
+      "price": 159,
+      "category": "Fresh Juices",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "juice_apple",
+      "name": "Apple Juice",
+      "description": "Pure premium apple juice pressed from fresh apples.",
+      "price": 489,
+      "category": "Fresh Juices",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "ice_cream_vanilla",
+      "name": "Vanilla Ice Cream",
+      "description": "A scoop of classic, creamy vanilla bean ice cream.",
+      "price": 155,
+      "category": "Ice Cream",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "ice_cream_chocolate",
+      "name": "Chocolate Ice Cream",
+      "description": "A scoop of rich, indulgence chocolate cocoa ice cream.",
+      "price": 155,
+      "category": "Ice Cream",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "ice_cream_mango",
+      "name": "Mango Ice Cream",
+      "description": "A scoop of fruity and refreshing mango ice cream.",
+      "price": 155,
+      "category": "Ice Cream",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "addon_hazelnut",
+      "name": "Hazelnut Syrup",
+      "description": "Extra pump of hazelnut flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "addon_caramel",
+      "name": "Caramel Syrup",
+      "description": "Extra pump of sweet caramel flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "addon_vanilla",
+      "name": "Vanilla Syrup",
+      "description": "Extra pump of vanilla flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "addon_mocha",
+      "name": "Mocha Syrup",
+      "description": "Extra pump of mocha chocolate flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "addon_salted_caramel",
+      "name": "Salted Caramel Syrup",
+      "description": "Extra pump of sweet & salty caramel flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 4
+    },
+    {
+      "id": "addon_tiramisu",
+      "name": "Tiramisu Syrup",
+      "description": "Extra pump of tiramisu dessert flavouring syrup.",
+      "price": 99,
+      "category": "Add On(s) Flavours",
+      "image": "",
+      "order": 5
+    },
+    {
+      "id": "lassi_mango",
+      "name": "Mango Lassi",
+      "description": "Traditional yogurt drink blended with sweet ripe mango pulp.",
+      "price": 319,
+      "category": "Traditionals",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "lassi_strawberry",
+      "name": "Strawberry Lassi",
+      "description": "Traditional yogurt drink blended with sweet strawberries.",
+      "price": 339,
+      "category": "Traditionals",
       "image": "",
       "order": 1
     }
