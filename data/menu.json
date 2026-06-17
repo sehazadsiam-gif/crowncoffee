@@ -1,6 +1,9 @@
 {
   "categories": [
     "Coffee",
+    "Cold Brew & Tea",
+    "Breakfast",
+    "Pastries & Desserts",
     "Boba Specials",
     "Shakes",
     "Iced Coffee",
@@ -14,6 +17,105 @@
     "Traditionals"
   ],
   "items": [
+    {
+      "id": "esp",
+      "name": "Espresso",
+      "description": "A double shot, pulled slow for a syrupy, balanced finish.",
+      "price": 180,
+      "category": "Coffee",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "cap",
+      "name": "Cappuccino",
+      "description": "Espresso with steamed milk and a thick layer of microfoam.",
+      "price": 230,
+      "category": "Coffee",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "latte",
+      "name": "Caffè Latte",
+      "description": "Smooth espresso rounded out with steamed milk.",
+      "price": 250,
+      "category": "Coffee",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "mocha",
+      "name": "Mocha",
+      "description": "Espresso, steamed milk and dark chocolate, lightly sweetened.",
+      "price": 270,
+      "category": "Coffee",
+      "image": "",
+      "order": 3
+    },
+    {
+      "id": "coldbrew",
+      "name": "Cold Brew",
+      "description": "Steeped for 18 hours and served over ice.",
+      "price": 260,
+      "category": "Cold Brew & Tea",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "icedlatte",
+      "name": "Iced Latte",
+      "description": "Chilled espresso and milk, served over ice.",
+      "price": 270,
+      "category": "Cold Brew & Tea",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "masala",
+      "name": "Masala Chai",
+      "description": "Black tea simmered slowly with whole spices and milk.",
+      "price": 150,
+      "category": "Cold Brew & Tea",
+      "image": "",
+      "order": 2
+    },
+    {
+      "id": "sandwich",
+      "name": "Grilled Chicken Sandwich",
+      "description": "Grilled chicken, cheddar and house sauce on sourdough.",
+      "price": 420,
+      "category": "Breakfast",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "eggsbenny",
+      "name": "Eggs Benedict",
+      "description": "Poached eggs and hollandaise on a toasted muffin.",
+      "price": 480,
+      "category": "Breakfast",
+      "image": "",
+      "order": 1
+    },
+    {
+      "id": "croissant",
+      "name": "Butter Croissant",
+      "description": "Laminated in-house and baked fresh every morning.",
+      "price": 190,
+      "category": "Pastries & Desserts",
+      "image": "",
+      "order": 0
+    },
+    {
+      "id": "cheesecake",
+      "name": "New York Cheesecake",
+      "description": "Dense and creamy, with a buttery biscuit base.",
+      "price": 350,
+      "category": "Pastries & Desserts",
+      "image": "",
+      "order": 1
+    },
     {
       "id": "espresso",
       "name": "Espresso",
@@ -58,15 +160,6 @@
       "category": "Coffee",
       "image": "",
       "order": 4
-    },
-    {
-      "id": "latte",
-      "name": "Latte",
-      "description": "Smooth espresso rounded out with steamed milk.",
-      "price": 310,
-      "category": "Coffee",
-      "image": "",
-      "order": 5
     },
     {
       "id": "affogato",
