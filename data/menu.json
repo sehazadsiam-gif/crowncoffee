@@ -1,8 +1,17 @@
 {
   "categories": [
+    "Breakfast",
+    "Sandwich",
+    "Appetizers",
+    "Soup",
+    "Pasta",
+    "Noodles",
+    "Salad",
+    "Pizza",
+    "Main Course",
+    "Desert",
     "Coffee",
     "Cold Brew & Tea",
-    "Breakfast",
     "Pastries & Desserts",
     "Boba Specials",
     "Shakes",
@@ -18,13 +27,325 @@
   ],
   "items": [
     {
+      "name": "Traditional Breakfast",
+      "description": "Traditional breakfast served with paratha, eggs, and lemon butter chicken.",
+      "price": 390,
+      "category": "Breakfast",
+      "id": "traditional_breakfast",
+      "order": 0
+    },
+    {
+      "name": "American Breakfast",
+      "description": "Classic American breakfast with eggs, sausages, baked beans, mushrooms, toast, and peanut butter.",
+      "price": 370,
+      "category": "Breakfast",
+      "id": "american_breakfast",
+      "order": 1
+    },
+    {
+      "name": "Brunch Delight",
+      "description": "Brunch platter with bread, eggs, baked beans, sausages, chicken, butter, and jelly.",
+      "price": 430,
+      "category": "Breakfast",
+      "id": "brunch_delight",
+      "order": 2
+    },
+    {
+      "name": "Chicken Sandwich",
+      "description": "Smoky, tender chicken in a fresh sandwich",
+      "price": 385,
+      "category": "Sandwich",
+      "id": "chicken_sandwich",
+      "order": 3
+    },
+    {
+      "name": "Mushroom Sandwich",
+      "description": "Savory chicken and mushrooms, perfectly seasoned and generously filled",
+      "price": 490,
+      "category": "Sandwich",
+      "id": "mushroom_sandwich",
+      "order": 4
+    },
+    {
+      "name": "Classic Club Sandwich",
+      "description": "A classic favorite crafted for a satisfying crunch in every bite",
+      "price": 580,
+      "category": "Sandwich",
+      "id": "classic_club_sandwich",
+      "order": 5
+    },
+    {
+      "name": "French Fries",
+      "description": "Simple and Classic",
+      "price": 210,
+      "category": "Appetizers",
+      "id": "french_fries",
+      "order": 6
+    },
+    {
+      "name": "Japanese Fried Chicken",
+      "description": "Crispy bite-sized chicken juicy inside, golden and crunchy outside",
+      "price": 365,
+      "category": "Appetizers",
+      "id": "japanese_fried_chicken",
+      "order": 7
+    },
+    {
+      "name": "Chicken Nanban",
+      "description": "Crispy Chicken coated in creamy, sweet spicy sauce bold flavour, perfect crunch, unforgettable taste",
+      "price": 345,
+      "category": "Appetizers",
+      "id": "chicken_nanban",
+      "order": 8
+    },
+    {
+      "name": "Chicken Gyoza",
+      "description": "Delicate chickens are lightly coated in a crisp, airy tempura batter and fried to golden perfection.",
+      "price": 340,
+      "category": "Appetizers",
+      "id": "chicken_gyoza",
+      "order": 9
+    },
+    {
+      "name": "Steamed Wonton",
+      "description": "Delicate steamed wontons, tender and flavorful with a light, savory filling.",
+      "price": 290,
+      "category": "Appetizers",
+      "id": "steamed_wonton",
+      "order": 10
+    },
+    {
+      "name": "Fried Sesame Dory",
+      "description": "Crispy fried dory, coated in aromatic sesame for a rich, nutty finish.",
+      "price": 520,
+      "category": "Appetizers",
+      "id": "fried_sesame_dory",
+      "order": 11
+    },
+    {
+      "name": "Fish and Chips",
+      "description": "Crispy fried dory fillets coated with toasted sesame seeds, served hot with tangy sauce.",
+      "price": 570,
+      "category": "Appetizers",
+      "id": "fish_and_chips",
+      "order": 12
+    },
+    {
+      "name": "High Tea (1:4)",
+      "description": "(Wonton, Chicken Wings, Chicken Satay, Fish Fingers, Fries) x 4",
+      "price": 745,
+      "category": "Appetizers",
+      "id": "high_tea__1_4_",
+      "order": 13
+    },
+    {
+      "name": "Thai Clear Soup",
+      "description": "A light and aromatic Thai clear soup with tender chicken, fresh herbs, and a hint of citrus.",
+      "price": 260,
+      "category": "Soup",
+      "id": "thai_clear_soup",
+      "order": 14
+    },
+    {
+      "name": "Thai Thick Soup",
+      "description": "Classic Thai thick soup with prawns & chicken, fresh ginger, lime juice, chilli paste",
+      "price": 310,
+      "category": "Soup",
+      "id": "thai_thick_soup",
+      "order": 15
+    },
+    {
+      "name": "Cream of Mushroom Soup",
+      "description": "Herbed roasted mushroom with garlic bread, onion, celery, bread, cream and parsley.",
+      "price": 380,
+      "category": "Soup",
+      "id": "cream_of_mushroom_soup",
+      "order": 16
+    },
+    {
+      "name": "Creamy Fettuccine Alfredo Pasta",
+      "description": "A generous mix of tender meats, grilled to perfection",
+      "price": 490,
+      "category": "Pasta",
+      "id": "creamy_fettuccine_alfredo_pasta",
+      "order": 17
+    },
+    {
+      "name": "Beef Bolognese Pasta",
+      "description": "Classic beef Bolognese pasta, slow cooked in a rich, hearty tomato sauce.",
+      "price": 580,
+      "category": "Pasta",
+      "id": "beef_bolognese_pasta",
+      "order": 18
+    },
+    {
+      "name": "Pasta De La Casa",
+      "description": "Juicy prawns and chickens sautéed in garlic tossed with Alfredo, chili, and herbs.",
+      "price": 895,
+      "category": "Pasta",
+      "id": "pasta_de_la_casa",
+      "order": 19
+    },
+    {
+      "name": "Stir Fried Chicken Noodles",
+      "description": "A delicious noodle of chicken, onion and sauce, spicy herbs.",
+      "price": 380,
+      "category": "Noodles",
+      "id": "stir_fried_chicken_noodles",
+      "order": 20
+    },
+    {
+      "name": "Stir Fried Beef Noodles",
+      "description": "Soft spicy beef noodles and adding herbs and spices.",
+      "price": 460,
+      "category": "Noodles",
+      "id": "stir_fried_beef_noodles",
+      "order": 21
+    },
+    {
+      "name": "Cashew Nut Salad",
+      "description": "Crisp chickens, veggies and roasted cashewnuts tossed in a light, tangy.",
+      "price": 465,
+      "category": "Salad",
+      "id": "cashew_nut_salad",
+      "order": 22
+    },
+    {
+      "name": "Spanish Grilled Chicken Salad",
+      "description": "Grilled chicken salad and seasonal vegetable topped with balsamic dressing.",
+      "price": 380,
+      "category": "Salad",
+      "id": "spanish_grilled_chicken_salad",
+      "order": 23
+    },
+    {
+      "name": "BBQ Chicken Pizza",
+      "description": "Tender grilled chicken and cheddar cheese and blended melted mozzarella cheese and a drizzle of extra BBQ sauce",
+      "price": "9\" - 595 / 12\" - 980",
+      "category": "Pizza",
+      "id": "bbq_chicken_pizza",
+      "order": 24
+    },
+    {
+      "name": "Beef Bolognese Pizza",
+      "description": "Ground beef finished and a drizzle of extra virgin olive oil, cheesy, and aromatic goodness in every bite.",
+      "price": "9\" - 845 / 12\" - 1330",
+      "category": "Pizza",
+      "id": "beef_bolognese_pizza",
+      "order": 25
+    },
+    {
+      "name": "CC Special Four Seasons",
+      "description": "House Special Pizza topped with beef, chicken, squids and Dory with overloaded cheese",
+      "price": "12\" - 1495",
+      "category": "Pizza",
+      "id": "cc_special_four_seasons",
+      "order": 26
+    },
+    {
+      "name": "Chicken Schnitzel",
+      "description": "Lightly breaded chicken breast fried to perfection juicy, crisp, and flavorful served with rice",
+      "price": 395,
+      "category": "Main Course",
+      "id": "chicken_schnitzel",
+      "order": 27
+    },
+    {
+      "name": "Turkish Savory",
+      "description": "Fluffy rice served with tender chicken cooked in special spices, paired with fresh sautéed vegetables.",
+      "price": 460,
+      "category": "Main Course",
+      "id": "turkish_savory",
+      "order": 28
+    },
+    {
+      "name": "Basil Leaf Beef (Spicy)",
+      "description": "Flavorful basil chicken or beef cooked in our special sauce spicy, aromatic, and satisfying served with rice",
+      "price": 450,
+      "category": "Main Course",
+      "id": "basil_leaf_beef__spicy_",
+      "order": 29
+    },
+    {
+      "name": "Herbed Dory with Salsa",
+      "description": "Grilled dory topped with spicy salsa and rice.",
+      "price": 580,
+      "category": "Main Course",
+      "id": "herbed_dory_with_salsa",
+      "order": 30
+    },
+    {
+      "name": "King Prawn",
+      "description": "Juicy king prawns served with rice and sautéed vegetables",
+      "price": 690,
+      "category": "Main Course",
+      "id": "king_prawn",
+      "order": 31
+    },
+    {
+      "name": "Peri Peri Chicken",
+      "description": "Tender peri peri chicken paired with fragrant rice and seasonal sautéed vegetables.",
+      "price": 410,
+      "category": "Main Course",
+      "id": "peri_peri_chicken",
+      "order": 32
+    },
+    {
+      "name": "Crown Coffee Special Rice (Spicy)",
+      "description": "Mixed rice of chicken, beef, prawn and calamari",
+      "price": 760,
+      "category": "Main Course",
+      "id": "crown_coffee_special_rice__spicy_",
+      "order": 33
+    },
+    {
+      "name": "Health Plus",
+      "description": "",
+      "price": 390,
+      "category": "Main Course",
+      "id": "health_plus",
+      "order": 34
+    },
+    {
+      "name": "Chawanmushi",
+      "description": "Silky Japanese steamed egg custard, delicately savory and smooth.",
+      "price": 195,
+      "category": "Desert",
+      "id": "chawanmushi",
+      "order": 35
+    },
+    {
+      "name": "Crêpe",
+      "description": "Soft, thin crepe, light and delicately filled or topped as desired.",
+      "price": 260,
+      "category": "Desert",
+      "id": "cr_pe",
+      "order": 36
+    },
+    {
+      "name": "Sweet Madness",
+      "description": "A decadent dessert with two scoops of ice cream, Swiss cake, and fresh fruits.",
+      "price": 340,
+      "category": "Desert",
+      "id": "sweet_madness",
+      "order": 37
+    },
+    {
+      "name": "Chocolate Lava",
+      "description": "A decadent dessert with two scoops of ice cream, Swiss cake, and fresh fruits.",
+      "price": 220,
+      "category": "Desert",
+      "id": "chocolate_lava",
+      "order": 38
+    },
+    {
       "id": "esp",
       "name": "Espresso",
       "description": "A double shot, pulled slow for a syrupy, balanced finish.",
       "price": 180,
       "category": "Coffee",
       "image": "",
-      "order": 0
+      "order": 39
     },
     {
       "id": "cap",
@@ -33,7 +354,7 @@
       "price": 230,
       "category": "Coffee",
       "image": "",
-      "order": 1
+      "order": 40
     },
     {
       "id": "latte",
@@ -42,7 +363,7 @@
       "price": 250,
       "category": "Coffee",
       "image": "",
-      "order": 2
+      "order": 41
     },
     {
       "id": "mocha",
@@ -51,7 +372,7 @@
       "price": 270,
       "category": "Coffee",
       "image": "",
-      "order": 3
+      "order": 42
     },
     {
       "id": "coldbrew",
@@ -60,7 +381,7 @@
       "price": 260,
       "category": "Cold Brew & Tea",
       "image": "",
-      "order": 0
+      "order": 43
     },
     {
       "id": "icedlatte",
@@ -69,7 +390,7 @@
       "price": 270,
       "category": "Cold Brew & Tea",
       "image": "",
-      "order": 1
+      "order": 44
     },
     {
       "id": "masala",
@@ -78,7 +399,7 @@
       "price": 150,
       "category": "Cold Brew & Tea",
       "image": "",
-      "order": 2
+      "order": 45
     },
     {
       "id": "sandwich",
@@ -87,7 +408,7 @@
       "price": 420,
       "category": "Breakfast",
       "image": "",
-      "order": 0
+      "order": 46
     },
     {
       "id": "eggsbenny",
@@ -96,7 +417,7 @@
       "price": 480,
       "category": "Breakfast",
       "image": "",
-      "order": 1
+      "order": 47
     },
     {
       "id": "croissant",
@@ -105,7 +426,7 @@
       "price": 190,
       "category": "Pastries & Desserts",
       "image": "",
-      "order": 0
+      "order": 48
     },
     {
       "id": "cheesecake",
@@ -114,7 +435,7 @@
       "price": 350,
       "category": "Pastries & Desserts",
       "image": "",
-      "order": 1
+      "order": 49
     },
     {
       "id": "espresso",
@@ -123,7 +444,7 @@
       "price": 190,
       "category": "Coffee",
       "image": "",
-      "order": 0
+      "order": 50
     },
     {
       "id": "macchiato",
@@ -132,7 +453,7 @@
       "price": 195,
       "category": "Coffee",
       "image": "",
-      "order": 1
+      "order": 51
     },
     {
       "id": "americano",
@@ -141,7 +462,7 @@
       "price": 199,
       "category": "Coffee",
       "image": "",
-      "order": 2
+      "order": 52
     },
     {
       "id": "cappucino",
@@ -150,7 +471,7 @@
       "price": 280,
       "category": "Coffee",
       "image": "",
-      "order": 3
+      "order": 53
     },
     {
       "id": "cappuccino_small",
@@ -159,7 +480,7 @@
       "price": 180,
       "category": "Coffee",
       "image": "",
-      "order": 4
+      "order": 54
     },
     {
       "id": "affogato",
@@ -168,7 +489,7 @@
       "price": 229,
       "category": "Coffee",
       "image": "",
-      "order": 6
+      "order": 55
     },
     {
       "id": "flat_white",
@@ -177,7 +498,7 @@
       "price": 240,
       "category": "Coffee",
       "image": "",
-      "order": 7
+      "order": 56
     },
     {
       "id": "iced_coffee_boba",
@@ -186,7 +507,7 @@
       "price": 289,
       "category": "Boba Specials",
       "image": "",
-      "order": 0
+      "order": 57
     },
     {
       "id": "shake_nutella",
@@ -195,7 +516,7 @@
       "price": 399,
       "category": "Shakes",
       "image": "",
-      "order": 0
+      "order": 58
     },
     {
       "id": "shake_vanilla",
@@ -204,7 +525,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 1
+      "order": 59
     },
     {
       "id": "shake_chocolate",
@@ -213,7 +534,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 2
+      "order": 60
     },
     {
       "id": "shake_oreo",
@@ -222,7 +543,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 3
+      "order": 61
     },
     {
       "id": "shake_mango",
@@ -231,7 +552,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 4
+      "order": 62
     },
     {
       "id": "shake_blueberry",
@@ -240,7 +561,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 5
+      "order": 63
     },
     {
       "id": "shake_strawberry",
@@ -249,7 +570,7 @@
       "price": 299,
       "category": "Shakes",
       "image": "",
-      "order": 6
+      "order": 64
     },
     {
       "id": "iced_americano",
@@ -258,7 +579,7 @@
       "price": 230,
       "category": "Iced Coffee",
       "image": "",
-      "order": 0
+      "order": 65
     },
     {
       "id": "iced_cappuccino",
@@ -267,7 +588,7 @@
       "price": 290,
       "category": "Iced Coffee",
       "image": "",
-      "order": 1
+      "order": 66
     },
     {
       "id": "iced_latte",
@@ -276,7 +597,7 @@
       "price": 330,
       "category": "Iced Coffee",
       "image": "",
-      "order": 2
+      "order": 67
     },
     {
       "id": "smoothie_mango",
@@ -285,7 +606,7 @@
       "price": 399,
       "category": "Smoothie",
       "image": "",
-      "order": 0
+      "order": 68
     },
     {
       "id": "smoothie_strawberry",
@@ -294,7 +615,7 @@
       "price": 399,
       "category": "Smoothie",
       "image": "",
-      "order": 1
+      "order": 69
     },
     {
       "id": "smoothie_peach",
@@ -303,7 +624,7 @@
       "price": 419,
       "category": "Smoothie",
       "image": "",
-      "order": 2
+      "order": 70
     },
     {
       "id": "hot_chocolate_regular",
@@ -312,7 +633,7 @@
       "price": 289,
       "category": "Hot Chocolate",
       "image": "",
-      "order": 0
+      "order": 71
     },
     {
       "id": "hot_chocolate_frozen",
@@ -321,7 +642,7 @@
       "price": 299,
       "category": "Hot Chocolate",
       "image": "",
-      "order": 1
+      "order": 72
     },
     {
       "id": "mocktail_mint_lemonade",
@@ -330,7 +651,7 @@
       "price": 239,
       "category": "Mocktails",
       "image": "",
-      "order": 0
+      "order": 73
     },
     {
       "id": "mocktail_blue_ocean",
@@ -339,7 +660,7 @@
       "price": 299,
       "category": "Mocktails",
       "image": "",
-      "order": 1
+      "order": 74
     },
     {
       "id": "mocktail_hurricane",
@@ -348,7 +669,7 @@
       "price": 399,
       "category": "Mocktails",
       "image": "",
-      "order": 2
+      "order": 75
     },
     {
       "id": "mocktail_crown_special",
@@ -357,7 +678,7 @@
       "price": 410,
       "category": "Mocktails",
       "image": "",
-      "order": 3
+      "order": 76
     },
     {
       "id": "frappe_hazelnut",
@@ -366,7 +687,7 @@
       "price": 409,
       "category": "Frappe",
       "image": "",
-      "order": 0
+      "order": 77
     },
     {
       "id": "frappe_caramel",
@@ -375,7 +696,7 @@
       "price": 409,
       "category": "Frappe",
       "image": "",
-      "order": 1
+      "order": 78
     },
     {
       "id": "frappe_salted_caramel",
@@ -384,7 +705,7 @@
       "price": 409,
       "category": "Frappe",
       "image": "",
-      "order": 2
+      "order": 79
     },
     {
       "id": "frappe_vanilla",
@@ -393,7 +714,7 @@
       "price": 399,
       "category": "Frappe",
       "image": "",
-      "order": 3
+      "order": 80
     },
     {
       "id": "frappe_mocha",
@@ -402,7 +723,7 @@
       "price": 399,
       "category": "Frappe",
       "image": "",
-      "order": 4
+      "order": 81
     },
     {
       "id": "frappe_tiramisu",
@@ -411,7 +732,7 @@
       "price": 415,
       "category": "Frappe",
       "image": "",
-      "order": 5
+      "order": 82
     },
     {
       "id": "juice_orange",
@@ -420,7 +741,7 @@
       "price": 289,
       "category": "Fresh Juices",
       "image": "",
-      "order": 0
+      "order": 83
     },
     {
       "id": "juice_pineapple",
@@ -429,7 +750,7 @@
       "price": 209,
       "category": "Fresh Juices",
       "image": "",
-      "order": 1
+      "order": 84
     },
     {
       "id": "juice_papaya",
@@ -438,7 +759,7 @@
       "price": 159,
       "category": "Fresh Juices",
       "image": "",
-      "order": 2
+      "order": 85
     },
     {
       "id": "juice_apple",
@@ -447,7 +768,7 @@
       "price": 489,
       "category": "Fresh Juices",
       "image": "",
-      "order": 3
+      "order": 86
     },
     {
       "id": "ice_cream_vanilla",
@@ -456,7 +777,7 @@
       "price": 155,
       "category": "Ice Cream",
       "image": "",
-      "order": 0
+      "order": 87
     },
     {
       "id": "ice_cream_chocolate",
@@ -465,7 +786,7 @@
       "price": 155,
       "category": "Ice Cream",
       "image": "",
-      "order": 1
+      "order": 88
     },
     {
       "id": "ice_cream_mango",
@@ -474,7 +795,7 @@
       "price": 155,
       "category": "Ice Cream",
       "image": "",
-      "order": 2
+      "order": 89
     },
     {
       "id": "addon_hazelnut",
@@ -483,7 +804,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 0
+      "order": 90
     },
     {
       "id": "addon_caramel",
@@ -492,7 +813,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 1
+      "order": 91
     },
     {
       "id": "addon_vanilla",
@@ -501,7 +822,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 2
+      "order": 92
     },
     {
       "id": "addon_mocha",
@@ -510,7 +831,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 3
+      "order": 93
     },
     {
       "id": "addon_salted_caramel",
@@ -519,7 +840,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 4
+      "order": 94
     },
     {
       "id": "addon_tiramisu",
@@ -528,7 +849,7 @@
       "price": 99,
       "category": "Add On(s) Flavours",
       "image": "",
-      "order": 5
+      "order": 95
     },
     {
       "id": "lassi_mango",
@@ -537,7 +858,7 @@
       "price": 319,
       "category": "Traditionals",
       "image": "",
-      "order": 0
+      "order": 96
     },
     {
       "id": "lassi_strawberry",
@@ -546,7 +867,7 @@
       "price": 339,
       "category": "Traditionals",
       "image": "",
-      "order": 1
+      "order": 97
     }
   ]
 }
