@@ -13,6 +13,7 @@ import { FONT_PAIRS } from "@/lib/fonts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BannerStrip from "@/components/BannerStrip";
+import PresenceTracker from "@/components/PresenceTracker";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }) {
         <BannerStrip initialBanners={activeBanners} />
         <main className="flex-1">{children}</main>
         <Footer settings={settings} />
+        <PresenceTracker />
       </body>
     </html>
   );

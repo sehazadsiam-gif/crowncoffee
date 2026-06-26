@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import CrownMark from "@/components/CrownMark";
@@ -18,7 +18,26 @@ const TABS = [
 
 export default function AdminDashboard({ initialMenu, initialSettings, initialBanners }) {
   const [tab, setTab] = useState("menu");
+  const [activeVisits, setActiveVisits] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchVisits = async () => {
+      try {
+        const res = await fetch('/api/presence');
+        if (res.ok) {
+          const data = await res.json();
+          setActiveVisits(data.count || 0);
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    };
+
+    fetchVisits();
+    const interval = setInterval(fetchVisits, 5000); // Poll every 5s
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -37,6 +56,13 @@ export default function AdminDashboard({ initialMenu, initialSettings, initialBa
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--background)] px-3 py-2 text-sm font-medium">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500"></span>
+            </span>
+            <span>{activeVisits} {activeVisits === 1 ? 'visitor' : 'visitors'}</span>
+          </div>
           <Link
             href="/"
             target="_blank"
