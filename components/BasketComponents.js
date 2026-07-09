@@ -5,9 +5,39 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
 
+function getFoodImage(item) {
+  if (item.image) return item.image;
+  const cat = (item.category || "").toLowerCase();
+  if (cat.includes("coffee") || cat.includes("brew") || cat.includes("tea") || cat.includes("iced") || cat.includes("frappe")) {
+    return "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("sandwich")) {
+    return "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("pizza")) {
+    return "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("pasta") || cat.includes("noodles") || cat.includes("spaghetti")) {
+    return "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("burger")) {
+    return "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("breakfast") || cat.includes("brunch")) {
+    return "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("pastry") || cat.includes("dessert") || cat.includes("cake") || cat.includes("sweet") || cat.includes("ice cream")) {
+    return "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=150&auto=format&fit=crop&q=60";
+  }
+  if (cat.includes("drink") || cat.includes("shake") || cat.includes("smoothie") || cat.includes("juice") || cat.includes("boba") || cat.includes("mocktail") || cat.includes("chocolate")) {
+    return "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=150&auto=format&fit=crop&q=60";
+  }
+  return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150&auto=format&fit=crop&q=60";
+}
+
 // ─── Real menu item suggestions carousel ────────────────────────────────────
 function SuggestionsCarousel() {
-  const { addToBasket, getItemQuantity, isMounted } = useBasket();
+  const { basket, addToBasket, getItemQuantity, isMounted } = useBasket();
   const [menuItems, setMenuItems] = useState([]);
   const [startIdx, setStartIdx] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -26,18 +56,25 @@ function SuggestionsCarousel() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Filter out items already in the basket
+  const otherItems = menuItems.filter((item) => !basket.some((b) => b.id === item.id));
+
   // Rotate 5 visible items every 10 seconds
   useEffect(() => {
-    if (menuItems.length === 0) return;
+    if (otherItems.length === 0) return;
     const timer = setInterval(() => {
-      setStartIdx((prev) => (prev + 5) % menuItems.length);
+      setStartIdx((prev) => (prev + 5) % otherItems.length);
     }, 10_000);
     return () => clearInterval(timer);
-  }, [menuItems.length]);
+  }, [otherItems.length]);
 
-  if (loading || menuItems.length === 0) return null;
+  if (loading || otherItems.length === 0) return null;
 
-  const visible = [0, 1, 2, 3, 4].map((offset) => menuItems[(startIdx + offset) % menuItems.length]);
+  const visible = [0, 1, 2, 3, 4]
+    .map((offset) => otherItems[(startIdx + offset) % otherItems.length])
+    .filter(Boolean);
+
+  if (visible.length === 0) return null;
 
   return (
     <div className="mt-5 pt-4 border-t border-[var(--line)]">
@@ -49,8 +86,8 @@ function SuggestionsCarousel() {
 
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
         {visible.map((item) => {
-          if (!item) return null;
           const qty = isMounted ? getItemQuantity(item.id) : 0;
+          const imageUrl = getFoodImage(item);
           return (
             <div
               key={item.id}
@@ -58,19 +95,13 @@ function SuggestionsCarousel() {
             >
               {/* Food image */}
               <div className="relative w-full aspect-square bg-[var(--accent-soft)] overflow-hidden">
-                {item.image ? (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    sizes="85px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <CrownMark className="h-5 w-5 text-[var(--accent)] opacity-30" />
-                  </div>
-                )}
+                <Image
+                  src={imageUrl}
+                  alt={item.name}
+                  fill
+                  sizes="85px"
+                  className="object-cover"
+                />
               </div>
 
               {/* Info + action */}
