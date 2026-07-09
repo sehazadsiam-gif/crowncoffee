@@ -305,8 +305,18 @@ export default function MenuManager({ initialMenu }) {
                         <span
                           className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide"
                           style={{ background: "var(--accent)", color: "#fff" }}
+                          title="Best Seller"
                         >
                           ★
+                        </span>
+                      )}
+                      {item.kiosk && (
+                        <span
+                          className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide"
+                          style={{ background: "#4f46e5", color: "#fff" }}
+                          title="Kiosk Menu"
+                        >
+                          📱
                         </span>
                       )}
                     </p>
@@ -443,9 +453,10 @@ export default function MenuManager({ initialMenu }) {
                         </label>
                       </div>
 
+                      <div className="flex flex-wrap gap-3">
                         {/* Best Seller toggle */}
                         <label
-                          className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[var(--line)] px-3 py-2.5 text-sm transition hover:border-[var(--accent)]"
+                          className="flex flex-1 min-w-[180px] cursor-pointer items-center gap-2.5 rounded-lg border border-[var(--line)] px-3 py-2.5 text-sm transition hover:border-[var(--accent)]"
                           style={item.bestSeller ? { borderColor: "var(--accent)", background: "rgba(182,134,44,0.06)" } : {}}
                         >
                           <input
@@ -458,8 +469,27 @@ export default function MenuManager({ initialMenu }) {
                           <span className="font-semibold" style={{ color: item.bestSeller ? "var(--accent)" : "inherit" }}>
                             ★ Best Seller
                           </span>
-                          <span className="text-[var(--mute)] text-xs">shows on homepage</span>
+                          <span className="text-[var(--mute)] text-xs ml-auto">shows on homepage</span>
                         </label>
+
+                        {/* Kiosk toggle */}
+                        <label
+                          className="flex flex-1 min-w-[180px] cursor-pointer items-center gap-2.5 rounded-lg border border-[var(--line)] px-3 py-2.5 text-sm transition hover:border-[var(--accent)]"
+                          style={item.kiosk ? { borderColor: "var(--accent)", background: "rgba(182,134,44,0.06)" } : {}}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!item.kiosk}
+                            onChange={(e) => updateItem(item.id, { kiosk: e.target.checked })}
+                            className="h-4 w-4 rounded"
+                            style={{ accentColor: "var(--accent)" }}
+                          />
+                          <span className="font-semibold" style={{ color: item.kiosk ? "var(--accent)" : "inherit" }}>
+                            📱 Kiosk Menu
+                          </span>
+                          <span className="text-[var(--mute)] text-xs ml-auto">shows on kiosk</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 )}

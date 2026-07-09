@@ -32,7 +32,8 @@
       "price": 390,
       "category": "Breakfast",
       "id": "traditional_breakfast",
-      "order": 0
+      "order": 0,
+      "kiosk": true
     },
     {
       "name": "American Breakfast",
@@ -40,7 +41,8 @@
       "price": 370,
       "category": "Breakfast",
       "id": "american_breakfast",
-      "order": 1
+      "order": 1,
+      "kiosk": true
     },
     {
       "name": "Brunch Delight",
@@ -48,7 +50,8 @@
       "price": 430,
       "category": "Breakfast",
       "id": "brunch_delight",
-      "order": 2
+      "order": 2,
+      "kiosk": true
     },
     {
       "name": "Chicken Sandwich",
@@ -56,7 +59,8 @@
       "price": 385,
       "category": "Sandwich",
       "id": "chicken_sandwich",
-      "order": 3
+      "order": 3,
+      "kiosk": true
     },
     {
       "name": "Mushroom Sandwich",
@@ -72,7 +76,8 @@
       "price": 580,
       "category": "Sandwich",
       "id": "classic_club_sandwich",
-      "order": 5
+      "order": 5,
+      "kiosk": true
     },
     {
       "name": "French Fries",
@@ -80,7 +85,8 @@
       "price": 210,
       "category": "Appetizers",
       "id": "french_fries",
-      "order": 6
+      "order": 6,
+      "kiosk": true
     },
     {
       "name": "Japanese Fried Chicken",
@@ -88,7 +94,8 @@
       "price": 365,
       "category": "Appetizers",
       "id": "japanese_fried_chicken",
-      "order": 7
+      "order": 7,
+      "kiosk": true
     },
     {
       "name": "Chicken Nanban",
@@ -168,7 +175,8 @@
       "price": 490,
       "category": "Pasta",
       "id": "creamy_fettuccine_alfredo_pasta",
-      "order": 17
+      "order": 17,
+      "kiosk": true
     },
     {
       "name": "Beef Bolognese Pasta",
@@ -192,7 +200,8 @@
       "price": 380,
       "category": "Noodles",
       "id": "stir_fried_chicken_noodles",
-      "order": 20
+      "order": 20,
+      "kiosk": true
     },
     {
       "name": "Stir Fried Beef Noodles",
@@ -208,7 +217,8 @@
       "price": 465,
       "category": "Salad",
       "id": "cashew_nut_salad",
-      "order": 22
+      "order": 22,
+      "kiosk": true
     },
     {
       "name": "Spanish Grilled Chicken Salad",
@@ -224,7 +234,8 @@
       "price": "9\" - 595 / 12\" - 980",
       "category": "Pizza",
       "id": "bbq_chicken_pizza",
-      "order": 24
+      "order": 24,
+      "kiosk": true
     },
     {
       "name": "Beef Bolognese Pizza",
@@ -248,7 +259,8 @@
       "price": 395,
       "category": "Main Course",
       "id": "chicken_schnitzel",
-      "order": 27
+      "order": 27,
+      "kiosk": true
     },
     {
       "name": "Turkish Savory",
@@ -345,7 +357,8 @@
       "price": 180,
       "category": "Coffee",
       "image": "",
-      "order": 39
+      "order": 39,
+      "kiosk": true
     },
     {
       "id": "cap",
@@ -354,7 +367,8 @@
       "price": 230,
       "category": "Coffee",
       "image": "",
-      "order": 40
+      "order": 40,
+      "kiosk": true
     },
     {
       "id": "latte",
@@ -363,7 +377,8 @@
       "price": 250,
       "category": "Coffee",
       "image": "",
-      "order": 41
+      "order": 41,
+      "kiosk": true
     },
     {
       "id": "mocha",

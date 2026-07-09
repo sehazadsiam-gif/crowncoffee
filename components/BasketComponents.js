@@ -2,13 +2,15 @@
 
 import { useBasket } from "@/context/BasketContext";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
 
 export function FloatingBasketButton() {
   const { totalItems, setIsOpen, isMounted } = useBasket();
+  const pathname = usePathname();
 
-  if (!isMounted || totalItems === 0) return null;
+  if (!isMounted || totalItems === 0 || pathname === "/kiosk") return null;
 
   return (
     <button

@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import CrownMark from "./CrownMark";
 
 export default function Footer({ settings }) {
+  const pathname = usePathname();
+  if (pathname === "/kiosk") return null;
   const year = new Date().getFullYear();
 
   return (
