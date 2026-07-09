@@ -59,12 +59,12 @@ function SuggestionsCarousel() {
   // Filter out items already in the basket
   const otherItems = menuItems.filter((item) => !basket.some((b) => b.id === item.id));
 
-  // Rotate 5 visible items every 10 seconds
+  // Rotate 5 visible items every 5 seconds
   useEffect(() => {
     if (otherItems.length === 0) return;
     const timer = setInterval(() => {
       setStartIdx((prev) => (prev + 5) % otherItems.length);
-    }, 10_000);
+    }, 5_000);
     return () => clearInterval(timer);
   }, [otherItems.length]);
 
@@ -80,7 +80,7 @@ function SuggestionsCarousel() {
     <div className="mt-5 pt-4 border-t border-[var(--line)]">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--ink-soft)]">
-          ✨ You might also like (refreshes every 10s)
+          ✨ You might also like (refreshes every 5s)
         </p>
       </div>
 
