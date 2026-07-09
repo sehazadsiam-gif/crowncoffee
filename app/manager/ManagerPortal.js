@@ -285,7 +285,7 @@ export default function ManagerPortal({ initialOrders }) {
   const [orders, setOrders] = useState(initialOrders || []);
   const [tab, setTab] = useState("pending");
   const [newOrderIds, setNewOrderIds] = useState(new Set());
-  const [soundKey, setSoundKey] = useState("gentle_bell");
+  const soundKey = "classic_chime";
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [connected, setConnected] = useState(false);
 
@@ -484,25 +484,17 @@ export default function ManagerPortal({ initialOrders }) {
       </header>
 
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 space-y-6">
-        {/* Sound picker */}
-        <div className="rounded-2xl border border-[var(--line)] bg-white p-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-semibold text-[var(--ink)]">Alert Sound:</span>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(SOUND_PRESETS).map(([key, preset]) => (
-              <button
-                key={key}
-                onClick={() => setSoundKey(key)}
-                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${soundKey === key ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--line)] text-[var(--ink-soft)] hover:border-[var(--accent)] hover:text-[var(--accent)]"}`}
-              >
-                {preset.label}
-              </button>
-            ))}
+        {/* Alert Tone Indicator */}
+        <div className="rounded-2xl border border-[var(--line)] bg-white p-4 flex items-center justify-between gap-3">
+          <div>
+            <span className="text-sm font-semibold text-[var(--ink)]">Alert Tone: 🎶 Classic Chime</span>
+            <p className="text-xs text-[var(--ink-soft)]">This sound will ring continuously when a new order arrives until you press KOT Printed.</p>
           </div>
           <button
-            onClick={() => SOUND_PRESETS[soundKey]?.fn()}
-            className="ml-auto rounded-full border border-[var(--line)] px-3 py-1 text-xs font-semibold text-[var(--ink-soft)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
+            onClick={() => SOUND_PRESETS.classic_chime.fn()}
+            className="rounded-full border border-[var(--line)] px-4 py-2 text-xs font-semibold text-[var(--ink-soft)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
           >
-            ▶ Test
+            ▶ Test Sound
           </button>
         </div>
 
