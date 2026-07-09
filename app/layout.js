@@ -10,12 +10,8 @@ import "@fontsource/spectral/700.css";
 import "./globals.css";
 import { getSettings, getBanners } from "@/lib/data";
 import { FONT_PAIRS } from "@/lib/fonts";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BannerStrip from "@/components/BannerStrip";
-import PresenceTracker from "@/components/PresenceTracker";
 import { BasketProvider } from "@/context/BasketContext";
-import { FloatingBasketButton, BasketDrawer, WaiterModeModal } from "@/components/BasketComponents";
+import SiteShell from "@/components/SiteShell";
 
 export const dynamic = "force-dynamic";
 
@@ -37,19 +33,17 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#B6862C" />
+        <script dangerouslySetInnerHTML={{
+          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}`
+        }} />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
         <BasketProvider>
-          <Header settings={settings} />
-          <BannerStrip initialBanners={activeBanners} />
-          <main className="flex-1">{children}</main>
-          <Footer settings={settings} />
-          <PresenceTracker />
-
-          {/* Basket UI Components */}
-          <FloatingBasketButton />
-          <BasketDrawer />
-          <WaiterModeModal />
+          <SiteShell settings={settings} activeBanners={activeBanners}>
+            {children}
+          </SiteShell>
         </BasketProvider>
       </body>
     </html>

@@ -14,6 +14,7 @@ const TABS = [
   { id: "appearance", label: "Appearance" },
   { id: "info", label: "Site info" },
   { id: "banners", label: "Banners" },
+  { id: "qr", label: "Tables & QR" },
 ];
 
 export default function AdminDashboard({ initialMenu, initialSettings, initialBanners }) {
@@ -64,6 +65,13 @@ export default function AdminDashboard({ initialMenu, initialSettings, initialBa
             <span>{activeVisits} {activeVisits === 1 ? 'visitor' : 'visitors'}</span>
           </div>
           <Link
+            href="/manager"
+            target="_blank"
+            className="rounded-full border border-[var(--line)] px-4 py-2 text-sm font-semibold transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            Manager Portal
+          </Link>
+          <Link
             href="/"
             target="_blank"
             className="rounded-full border border-[var(--line)] px-4 py-2 text-sm font-semibold transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
@@ -102,6 +110,19 @@ export default function AdminDashboard({ initialMenu, initialSettings, initialBa
         {tab === "appearance" && <AppearanceForm initialTheme={initialSettings.theme} />}
         {tab === "info" && <SiteInfoForm initialSettings={initialSettings} />}
         {tab === "banners" && <BannerManager initialBanners={initialBanners} />}
+        {tab === "qr" && (
+          <div className="space-y-4">
+            <p className="text-sm text-[var(--ink-soft)]">Print QR codes to place on your tables. Customers scan to order directly.</p>
+            <Link
+              href="/qr"
+              target="_blank"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-105"
+              style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
+            >
+              Open QR Print Page ↗
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

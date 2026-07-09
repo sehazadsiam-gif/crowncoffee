@@ -9,8 +9,9 @@ export function BasketProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isWaiterMode, setIsWaiterMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [tableNumber, setTableNumber] = useState(null); // Set from QR URL
 
-  // Load basket from localStorage once component is mounted on the client
+  // Load basket + table number from localStorage once mounted on client
   useEffect(() => {
     setIsMounted(true);
     const savedBasket = localStorage.getItem("crown_coffee_basket");
@@ -21,6 +22,10 @@ export function BasketProvider({ children }) {
         console.error("Failed to parse saved basket", e);
       }
     }
+    const savedTable = localStorage.getItem("crown_coffee_table");
+    if (savedTable) {
+      setTableNumber(savedTable);
+    }
   }, []);
 
   // Sync basket to localStorage on changes
@@ -30,6 +35,13 @@ export function BasketProvider({ children }) {
     }
   }, [basket, isMounted]);
 
+  // Sync tableNumber to localStorage
+  useEffect(() => {
+    if (isMounted && tableNumber) {
+      localStorage.setItem("crown_coffee_table", tableNumber);
+    }
+  }, [tableNumber, isMounted]);
+
   const addToBasket = (item) => {
     setBasket((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -38,13 +50,13 @@ export function BasketProvider({ children }) {
           i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: 1, specialRequest: "" }];
     });
   };
 
   const updateQuantity = (itemId, change) => {
-    setBasket((prev) => {
-      return prev
+    setBasket((prev) =>
+      prev
         .map((i) => {
           if (i.id === itemId) {
             const newQty = i.quantity + change;
@@ -52,8 +64,14 @@ export function BasketProvider({ children }) {
           }
           return i;
         })
-        .filter((i) => i.quantity > 0);
-    });
+        .filter((i) => i.quantity > 0)
+    );
+  };
+
+  const updateSpecialRequest = (itemId, text) => {
+    setBasket((prev) =>
+      prev.map((i) => (i.id === itemId ? { ...i, specialRequest: text } : i))
+    );
   };
 
   const removeFromBasket = (itemId) => {
@@ -83,12 +101,15 @@ export function BasketProvider({ children }) {
         setIsWaiterMode,
         addToBasket,
         updateQuantity,
+        updateSpecialRequest,
         removeFromBasket,
         clearBasket,
         getItemQuantity,
         totalItems,
         totalPrice,
         isMounted,
+        tableNumber,
+        setTableNumber,
       }}
     >
       {children}
