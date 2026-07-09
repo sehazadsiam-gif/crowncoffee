@@ -305,6 +305,7 @@ export default function ManagerPortal({ initialOrders }) {
   // Sound loops as long as this is non-empty
   const [pendingKotIds, setPendingKotIds] = useState(new Set());
   const loopRef = useRef(null); // setInterval reference
+  const lastLocalActionTime = useRef(0); // Timestamp of the last local action to prevent polling race conditions
 
   // ── Continuous loop: start/stop based on pendingKotIds ─────────────────
   useEffect(() => {
@@ -367,6 +368,11 @@ export default function ManagerPortal({ initialOrders }) {
             setOrders((prev) => [order, ...prev]);
             setNewOrderIds((prev) => new Set([...prev, order.orderId]));
 
+            // Play sound immediately on arrival if pending & sound enabled
+            if (order.status === "pending" && soundEnabled) {
+              SOUND_PRESETS[soundKey]?.fn();
+            }
+
             // Add to pending-KOT set → triggers sound loop
             if (order.status === "pending") {
               setPendingKotIds((prev) => new Set([...prev, order.orderId]));
@@ -380,6 +386,12 @@ export default function ManagerPortal({ initialOrders }) {
             }, 8000);
           } else if (msg.type === "order_updated") {
             const order = msg.order;
+            
+            // Skip updating state if we just updated this locally to prevent latency overwrite
+            if (Date.now() - lastLocalActionTime.current < 5000) {
+              return;
+            }
+
             setOrders((prev) => prev.map((o) => o.orderId === order.orderId ? order : o));
 
             // If status moved away from pending → remove from ringing set
@@ -399,11 +411,15 @@ export default function ManagerPortal({ initialOrders }) {
       };
     }
     connect();
-  }, []); // only connect once — soundKey/soundEnabled handled via pendingKotIds effect
+  }, [soundEnabled, soundKey]); // connect dependencies handled correctly
 
   // ── Polling fallback (ensures cross-device sync in serverless environments) ──
   useEffect(() => {
     async function pollOrders() {
+      // Skip polling updates if we did a local status change in the last 5 seconds to avoid race conditions
+      if (Date.now() - lastLocalActionTime.current < 5000) {
+        return;
+      }
       try {
         const res = await fetch("/api/orders");
         if (res.ok) {
@@ -429,25 +445,47 @@ export default function ManagerPortal({ initialOrders }) {
 
   // ── Status update ──────────────────────────────────────────────────────
   const handleStatusChange = useCallback(async (orderId, patch) => {
-    const res = await fetch(`/api/orders/${orderId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(patch),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setOrders((prev) => prev.map((o) => o.orderId === orderId ? data.order : o));
+    lastLocalActionTime.current = Date.now();
 
-      // If moved away from pending → remove from ringing set
-      if (patch.status && patch.status !== "pending") {
-        setPendingKotIds((prev) => {
-          const next = new Set(prev); next.delete(orderId); return next;
-        });
+    // 1. Optimistic Local State Update:
+    setOrders((prev) =>
+      prev.map((o) => (o.orderId === orderId ? { ...o, ...patch } : o))
+    );
+
+    // If moved away from pending -> stop sound immediately
+    if (patch.status && patch.status !== "pending") {
+      setPendingKotIds((prev) => {
+        const next = new Set(prev);
+        next.delete(orderId);
+        return next;
+      });
+    }
+    // If moved back to pending -> start sound immediately
+    if (patch.status === "pending") {
+      setPendingKotIds((prev) => new Set([...prev, orderId]));
+    }
+
+    // 2. Perform Network Update in Background:
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Update local state with exact response from server
+        setOrders((prev) =>
+          prev.map((o) => (o.orderId === orderId ? data.order : o))
+        );
+      } else {
+        throw new Error("PATCH failed");
       }
-      // If unlocked back to pending → re-add to ringing set
-      if (patch.status === "pending") {
-        setPendingKotIds((prev) => new Set([...prev, orderId]));
-      }
+    } catch (err) {
+      console.error("Failed to update status on server:", err);
+      alert("Failed to save changes. Please try again.");
+      // Revert status
+      lastLocalActionTime.current = 0; // force poll update to revert
     }
   }, []);
 
