@@ -389,6 +389,32 @@ export default function ManagerPortal({ initialOrders }) {
     connect();
   }, []); // only connect once — soundKey/soundEnabled handled via pendingKotIds effect
 
+  // ── Polling fallback (ensures cross-device sync in serverless environments) ──
+  useEffect(() => {
+    async function pollOrders() {
+      try {
+        const res = await fetch("/api/orders");
+        if (res.ok) {
+          const freshOrders = await res.json();
+          setOrders(freshOrders);
+
+          // Re-calculate pendingKotIds based on fresh orders
+          const ringingIds = new Set(
+            freshOrders
+              .filter((o) => o.status === "pending")
+              .map((o) => o.orderId)
+          );
+          setPendingKotIds(ringingIds);
+        }
+      } catch (err) {
+        console.error("Polling orders failed:", err);
+      }
+    }
+
+    const interval = setInterval(pollOrders, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ── Status update ──────────────────────────────────────────────────────
   const handleStatusChange = useCallback(async (orderId, patch) => {
     const res = await fetch(`/api/orders/${orderId}`, {

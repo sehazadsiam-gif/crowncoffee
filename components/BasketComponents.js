@@ -26,36 +26,35 @@ function SuggestionsCarousel() {
       .catch(() => setLoading(false));
   }, []);
 
-  // Rotate 3 visible items every 10 seconds
+  // Rotate 5 visible items every 10 seconds
   useEffect(() => {
     if (menuItems.length === 0) return;
     const timer = setInterval(() => {
-      setStartIdx((prev) => (prev + 3) % menuItems.length);
+      setStartIdx((prev) => (prev + 5) % menuItems.length);
     }, 10_000);
     return () => clearInterval(timer);
   }, [menuItems.length]);
 
   if (loading || menuItems.length === 0) return null;
 
-  const visible = [0, 1, 2].map((offset) => menuItems[(startIdx + offset) % menuItems.length]);
+  const visible = [0, 1, 2, 3, 4].map((offset) => menuItems[(startIdx + offset) % menuItems.length]);
 
   return (
     <div className="mt-5 pt-4 border-t border-[var(--line)]">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--ink-soft)]">
-          ✨ You might also like
+          ✨ You might also like (refreshes every 10s)
         </p>
-        <p className="text-[9px] text-[var(--ink-soft)] opacity-60">refreshes every 10s</p>
       </div>
 
-      <div className="flex gap-2.5">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
         {visible.map((item) => {
           if (!item) return null;
           const qty = isMounted ? getItemQuantity(item.id) : 0;
           return (
             <div
               key={item.id}
-              className="flex-1 min-w-0 rounded-xl border border-[var(--line)] bg-[var(--paper)] overflow-hidden flex flex-col transition hover:border-[var(--accent)] hover:shadow-sm"
+              className="w-[85px] shrink-0 snap-start rounded-xl border border-[var(--line)] bg-[var(--paper)] overflow-hidden flex flex-col transition hover:border-[var(--accent)] hover:shadow-xs"
             >
               {/* Food image */}
               <div className="relative w-full aspect-square bg-[var(--accent-soft)] overflow-hidden">
@@ -64,35 +63,39 @@ function SuggestionsCarousel() {
                     src={item.image}
                     alt={item.name}
                     fill
-                    sizes="120px"
+                    sizes="85px"
                     className="object-cover"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">
-                    <CrownMark className="h-6 w-6 text-[var(--accent)] opacity-30" />
+                    <CrownMark className="h-5 w-5 text-[var(--accent)] opacity-30" />
                   </div>
                 )}
               </div>
 
               {/* Info + action */}
-              <div className="p-2 flex flex-col gap-1.5 flex-1">
-                <p className="text-[11px] font-semibold text-[var(--ink)] leading-tight line-clamp-2">
-                  {item.name}
-                </p>
-                <p className="text-[11px] font-bold text-[var(--accent)]">৳{item.price}</p>
-
-                {qty > 0 ? (
-                  <p className="text-[10px] text-center font-bold text-green-600 bg-green-50 rounded-full py-0.5">
-                    ✓ In basket ×{qty}
+              <div className="p-1.5 flex flex-col gap-1 flex-1 justify-between">
+                <div>
+                  <p className="text-[9px] font-semibold text-[var(--ink)] leading-tight line-clamp-2">
+                    {item.name}
                   </p>
-                ) : (
-                  <button
-                    onClick={() => addToBasket(item)}
-                    className="w-full rounded-full border border-[var(--accent)] py-1 text-[10px] font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
-                  >
-                    + Add
-                  </button>
-                )}
+                  <p className="text-[9px] font-bold text-[var(--accent)] mt-0.5">৳{item.price}</p>
+                </div>
+
+                <div className="mt-1">
+                  {qty > 0 ? (
+                    <p className="text-[8px] text-center font-bold text-green-600 bg-green-50 rounded-full py-0.5 border border-green-200">
+                      ✓ {qty}
+                    </p>
+                  ) : (
+                    <button
+                      onClick={() => addToBasket(item)}
+                      className="w-full rounded-full border border-[var(--accent)] py-0.5 text-[9px] font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
+                    >
+                      + Add
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           );
