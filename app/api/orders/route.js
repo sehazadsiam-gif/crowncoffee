@@ -15,17 +15,24 @@ export async function GET() {
   }
 }
 
-// POST /api/orders — place a new order from a table QR scan
+// POST /api/orders — place a new order from a table QR scan or delivery
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { tableNumber, items, totalPrice, specialNote } = body;
+    const { tableNumber, items, totalPrice, specialNote, deliveryAddress, deliveryCharge } = body;
 
     if (!tableNumber || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Invalid order" }, { status: 400 });
     }
 
-    const order = await addOrder({ tableNumber, items, totalPrice, specialNote: specialNote || "" });
+    const order = await addOrder({
+      tableNumber,
+      items,
+      totalPrice,
+      specialNote: specialNote || "",
+      deliveryAddress: deliveryAddress || null,
+      deliveryCharge: deliveryCharge || 0,
+    });
 
     // Push to all connected manager SSE clients
     broadcastOrder(order);

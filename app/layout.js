@@ -40,7 +40,7 @@ export default async function RootLayout({ children }) {
         }} />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
-        <BasketProvider>
+        <BasketProvider deliveryCharge={settings.deliveryCharge}>
           <SiteShell settings={settings} activeBanners={activeBanners}>
             {children}
           </SiteShell>

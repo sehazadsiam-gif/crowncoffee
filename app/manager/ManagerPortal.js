@@ -117,11 +117,13 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white font-display text-lg font-black"
             style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
           >
-            {order.tableNumber}
+            {order.tableNumber === "delivery" ? "🚚" : order.tableNumber}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-display text-lg font-bold text-[var(--ink)]">Table {order.tableNumber}</span>
+              <span className="font-display text-lg font-bold text-[var(--ink)]">
+                {order.tableNumber === "delivery" ? "Home Delivery" : `Table ${order.tableNumber}`}
+              </span>
               <span className="font-mono text-sm font-bold text-[var(--accent)]">{order.orderNumber}</span>
               <StatusBadge status={order.status} />
               {isNew && (
@@ -164,6 +166,22 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
             ))}
           </ul>
 
+          {order.deliveryCharge > 0 && (
+            <div className="mt-2 text-right text-xs text-[var(--ink-soft)] font-medium">
+              Items: ৳{order.totalPrice - order.deliveryCharge} + Delivery: ৳{order.deliveryCharge}
+            </div>
+          )}
+
+          {order.deliveryAddress && (
+            <div className="mt-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-left">
+              <p className="text-xs text-red-900 leading-relaxed">
+                <strong>📍 Delivery Address & Contact:</strong>
+                <br />
+                <span className="whitespace-pre-wrap font-sans mt-1 block">{order.deliveryAddress}</span>
+              </p>
+            </div>
+          )}
+
           {order.specialNote && (
             <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
               <p className="text-xs text-amber-800"><strong>Order note:</strong> {order.specialNote}</p>
@@ -171,7 +189,9 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
           )}
 
           <div className="mt-3 rounded-lg bg-blue-50 border border-blue-200 px-3 py-2">
-            <p className="text-xs text-blue-800 font-semibold">⏱ Estimated prep: 15–20 minutes</p>
+            <p className="text-xs text-blue-800 font-semibold">
+              {order.tableNumber === "delivery" ? "⏱ Estimated delivery: 30–45 minutes" : "⏱ Estimated prep: 15–20 minutes"}
+            </p>
           </div>
 
           {/* ─── Action buttons ─────────────────────────────── */}

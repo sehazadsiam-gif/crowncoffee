@@ -60,6 +60,42 @@ export default function QRGrid({ baseUrl }) {
         className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5 print:grid-cols-2 print:gap-4"
         id="qr-grid"
       >
+        {/* Home Delivery Card */}
+        <div
+          className="flex flex-col items-center rounded-2xl border-2 border-dashed border-[var(--accent)] bg-amber-50/10 p-4 shadow-sm print:break-inside-avoid print:border-2 print:border-amber-400 print:rounded-xl print:shadow-none"
+        >
+          {/* Crown logo */}
+          <div className="mb-2 flex items-center gap-1.5">
+            <CrownMark className="h-4 w-4 text-[var(--accent)]" />
+            <span className="font-display text-sm font-bold text-[var(--ink)]">Crown Coffee</span>
+          </div>
+
+          {/* QR code */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(`${origin}/order?type=delivery`)}&margin=12&color=1C1612&bgcolor=FFFBF5`}
+            alt="QR code for Home Delivery"
+            className="h-40 w-40 rounded-lg"
+            loading="lazy"
+          />
+
+          {/* Label */}
+          <div className="mt-3 flex flex-col items-center gap-0.5">
+            <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--ink-soft)] font-mono">Delivery</span>
+            <span className="font-display text-lg font-black text-[var(--accent)] uppercase text-center leading-tight">Home Delivery</span>
+          </div>
+
+          {/* URL hint */}
+          <p className="mt-2 text-[9px] text-center text-[var(--ink-soft)] leading-tight break-all">
+            {origin}/order?type=delivery
+          </p>
+
+          {/* Scan instruction */}
+          <p className="mt-2 text-[10px] font-semibold text-center text-[var(--accent)]">
+            🚚 Scan to order
+          </p>
+        </div>
+
         {Array.from({ length: TABLE_COUNT }, (_, i) => i + 1).map((tableNum) => (
           <div
             key={tableNum}

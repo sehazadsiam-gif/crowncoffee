@@ -11,6 +11,7 @@ export default function SiteInfoForm({ initialSettings }) {
     address: initialSettings.address,
     phone: initialSettings.phone,
     mapUrl: initialSettings.mapUrl,
+    deliveryCharge: initialSettings.deliveryCharge || 0,
     hours: initialSettings.hours,
   });
   const [dirty, setDirty] = useState(false);
@@ -54,6 +55,7 @@ export default function SiteInfoForm({ initialSettings }) {
         address: saved.address,
         phone: saved.phone,
         mapUrl: saved.mapUrl,
+        deliveryCharge: saved.deliveryCharge || 0,
         hours: saved.hours,
       });
       setDirty(false);
@@ -107,6 +109,11 @@ export default function SiteInfoForm({ initialSettings }) {
             label="Google Maps link"
             value={info.mapUrl}
             onChange={(v) => update({ mapUrl: v })}
+          />
+          <Field
+            label="Delivery Charge (৳)"
+            value={String(info.deliveryCharge || 0)}
+            onChange={(v) => update({ deliveryCharge: Number(v) || 0 })}
           />
         </div>
       </div>

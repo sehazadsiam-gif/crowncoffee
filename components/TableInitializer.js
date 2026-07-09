@@ -14,7 +14,10 @@ export default function TableInitializer() {
 
   useEffect(() => {
     const table = searchParams.get("table");
-    if (table) {
+    const type = searchParams.get("type");
+    if (type === "delivery") {
+      setTableNumber("delivery");
+    } else if (table) {
       setTableNumber(table);
     }
   }, [searchParams, setTableNumber]);

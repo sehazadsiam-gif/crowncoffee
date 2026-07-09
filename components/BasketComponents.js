@@ -130,8 +130,9 @@ export function FloatingBasketButton() {
 export function BasketDrawer() {
   const {
     basket, isOpen, setIsOpen, updateQuantity, updateSpecialRequest,
-    removeFromBasket, clearBasket, totalPrice, totalItems,
-    setIsWaiterMode, tableNumber,
+    removeFromBasket, clearBasket, itemsPrice, totalPrice, totalItems,
+    setIsWaiterMode, tableNumber, deliveryAddress, setDeliveryAddress,
+    deliveryCharge, isDelivery
   } = useBasket();
 
   const [mounted, setMounted] = useState(false);
@@ -150,12 +151,22 @@ export function BasketDrawer() {
       alert("No table assigned. Please scan your table's QR code.");
       return;
     }
+    if (isDelivery && !deliveryAddress.trim()) {
+      alert("Please enter a delivery address.");
+      return;
+    }
     setOrderStatus("placing");
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tableNumber, items: basket, totalPrice }),
+        body: JSON.stringify({
+          tableNumber,
+          items: basket,
+          totalPrice,
+          deliveryAddress: isDelivery ? deliveryAddress : null,
+          deliveryCharge: isDelivery ? deliveryCharge : 0,
+        }),
       });
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
@@ -188,7 +199,7 @@ export function BasketDrawer() {
               Basket ({totalItems})
               {tableNumber && (
                 <span className="ml-2 text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded-full">
-                  Table {tableNumber}
+                  {isDelivery ? "Home Delivery" : `Table ${tableNumber}`}
                 </span>
               )}
             </h2>
@@ -210,9 +221,13 @@ export function BasketDrawer() {
             </div>
             <h3 className="font-display text-2xl font-bold text-[var(--ink)]">Order Placed!</h3>
             <p className="font-mono text-3xl font-black text-[var(--accent)]">{orderNumber}</p>
-            <p className="text-sm text-[var(--ink-soft)]">Your order has been sent to the kitchen.</p>
+            <p className="text-sm text-[var(--ink-soft)]">
+              {isDelivery ? "Your delivery order has been received." : "Your order has been sent to the kitchen."}
+            </p>
             <div className="mt-2 rounded-xl bg-amber-50 border border-amber-200 px-6 py-3">
-              <p className="text-sm font-semibold text-amber-900">⏱ Estimated wait: 15–20 minutes</p>
+              <p className="text-sm font-semibold text-amber-900">
+                ⏱ {isDelivery ? "Estimated delivery: 30–45 minutes" : "Estimated wait: 15–20 minutes"}
+              </p>
             </div>
           </div>
         )}
@@ -288,6 +303,22 @@ export function BasketDrawer() {
                   ))}
                 </div>
 
+                {/* Delivery address input */}
+                {isDelivery && (
+                  <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-3 space-y-2">
+                    <label className="block text-xs font-bold text-amber-900 uppercase tracking-wider">
+                      🚚 Delivery Address & Phone Number (Required)
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter your full home address and contact phone number..."
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      className="w-full rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-xs text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                    />
+                  </div>
+                )}
+
                 {/* Real food suggestions */}
                 <SuggestionsCarousel />
               </>
@@ -300,8 +331,13 @@ export function BasketDrawer() {
           <div className="border-t border-[var(--line)] bg-[var(--card)] p-6 space-y-3">
             <div className="space-y-1.5">
               <div className="flex justify-between text-sm text-[var(--ink-soft)]">
-                <span>Total Items</span><span>{totalItems}</span>
+                <span>Items Subtotal</span><span>৳{itemsPrice}</span>
               </div>
+              {isDelivery && (
+                <div className="flex justify-between text-sm text-[var(--ink-soft)]">
+                  <span>Delivery Charge</span><span>৳{deliveryCharge}</span>
+                </div>
+              )}
               <div className="flex justify-between text-base font-bold text-[var(--ink)]">
                 <span>Total Price</span>
                 <span className="text-[var(--accent)]">৳{totalPrice}</span>
@@ -319,21 +355,23 @@ export function BasketDrawer() {
                 {orderStatus === "placing" ? (
                   <><span className="animate-spin">⟳</span><span>Placing Order…</span></>
                 ) : (
-                  <><span>♛</span><span>Place Order — Table {tableNumber}</span></>
+                  <><span>♛</span><span>{isDelivery ? "Place Delivery Order" : `Place Order — Table ${tableNumber}`}</span></>
                 )}
               </button>
             )}
 
-            {/* Fallback: Show to Waiter */}
-            <button
-              onClick={() => { setIsOpen(false); setIsWaiterMode(true); }}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] py-3 text-sm font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition"
-            >
-              Show to Waiter
-            </button>
+            {/* Fallback: Show to Waiter (hidden for delivery) */}
+            {!isDelivery && (
+              <button
+                onClick={() => { setIsOpen(false); setIsWaiterMode(true); }}
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] py-3 text-sm font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition"
+              >
+                Show to Waiter
+              </button>
+            )}
 
             <p className="text-center text-xs text-[var(--ink-soft)]">
-              {tableNumber ? "Your order goes directly to the kitchen." : "Scan your table QR to place orders directly."}
+              {isDelivery ? "Your order will be delivered to your address." : tableNumber ? "Your order goes directly to the kitchen." : "Scan your table QR to place orders directly."}
             </p>
           </div>
         )}
