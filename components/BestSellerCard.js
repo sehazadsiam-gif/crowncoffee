@@ -60,23 +60,23 @@ export default function BestSellerCard({ item }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-2 p-5 pt-4">
-        <div className="flex items-baseline justify-between gap-3">
+      <div className="flex flex-1 flex-col gap-1 sm:gap-2 p-3 pt-2 sm:p-5 sm:pt-4">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-3">
           <h3
-            className="font-display text-xl leading-snug"
+            className="font-display text-base sm:text-xl leading-snug"
             style={{ color: "var(--ink)" }}
           >
             {item.name}
           </h3>
           <span
-            className="shrink-0 font-display text-xl font-bold"
+            className="shrink-0 font-display text-base sm:text-xl font-bold"
             style={{ color: "var(--accent)" }}
           >
             &#2547;{item.price}
           </span>
         </div>
         {item.description && (
-          <p className="text-sm leading-relaxed" style={{ color: "var(--ink-soft)" }}>
+          <p className="text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none" style={{ color: "var(--ink-soft)" }}>
             {item.description}
           </p>
         )}

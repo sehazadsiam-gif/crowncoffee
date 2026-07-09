@@ -20,15 +20,17 @@ export default function MenuCard({ item }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-5">
-        <div className="flex items-baseline justify-between gap-3">
-          <h3 className="font-display text-lg leading-snug">{item.name}</h3>
-          <span className="shrink-0 font-display text-lg text-[var(--accent)]">
+      <div className="flex flex-1 flex-col gap-1 sm:gap-2 p-3 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-3">
+          <h3 className="font-display text-sm sm:text-lg leading-snug">{item.name}</h3>
+          <span className="shrink-0 font-display text-sm sm:text-lg text-[var(--accent)] font-semibold">
             &#2547;{item.price}
           </span>
         </div>
         {item.description && (
-          <p className="text-sm leading-relaxed text-[var(--ink-soft)]">{item.description}</p>
+          <p className="text-xs sm:text-sm leading-relaxed text-[var(--ink-soft)] line-clamp-2 sm:line-clamp-none">
+            {item.description}
+          </p>
         )}
       </div>
     </article>

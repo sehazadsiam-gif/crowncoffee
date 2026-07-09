@@ -77,7 +77,7 @@ export default async function HomePage() {
                 See full menu &rarr;
               </Link>
             </div>
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {bestSellers.map((item) => (
                 <BestSellerCard key={item.id} item={item} />
               ))}
@@ -98,7 +98,7 @@ export default async function HomePage() {
               View full menu &rarr;
             </Link>
           </div>
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {preview.map((item) => (
               <MenuCard key={item.id} item={item} />
             ))}
