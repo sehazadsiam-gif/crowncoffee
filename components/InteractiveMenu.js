@@ -110,7 +110,7 @@ export default function InteractiveMenu({ groups }) {
                 <h2 className="font-display text-3xl sm:text-4xl text-[var(--ink)]">{group.category}</h2>
                 <span className="h-px flex-1 bg-gradient-to-r from-[var(--line)] to-transparent" aria-hidden="true" />
               </div>
-              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6">
+              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
                 {group.items.map((item) => (
                   <MenuCard key={item.id} item={item} />
                 ))}
