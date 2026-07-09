@@ -1,53 +1,102 @@
 "use client";
 
 import { useBasket } from "@/context/BasketContext";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
 
-// ─── Suggestion categories carousel ────────────────────────────────────────
-const SUGGESTION_CATEGORIES = [
-  { label: "☕ Coffee", query: "coffee" },
-  { label: "🥤 All Drinks", query: "drinks" },
-  { label: "🥗 Starters", query: "starters" },
-  { label: "🍕 Pizza", query: "pizza" },
-  { label: "🍝 Pasta", query: "pasta" },
-  { label: "🍖 Main Course", query: "main course" },
-  { label: "🍜 Noodles", query: "noodles" },
-  { label: "🍰 Desserts", query: "desserts" },
-];
+// ─── Real menu item suggestions carousel ────────────────────────────────────
+function SuggestionsCarousel() {
+  const { addToBasket, getItemQuantity, isMounted } = useBasket();
+  const [menuItems, setMenuItems] = useState([]);
+  const [startIdx, setStartIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-function SuggestionsCarousel({ onCategoryClick }) {
-  const [currentIdx, setCurrentIdx] = useState(0);
-
+  // Fetch real menu items once
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % SUGGESTION_CATEGORIES.length);
-    }, 10_000);
-    return () => clearInterval(timer);
+    fetch("/api/menu")
+      .then((r) => r.json())
+      .then((data) => {
+        const items = (data.items || []).filter((item) => item.available !== false);
+        // Shuffle so suggestions feel fresh
+        const shuffled = [...items].sort(() => Math.random() - 0.5);
+        setMenuItems(shuffled);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
-  const visible = [
-    SUGGESTION_CATEGORIES[currentIdx],
-    SUGGESTION_CATEGORIES[(currentIdx + 1) % SUGGESTION_CATEGORIES.length],
-    SUGGESTION_CATEGORIES[(currentIdx + 2) % SUGGESTION_CATEGORIES.length],
-  ];
+  // Rotate 3 visible items every 10 seconds
+  useEffect(() => {
+    if (menuItems.length === 0) return;
+    const timer = setInterval(() => {
+      setStartIdx((prev) => (prev + 3) % menuItems.length);
+    }, 10_000);
+    return () => clearInterval(timer);
+  }, [menuItems.length]);
+
+  if (loading || menuItems.length === 0) return null;
+
+  const visible = [0, 1, 2].map((offset) => menuItems[(startIdx + offset) % menuItems.length]);
 
   return (
-    <div className="mt-4">
-      <p className="text-[10px] font-semibold tracking-widest uppercase text-[var(--ink-soft)] mb-2">
-        Suggestions — refreshes every 10s
-      </p>
-      <div className="flex gap-2 flex-wrap">
-        {visible.map((cat) => (
-          <button
-            key={cat.query}
-            onClick={() => onCategoryClick(cat.label)}
-            className="rounded-full border border-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
-          >
-            {cat.label}
-          </button>
-        ))}
+    <div className="mt-5 pt-4 border-t border-[var(--line)]">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--ink-soft)]">
+          ✨ You might also like
+        </p>
+        <p className="text-[9px] text-[var(--ink-soft)] opacity-60">refreshes every 10s</p>
+      </div>
+
+      <div className="flex gap-2.5">
+        {visible.map((item) => {
+          if (!item) return null;
+          const qty = isMounted ? getItemQuantity(item.id) : 0;
+          return (
+            <div
+              key={item.id}
+              className="flex-1 min-w-0 rounded-xl border border-[var(--line)] bg-[var(--paper)] overflow-hidden flex flex-col transition hover:border-[var(--accent)] hover:shadow-sm"
+            >
+              {/* Food image */}
+              <div className="relative w-full aspect-square bg-[var(--accent-soft)] overflow-hidden">
+                {item.image ? (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    sizes="120px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <CrownMark className="h-6 w-6 text-[var(--accent)] opacity-30" />
+                  </div>
+                )}
+              </div>
+
+              {/* Info + action */}
+              <div className="p-2 flex flex-col gap-1.5 flex-1">
+                <p className="text-[11px] font-semibold text-[var(--ink)] leading-tight line-clamp-2">
+                  {item.name}
+                </p>
+                <p className="text-[11px] font-bold text-[var(--accent)]">৳{item.price}</p>
+
+                {qty > 0 ? (
+                  <p className="text-[10px] text-center font-bold text-green-600 bg-green-50 rounded-full py-0.5">
+                    ✓ In basket ×{qty}
+                  </p>
+                ) : (
+                  <button
+                    onClick={() => addToBasket(item)}
+                    className="w-full rounded-full border border-[var(--accent)] py-1 text-[10px] font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
+                  >
+                    + Add
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -80,17 +129,9 @@ export function FloatingBasketButton() {
 // ─── Basket drawer ───────────────────────────────────────────────────────────
 export function BasketDrawer() {
   const {
-    basket,
-    isOpen,
-    setIsOpen,
-    updateQuantity,
-    updateSpecialRequest,
-    removeFromBasket,
-    clearBasket,
-    totalPrice,
-    totalItems,
-    setIsWaiterMode,
-    tableNumber,
+    basket, isOpen, setIsOpen, updateQuantity, updateSpecialRequest,
+    removeFromBasket, clearBasket, totalPrice, totalItems,
+    setIsWaiterMode, tableNumber,
   } = useBasket();
 
   const [mounted, setMounted] = useState(false);
@@ -121,7 +162,6 @@ export function BasketDrawer() {
       setOrderNumber(data.order.orderNumber);
       setOrderStatus("success");
       clearBasket();
-      // Auto-close after 3s
       setTimeout(() => {
         setIsOpen(false);
         setOrderStatus("idle");
@@ -177,27 +217,28 @@ export function BasketDrawer() {
           </div>
         )}
 
-        {/* Error */}
+        {/* Error banner */}
         {orderStatus === "error" && (
           <div className="mx-6 mt-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 font-semibold text-center">
             ⚠️ Could not place order. Please try again or show to waiter.
           </div>
         )}
 
-        {/* Items list */}
+        {/* Items list + suggestions */}
         {orderStatus !== "success" && (
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {basket.length === 0 ? (
-              <div className="flex h-64 flex-col items-center justify-center text-center">
+              <div className="flex flex-col items-center justify-center text-center pt-8">
                 <CrownMark className="h-12 w-12 text-[var(--accent)] opacity-20 mb-4" />
                 <p className="font-semibold text-[var(--ink)]">Your basket is empty</p>
-                <p className="mt-1 text-sm text-[var(--ink-soft)]">Browse our menu and add items you want to order.</p>
+                <p className="mt-1 text-sm text-[var(--ink-soft)]">Browse our menu and add items to your order.</p>
                 <button onClick={() => setIsOpen(false)} className="mt-6 rounded-full border border-[var(--accent)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition">
                   Start Browsing
                 </button>
-
-                {/* Suggestions when empty */}
-                <SuggestionsCarousel onCategoryClick={(label) => { setIsOpen(false); }} />
+                {/* Show suggestions even when empty */}
+                <div className="w-full mt-2">
+                  <SuggestionsCarousel />
+                </div>
               </div>
             ) : (
               <>
@@ -223,7 +264,7 @@ export function BasketDrawer() {
                         {/* Details */}
                         <div className="flex-1 min-w-0">
                           <h4 className="font-display text-sm font-semibold text-[var(--ink)] truncate">{item.name}</h4>
-                          <p className="text-xs text-[var(--accent)] font-semibold mt-0.5">&#2547;{item.price}</p>
+                          <p className="text-xs text-[var(--accent)] font-semibold mt-0.5">৳{item.price}</p>
                         </div>
                         {/* Qty + total */}
                         <div className="flex flex-col items-end gap-2 shrink-0">
@@ -232,11 +273,10 @@ export function BasketDrawer() {
                             <span className="w-6 text-center text-xs font-semibold text-[var(--ink)]">{item.quantity}</span>
                             <button onClick={() => updateQuantity(item.id, 1)} className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Increase">+</button>
                           </div>
-                          <span className="text-xs font-semibold text-[var(--ink-soft)]">&#2547;{item.price * item.quantity}</span>
+                          <span className="text-xs font-semibold text-[var(--ink-soft)]">৳{item.price * item.quantity}</span>
                         </div>
                       </div>
-
-                      {/* Special request per item */}
+                      {/* Special request */}
                       <input
                         type="text"
                         placeholder={`Special request for ${item.name} (e.g. no onions)`}
@@ -248,8 +288,8 @@ export function BasketDrawer() {
                   ))}
                 </div>
 
-                {/* Suggestions */}
-                <SuggestionsCarousel onCategoryClick={(label) => { setIsOpen(false); }} />
+                {/* Real food suggestions */}
+                <SuggestionsCarousel />
               </>
             )}
           </div>
@@ -264,7 +304,7 @@ export function BasketDrawer() {
               </div>
               <div className="flex justify-between text-base font-bold text-[var(--ink)]">
                 <span>Total Price</span>
-                <span className="text-[var(--accent)]">&#2547;{totalPrice}</span>
+                <span className="text-[var(--accent)]">৳{totalPrice}</span>
               </div>
             </div>
 
@@ -284,16 +324,16 @@ export function BasketDrawer() {
               </button>
             )}
 
-            {/* Secondary: Show to Waiter (fallback) */}
+            {/* Fallback: Show to Waiter */}
             <button
               onClick={() => { setIsOpen(false); setIsWaiterMode(true); }}
               className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] py-3 text-sm font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition"
             >
-              <span>Show to Waiter</span>
+              Show to Waiter
             </button>
 
             <p className="text-center text-xs text-[var(--ink-soft)]">
-              {tableNumber ? "Your order will be sent directly to the kitchen." : "Scan your table QR to place orders directly."}
+              {tableNumber ? "Your order goes directly to the kitchen." : "Scan your table QR to place orders directly."}
             </p>
           </div>
         )}
@@ -302,10 +342,10 @@ export function BasketDrawer() {
   );
 }
 
-// ─── Waiter Mode Modal (unchanged, kept as fallback) ─────────────────────────
+// ─── Waiter Mode Modal (fallback) ────────────────────────────────────────────
 export function WaiterModeModal() {
   const { basket, isWaiterMode, setIsWaiterMode, totalItems, totalPrice } = useBasket();
-  const [tableNumber, setTableNumberLocal] = useState("");
+  const [tableNumberLocal, setTableNumberLocal] = useState("");
 
   useEffect(() => {
     document.body.style.overflow = isWaiterMode ? "hidden" : "";
@@ -321,7 +361,7 @@ export function WaiterModeModal() {
           <CrownMark className="h-6 w-6 text-[var(--accent)]" />
           <h2 className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">ORDER SUMMARY</h2>
         </div>
-        <button onClick={() => setIsWaiterMode(false)} className="rounded-full border-2 border-[var(--ink)] bg-[var(--paper)] p-2 font-bold text-[var(--ink)] hover:bg-[var(--line)] transition" aria-label="Close waiter mode">
+        <button onClick={() => setIsWaiterMode(false)} className="rounded-full border-2 border-[var(--ink)] bg-[var(--paper)] p-2 font-bold text-[var(--ink)] hover:bg-[var(--line)] transition" aria-label="Close">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -337,7 +377,7 @@ export function WaiterModeModal() {
         <div className="rounded-xl border-2 border-[var(--ink)] bg-white p-5 space-y-4 shadow-[4px_4px_0px_0px_rgba(28,22,18,1)]">
           <div className="flex items-center gap-4">
             <label htmlFor="table-num" className="text-sm font-bold tracking-wider text-[var(--ink)] uppercase shrink-0">Table / Room #</label>
-            <input id="table-num" type="text" placeholder="e.g. 5A" value={tableNumber} onChange={(e) => setTableNumberLocal(e.target.value)} className="flex-1 rounded-lg border-2 border-[var(--ink)] bg-[var(--paper)] px-3 py-2 text-sm font-bold text-[var(--ink)] uppercase placeholder-[var(--mute)] focus:border-[var(--accent)] focus:outline-none" />
+            <input id="table-num" type="text" placeholder="e.g. 5A" value={tableNumberLocal} onChange={(e) => setTableNumberLocal(e.target.value)} className="flex-1 rounded-lg border-2 border-[var(--ink)] bg-[var(--paper)] px-3 py-2 text-sm font-bold text-[var(--ink)] uppercase placeholder-[var(--mute)] focus:border-[var(--accent)] focus:outline-none" />
           </div>
         </div>
 
@@ -355,12 +395,12 @@ export function WaiterModeModal() {
                   {item.specialRequest && (
                     <p className="text-xs text-amber-700 italic mt-0.5">Note: {item.specialRequest}</p>
                   )}
-                  <span className="text-xs text-[var(--ink-soft)] mt-0.5 block">Unit Price: &#2547;{item.price}</span>
+                  <span className="text-xs text-[var(--ink-soft)] mt-0.5 block">Unit Price: ৳{item.price}</span>
                 </div>
                 <div className="flex items-center gap-6 shrink-0">
                   <div className="flex items-center justify-center rounded-lg border-2 border-[var(--ink)] bg-amber-50 h-10 w-12 font-display text-lg font-extrabold text-[var(--ink)]">{item.quantity}</div>
                   <div className="text-right w-20">
-                    <span className="font-display text-base font-bold text-[var(--ink)]">&#2547;{item.price * item.quantity}</span>
+                    <span className="font-display text-base font-bold text-[var(--ink)]">৳{item.price * item.quantity}</span>
                   </div>
                 </div>
               </li>
@@ -372,7 +412,7 @@ export function WaiterModeModal() {
             </div>
             <div className="flex justify-between text-xl font-black text-[var(--ink)] pt-1">
               <span>ESTIMATED TOTAL</span>
-              <span className="text-[var(--accent)]">&#2547;{totalPrice}</span>
+              <span className="text-[var(--accent)]">৳{totalPrice}</span>
             </div>
           </div>
         </div>
