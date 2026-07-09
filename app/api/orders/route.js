@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { tableNumber, items, totalPrice, specialNote, deliveryAddress, deliveryCharge } = body;
+    const { tableNumber, items, totalPrice, specialNote, deliveryAddress, deliveryCharge, customerName, customerContact } = body;
 
     if (!tableNumber || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Invalid order" }, { status: 400 });
@@ -32,6 +32,8 @@ export async function POST(request) {
       specialNote: specialNote || "",
       deliveryAddress: deliveryAddress || null,
       deliveryCharge: deliveryCharge || 0,
+      customerName: customerName || null,
+      customerContact: customerContact || null,
     });
 
     // Push to all connected manager SSE clients

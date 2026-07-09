@@ -15,6 +15,7 @@ export default async function OrderPage({ searchParams }) {
   const params = await searchParams;
   const tableNumber = params.table || null;
   const isDelivery = params.type === "delivery";
+  const isTab = params.type === "tab";
   const [menu, settings] = await Promise.all([getMenu(), getSettings()]);
 
   const groups = groupMenuByCategory(menu);
@@ -37,8 +38,24 @@ export default async function OrderPage({ searchParams }) {
         </div>
       )}
 
+      {/* Tab banner */}
+      {isTab && (
+        <div className="sticky top-0 z-30 -mx-6 px-6 py-3 mb-6 flex items-center justify-between border-b border-[var(--accent)] bg-white/95 backdrop-blur-sm shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full font-display text-lg text-white" style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}>
+              💳
+            </div>
+            <div>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[var(--ink-soft)]">{settings.siteName}</p>
+              <p className="font-display text-base font-bold text-[var(--ink)]">Tab Order — Scan &amp; Order</p>
+            </div>
+          </div>
+          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">● Live</span>
+        </div>
+      )}
+
       {/* Table banner */}
-      {!isDelivery && tableNumber && (
+      {!isDelivery && !isTab && tableNumber && (
         <div className="sticky top-0 z-30 -mx-6 px-6 py-3 mb-6 flex items-center justify-between border-b border-[var(--accent)] bg-white/95 backdrop-blur-sm shadow-sm">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full font-display text-base font-black text-white" style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}>
@@ -58,6 +75,10 @@ export default async function OrderPage({ searchParams }) {
       {isDelivery ? (
         <p className="mt-3 max-w-xl text-[var(--ink-soft)]">
           You are ordering for <strong>Home Delivery</strong> (Delivery charge: ৳{settings.deliveryCharge}). Add items to your basket, input your address, and place your order.
+        </p>
+      ) : isTab ? (
+        <p className="mt-3 max-w-xl text-[var(--ink-soft)]">
+          You are placing a <strong>Tab Order</strong>. Add items to your basket, enter your name &amp; contact number, and place your order.
         </p>
       ) : tableNumber ? (
         <p className="mt-3 max-w-xl text-[var(--ink-soft)]">

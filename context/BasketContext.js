@@ -9,11 +9,15 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
   const [isOpen, setIsOpen] = useState(false);
   const [isWaiterMode, setIsWaiterMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [tableNumber, setTableNumber] = useState(null); // Set from QR URL (can be "delivery")
+  const [tableNumber, setTableNumber] = useState(null); // Set from QR URL (can be "delivery" or "tab")
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryCharge, setDeliveryCharge] = useState(initialDeliveryCharge || 120);
 
-  // Load basket + table number + delivery address from localStorage once mounted on client
+  // Tab mode state
+  const [customerName, setCustomerName] = useState("");
+  const [customerContact, setCustomerContact] = useState("");
+
+  // Load basket + table number + delivery address + tab customer info from localStorage once mounted on client
   useEffect(() => {
     setIsMounted(true);
     const savedBasket = localStorage.getItem("crown_coffee_basket");
@@ -31,6 +35,14 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
     const savedAddress = localStorage.getItem("crown_coffee_address");
     if (savedAddress) {
       setDeliveryAddress(savedAddress);
+    }
+    const savedTabName = localStorage.getItem("crown_coffee_tab_name");
+    if (savedTabName) {
+      setCustomerName(savedTabName);
+    }
+    const savedTabContact = localStorage.getItem("crown_coffee_tab_contact");
+    if (savedTabContact) {
+      setCustomerContact(savedTabContact);
     }
   }, []);
 
@@ -54,6 +66,20 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
       localStorage.setItem("crown_coffee_address", deliveryAddress);
     }
   }, [deliveryAddress, isMounted]);
+
+  // Sync customerName to localStorage
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("crown_coffee_tab_name", customerName);
+    }
+  }, [customerName, isMounted]);
+
+  // Sync customerContact to localStorage
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("crown_coffee_tab_contact", customerContact);
+    }
+  }, [customerContact, isMounted]);
 
   // Update deliveryCharge when initialDeliveryCharge prop changes
   useEffect(() => {
@@ -111,6 +137,7 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
   const totalItems = basket.reduce((acc, item) => acc + item.quantity, 0);
   const itemsPrice = basket.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const isDelivery = tableNumber === "delivery";
+  const isTab = tableNumber === "tab";
   const totalPrice = itemsPrice + (isDelivery ? deliveryCharge : 0);
 
   return (
@@ -137,6 +164,11 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
         setDeliveryAddress,
         deliveryCharge,
         isDelivery,
+        customerName,
+        setCustomerName,
+        customerContact,
+        setCustomerContact,
+        isTab,
       }}
     >
       {children}

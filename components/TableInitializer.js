@@ -17,6 +17,8 @@ export default function TableInitializer() {
     const type = searchParams.get("type");
     if (type === "delivery") {
       setTableNumber("delivery");
+    } else if (type === "tab") {
+      setTableNumber("tab");
     } else if (table) {
       setTableNumber(table);
     }

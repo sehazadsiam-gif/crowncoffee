@@ -117,12 +117,12 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white font-display text-lg font-black"
             style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
           >
-            {order.tableNumber === "delivery" ? "🚚" : order.tableNumber}
+            {order.tableNumber === "tab" ? "💳" : order.tableNumber === "delivery" ? "🚚" : order.tableNumber}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-display text-lg font-bold text-[var(--ink)]">
-                {order.tableNumber === "delivery" ? "Home Delivery" : `Table ${order.tableNumber}`}
+                {order.tableNumber === "tab" ? "Tab Order" : order.tableNumber === "delivery" ? "Home Delivery" : `Table ${order.tableNumber}`}
               </span>
               <span className="font-mono text-sm font-bold text-[var(--accent)]">{order.orderNumber}</span>
               <StatusBadge status={order.status} />
@@ -169,6 +169,18 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
           {order.deliveryCharge > 0 && (
             <div className="mt-2 text-right text-xs text-[var(--ink-soft)] font-medium">
               Items: ৳{order.totalPrice - order.deliveryCharge} + Delivery: ৳{order.deliveryCharge}
+            </div>
+          )}
+
+          {order.customerName && (
+            <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-left">
+              <p className="text-xs text-amber-900 leading-relaxed">
+                <strong>👤 Customer Tab Contact:</strong>
+                <br />
+                <span className="font-sans mt-1 block font-bold text-[var(--ink)]">
+                  {order.customerName} ({order.customerContact})
+                </span>
+              </p>
             </div>
           )}
 

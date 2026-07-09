@@ -166,7 +166,8 @@ export function BasketDrawer() {
     basket, isOpen, setIsOpen, updateQuantity, updateSpecialRequest,
     removeFromBasket, clearBasket, itemsPrice, totalPrice, totalItems,
     setIsWaiterMode, tableNumber, deliveryAddress, setDeliveryAddress,
-    deliveryCharge, isDelivery
+    deliveryCharge, isDelivery, customerName, setCustomerName,
+    customerContact, setCustomerContact, isTab
   } = useBasket();
 
   const [mounted, setMounted] = useState(false);
@@ -189,6 +190,10 @@ export function BasketDrawer() {
       alert("Please enter a delivery address.");
       return;
     }
+    if (isTab && (!customerName.trim() || !customerContact.trim())) {
+      alert("Please enter your name and contact phone number.");
+      return;
+    }
     setOrderStatus("placing");
     try {
       const res = await fetch("/api/orders", {
@@ -200,6 +205,8 @@ export function BasketDrawer() {
           totalPrice,
           deliveryAddress: isDelivery ? deliveryAddress : null,
           deliveryCharge: isDelivery ? deliveryCharge : 0,
+          customerName: isTab ? customerName : null,
+          customerContact: isTab ? customerContact : null,
         }),
       });
       if (!res.ok) throw new Error("Failed");
@@ -233,7 +240,7 @@ export function BasketDrawer() {
               Basket ({totalItems})
               {tableNumber && (
                 <span className="ml-2 text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded-full">
-                  {isDelivery ? "Home Delivery" : `Table ${tableNumber}`}
+                  {isDelivery ? "Home Delivery" : isTab ? "Tab Order" : `Table ${tableNumber}`}
                 </span>
               )}
             </h2>
@@ -256,7 +263,7 @@ export function BasketDrawer() {
             <h3 className="font-display text-2xl font-bold text-[var(--ink)]">Order Placed!</h3>
             <p className="font-mono text-3xl font-black text-[var(--accent)]">{orderNumber}</p>
             <p className="text-sm text-[var(--ink-soft)]">
-              {isDelivery ? "Your delivery order has been received." : "Your order has been sent to the kitchen."}
+              {isDelivery ? "Your delivery order has been received." : isTab ? "Your tab order has been placed." : "Your order has been sent to the kitchen."}
             </p>
             <div className="mt-2 rounded-xl bg-amber-50 border border-amber-200 px-6 py-3">
               <p className="text-sm font-semibold text-amber-900">
@@ -269,7 +276,7 @@ export function BasketDrawer() {
         {/* Error banner */}
         {orderStatus === "error" && (
           <div className="mx-6 mt-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 font-semibold text-center">
-            ⚠️ Could not place order. Please try again or show to waiter.
+            ⚠️ Could not place order. Please try again.
           </div>
         )}
 
@@ -353,6 +360,31 @@ export function BasketDrawer() {
                   </div>
                 )}
 
+                {/* Tab Customer Information input */}
+                {isTab && (
+                  <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-3 space-y-2">
+                    <label className="block text-xs font-bold text-amber-900 uppercase tracking-wider">
+                      📋 Contact Information (Required)
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="text"
+                        placeholder="Your Full Name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="w-full rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-xs text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Contact Phone Number"
+                        value={customerContact}
+                        onChange={(e) => setCustomerContact(e.target.value)}
+                        className="w-full rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-xs text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Real food suggestions */}
                 <SuggestionsCarousel />
               </>
@@ -389,13 +421,13 @@ export function BasketDrawer() {
                 {orderStatus === "placing" ? (
                   <><span className="animate-spin">⟳</span><span>Placing Order…</span></>
                 ) : (
-                  <><span>♛</span><span>{isDelivery ? "Place Delivery Order" : `Place Order — Table ${tableNumber}`}</span></>
+                  <><span>♛</span><span>{isDelivery ? "Place Delivery Order" : isTab ? "Place Tab Order" : `Place Order — Table ${tableNumber}`}</span></>
                 )}
               </button>
             )}
 
-            {/* Fallback: Show to Waiter (hidden for delivery) */}
-            {!isDelivery && (
+            {/* Fallback: Show to Waiter (hidden for delivery / tab) */}
+            {!isDelivery && !isTab && (
               <button
                 onClick={() => { setIsOpen(false); setIsWaiterMode(true); }}
                 className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] py-3 text-sm font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition"
@@ -405,7 +437,7 @@ export function BasketDrawer() {
             )}
 
             <p className="text-center text-xs text-[var(--ink-soft)]">
-              {isDelivery ? "Your order will be delivered to your address." : tableNumber ? "Your order goes directly to the kitchen." : "Scan your table QR to place orders directly."}
+              {isDelivery ? "Your order will be delivered to your address." : isTab ? "Your order is placed under your tab." : tableNumber ? "Your order goes directly to the kitchen." : "Scan your table QR to place orders directly."}
             </p>
           </div>
         )}

@@ -6,8 +6,8 @@ export async function proxy(request) {
 
   const isProtectedPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
   const isProtectedApi =
-    pathname.startsWith("/api/menu") ||
-    pathname.startsWith("/api/settings") ||
+    (pathname.startsWith("/api/menu") && request.method !== "GET") ||
+    (pathname.startsWith("/api/settings") && request.method !== "GET") ||
     pathname.startsWith("/api/upload");
 
   if (!isProtectedPage && !isProtectedApi) {
