@@ -16,7 +16,6 @@ const MEMBERSHIP_URL = "https://ccadmin.online/membership";
 
 export default function Header({ settings }) {
   const pathname = usePathname();
-  if (pathname === "/kiosk") return null;
 
   function renderLabel(link) {
     if (link.href === "/menu") {

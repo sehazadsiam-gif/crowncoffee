@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
 
 const TYPE_CONFIG = {
   offer: { label: "OFFER:", color: "text-emerald-400" },
@@ -10,13 +9,11 @@ const TYPE_CONFIG = {
 };
 
 export default function BannerStrip({ initialBanners = [] }) {
-  const pathname = usePathname();
   const [banners, setBanners] = useState([]);
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (pathname === "/kiosk") return;
     try {
       const stored = sessionStorage.getItem("crown_dismissed_banners");
       const dismissedIds = stored ? JSON.parse(stored) : [];
@@ -34,7 +31,7 @@ export default function BannerStrip({ initialBanners = [] }) {
     } catch {
       setVisible(true);
     }
-  }, [initialBanners, pathname]);
+  }, [initialBanners]);
 
   const handleDismiss = useCallback(() => {
     try {
@@ -48,7 +45,7 @@ export default function BannerStrip({ initialBanners = [] }) {
     setDismissed(true);
   }, [banners]);
 
-  if (pathname === "/kiosk" || !visible || dismissed || banners.length === 0) return null;
+  if (!visible || dismissed || banners.length === 0) return null;
 
   // Stitch all banner texts together for the ticker
   const tickerItems = banners.map((banner, index) => {
