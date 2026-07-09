@@ -14,13 +14,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BannerStrip from "@/components/BannerStrip";
 import PresenceTracker from "@/components/PresenceTracker";
+import { BasketProvider } from "@/context/BasketContext";
+import { FloatingBasketButton, BasketDrawer, WaiterModeModal } from "@/components/BasketComponents";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Crown Coffee | Specialty Cafe in Uttara, Dhaka",
   description:
-    "Crown Coffee is a specialty coffee shop in Sector 13, Uttara, Dhaka \u2014 serving espresso, cold brew, breakfast and pastries daily.",
+    "Crown Coffee is a specialty coffee shop in Sector 13, Uttara, Dhaka — serving espresso, cold brew, breakfast and pastries daily.",
 };
 
 export default async function RootLayout({ children }) {
@@ -37,11 +39,18 @@ export default async function RootLayout({ children }) {
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
-        <Header settings={settings} />
-        <BannerStrip initialBanners={activeBanners} />
-        <main className="flex-1">{children}</main>
-        <Footer settings={settings} />
-        <PresenceTracker />
+        <BasketProvider>
+          <Header settings={settings} />
+          <BannerStrip initialBanners={activeBanners} />
+          <main className="flex-1">{children}</main>
+          <Footer settings={settings} />
+          <PresenceTracker />
+
+          {/* Basket UI Components */}
+          <FloatingBasketButton />
+          <BasketDrawer />
+          <WaiterModeModal />
+        </BasketProvider>
       </body>
     </html>
   );
