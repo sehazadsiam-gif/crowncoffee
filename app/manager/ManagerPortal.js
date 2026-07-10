@@ -339,6 +339,30 @@ export default function ManagerPortal({ initialOrders }) {
   const loopRef = useRef(null); // setInterval reference
   const updatingOrderIdsRef = useRef(new Map()); // Map of orderId -> lastLocalActionTimestamp
 
+  // Browser desktop notification helper
+  const sendDesktopNotification = useCallback((title, body) => {
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      try {
+        new Notification(title, {
+          body,
+          icon: "/icon.svg",
+          tag: "crown-coffee-order"
+        });
+      } catch (err) {
+        console.error("Desktop notification failed:", err);
+      }
+    }
+  }, []);
+
+  // Request Notification permission on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+  }, []);
+
   // Periodic check for escalated orders (> 4 minutes pending)
   useEffect(() => {
     const checkEscalation = () => {
@@ -403,6 +427,25 @@ export default function ManagerPortal({ initialOrders }) {
       : "Manager Portal | Crown Coffee";
   }, [orders]);
 
+  // ── 2-minute check reminder ──────────────────────────────────────────
+  useEffect(() => {
+    const triggerReminder = () => {
+      const pendingCount = orders.filter((o) => o.status === "pending").length;
+      if (pendingCount > 0) {
+        sendDesktopNotification(
+          "⚠️ Pending Orders Reminder",
+          `You have ${pendingCount} pending order(s) waiting. Please check the portal!`
+        );
+        if (soundEnabled) {
+          SOUND_PRESETS.double_ding?.fn();
+        }
+      }
+    };
+
+    const interval = setInterval(triggerReminder, 120_000); // 2 minutes (120,000 ms)
+    return () => clearInterval(interval);
+  }, [orders, soundEnabled, sendDesktopNotification]);
+
   // ── SSE connection ─────────────────────────────────────────────────────
   useEffect(() => {
     function connect() {
@@ -422,6 +465,10 @@ export default function ManagerPortal({ initialOrders }) {
               if (prev.some((o) => o.orderId === order.orderId)) {
                 return prev;
               }
+              sendDesktopNotification(
+                `🔔 New Order ${order.orderNumber || ""}`,
+                `Table ${order.tableName || "Kiosk"} placed a new order of ${order.items?.length || 0} item(s).`
+              );
               return [order, ...prev];
             });
             setNewOrderIds((prev) => new Set([...prev, order.orderId]));
@@ -470,7 +517,7 @@ export default function ManagerPortal({ initialOrders }) {
       };
     }
     connect();
-  }, [soundEnabled, currentSoundKey]); // connect dependencies handled correctly
+  }, [soundEnabled, currentSoundKey, sendDesktopNotification]); // connect dependencies handled correctly
 
   // ── Polling fallback (ensures cross-device sync in serverless environments) ──
   useEffect(() => {
@@ -482,6 +529,14 @@ export default function ManagerPortal({ initialOrders }) {
           
           setOrders((prev) => {
             return freshOrders.map((fresh) => {
+              const exists = prev.some((o) => o.orderId === fresh.orderId);
+              if (!exists && fresh.status === "pending") {
+                sendDesktopNotification(
+                  `🔔 New Order ${fresh.orderNumber || ""}`,
+                  `Table ${fresh.tableName || "Kiosk"} placed a new order of ${fresh.items?.length || 0} item(s).`
+                );
+              }
+
               const lastAction = updatingOrderIdsRef.current.get(fresh.orderId);
               if (lastAction && Date.now() - lastAction < 5000) {
                 const local = prev.find((o) => o.orderId === fresh.orderId);
@@ -506,7 +561,7 @@ export default function ManagerPortal({ initialOrders }) {
 
     const interval = setInterval(pollOrders, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [sendDesktopNotification]);
 
   // ── Status update ──────────────────────────────────────────────────────
   const handleStatusChange = useCallback(async (orderId, patch) => {
