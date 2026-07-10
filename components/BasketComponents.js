@@ -39,7 +39,6 @@ function getFoodImage(item) {
 function SuggestionsCarousel() {
   const { basket, addToBasket, getItemQuantity, isMounted } = useBasket();
   const [menuItems, setMenuItems] = useState([]);
-  const [startIdx, setStartIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Fetch real menu items once
@@ -56,82 +55,181 @@ function SuggestionsCarousel() {
       .catch(() => setLoading(false));
   }, []);
 
-  // Filter out items already in the basket
-  const otherItems = menuItems.filter((item) => !basket.some((b) => b.id === item.id));
+  return (
+    <Suggestions
+      basket={basket}
+      addToBasket={addToBasket}
+      getItemQuantity={getItemQuantity}
+      getFoodImage={getFoodImage}
+      loading={loading}
+      menuItems={menuItems}
+    />
+  );
+}
 
-  // Rotate 5 visible items every 5 seconds
+function Suggestions({ basket, addToBasket, getItemQuantity, getFoodImage, loading, menuItems }) {
+  const [activeDot, setActiveDot] = useState(0);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const scrollRef = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    if (otherItems.length === 0) return;
-    const timer = setInterval(() => {
-      setStartIdx((prev) => (prev + 5) % otherItems.length);
-    }, 5_000);
-    return () => clearInterval(timer);
-  }, [otherItems.length]);
+    setIsMounted(true);
+  }, []);
 
-  if (loading || otherItems.length === 0) return null;
+  const otherItems = menuItems.filter((item) => !basket.some((b) => b.id === item.id));
+  const items = otherItems.slice(0, 12);
 
-  const visible = [0, 1, 2, 3, 4]
-    .map((offset) => otherItems[(startIdx + offset) % otherItems.length])
-    .filter(Boolean);
+  const totalDots = items.length > 0 ? Math.max(1, Math.ceil(items.length / 3)) : 0;
 
-  if (visible.length === 0) return null;
+  const checkScrollable = () => {
+    if (scrollRef.current) {
+      const { scrollWidth, clientWidth } = scrollRef.current;
+      setIsScrollable(scrollWidth > clientWidth);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollable();
+    window.addEventListener("resize", checkScrollable);
+    return () => window.removeEventListener("resize", checkScrollable);
+  }, [items.length]);
+
+  const handleScroll = () => {
+    if (scrollRef.current && totalDots > 1) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      const maxScroll = scrollWidth - clientWidth;
+      if (maxScroll <= 0) return;
+      const pct = scrollLeft / maxScroll;
+      const activeIdx = Math.min(
+        totalDots - 1,
+        Math.max(0, Math.round(pct * (totalDots - 1)))
+      );
+      setActiveDot(activeIdx);
+    }
+  };
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const amount = direction === "left" ? -clientWidth : clientWidth;
+      scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
+    }
+  };
+
+  const scrollToDot = (idx) => {
+    if (scrollRef.current && totalDots > 1) {
+      const { scrollWidth, clientWidth } = scrollRef.current;
+      const maxScroll = scrollWidth - clientWidth;
+      const target = (idx / (totalDots - 1)) * maxScroll;
+      scrollRef.current.scrollTo({ left: target, behavior: "smooth" });
+    }
+  };
+
+  if (loading || items.length === 0) return null;
 
   return (
-    <div className="mt-5 pt-4 border-t border-[var(--line)]">
-      <div className="flex items-center justify-between mb-3">
+    <div className="mt-5 pt-4 border-t border-[var(--line)] relative group">
+      <div className="flex items-center justify-between mb-3 px-1">
         <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--ink-soft)]">
-          ✨ You might also like (refreshes every 5s)
+          ✨ You might also like
         </p>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
-        {visible.map((item) => {
-          const qty = isMounted ? getItemQuantity(item.id) : 0;
-          const imageUrl = getFoodImage(item);
-          return (
-            <div
-              key={item.id}
-              className="w-[85px] shrink-0 snap-start rounded-xl border border-[var(--line)] bg-[var(--paper)] overflow-hidden flex flex-col transition hover:border-[var(--accent)] hover:shadow-xs"
-            >
-              {/* Food image */}
-              <div className="relative w-full aspect-square bg-[var(--accent-soft)] overflow-hidden">
-                <Image
-                  src={imageUrl}
-                  alt={item.name}
-                  fill
-                  sizes="85px"
-                  className="object-cover"
-                />
-              </div>
+      {/* Carousel container wrapper */}
+      <div className="relative">
+        {/* Left Arrow Button */}
+        {isScrollable && (
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-1 top-[35%] -translate-y-1/2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/95 border border-[var(--line)] shadow-md hover:bg-white text-[var(--ink)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:opacity-100 cursor-pointer"
+            aria-label="Scroll left"
+          >
+            &larr;
+          </button>
+        )}
 
-              {/* Info + action */}
-              <div className="p-1.5 flex flex-col gap-1 flex-1 justify-between">
-                <div>
-                  <p className="text-[9px] font-semibold text-[var(--ink)] leading-tight line-clamp-2">
-                    {item.name}
-                  </p>
-                  <p className="text-[9px] font-bold text-[var(--accent)] mt-0.5">৳{item.price}</p>
+        {/* Right Arrow Button */}
+        {isScrollable && (
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-1 top-[35%] -translate-y-1/2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/95 border border-[var(--line)] shadow-md hover:bg-white text-[var(--ink)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:opacity-100 cursor-pointer"
+            aria-label="Scroll right"
+          >
+            &rarr;
+          </button>
+        )}
+
+        {/* Scrollable list */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth"
+        >
+          {items.map((item) => {
+            const qty = isMounted ? getItemQuantity(item.id) : 0;
+            const imageUrl = getFoodImage(item);
+            return (
+              <div
+                key={item.id}
+                className="w-[105px] shrink-0 snap-start rounded-xl border border-[var(--line)] bg-[var(--paper)] overflow-hidden flex flex-col transition hover:border-[var(--accent)] hover:shadow-xs"
+              >
+                {/* Food image */}
+                <div className="relative w-full aspect-square bg-[var(--accent-soft)] overflow-hidden">
+                  <Image
+                    src={imageUrl}
+                    alt={item.name}
+                    fill
+                    sizes="105px"
+                    className="object-cover"
+                  />
                 </div>
 
-                <div className="mt-1">
-                  {qty > 0 ? (
-                    <p className="text-[8px] text-center font-bold text-green-600 bg-green-50 rounded-full py-0.5 border border-green-200">
-                      ✓ {qty}
+                {/* Info + action */}
+                <div className="p-1.5 flex flex-col gap-1 flex-1 justify-between">
+                  <div>
+                    <p className="text-[10px] font-semibold text-[var(--ink)] leading-tight line-clamp-2">
+                      {item.name}
                     </p>
-                  ) : (
-                    <button
-                      onClick={() => addToBasket(item)}
-                      className="w-full rounded-full border border-[var(--accent)] py-0.5 text-[9px] font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
-                    >
-                      + Add
-                    </button>
-                  )}
+                    <p className="text-[9px] font-bold text-[var(--accent)] mt-0.5">৳{item.price}</p>
+                  </div>
+
+                  <div className="mt-1">
+                    {qty > 0 ? (
+                      <p className="text-[9px] text-center font-bold text-green-600 bg-green-50 rounded-full py-0.5 border border-green-200">
+                        ✓ {qty}
+                      </p>
+                    ) : (
+                      <button
+                        onClick={() => addToBasket(item)}
+                        className="w-full rounded-full border border-[var(--accent)] py-0.5 text-[9px] font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition cursor-pointer"
+                      >
+                        + Add
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
+
+      {/* Pagination indicators */}
+      {totalDots > 1 && (
+        <div className="flex justify-center items-center gap-1.5 mt-2">
+          {Array.from({ length: totalDots }).map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => scrollToDot(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                activeDot === idx ? "bg-[var(--accent)] w-3" : "bg-[var(--line)] w-1.5 hover:bg-[var(--ink-soft)]"
+              }`}
+              aria-label={`Go to page ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
