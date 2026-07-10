@@ -4,20 +4,26 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID?.trim();
+  const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY?.trim();
+  const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID?.trim();
+  const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME?.trim();
+  const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL?.trim();
+
   const diagnostics = {
     env: {
-      R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID ? "Configured (starts with " + process.env.R2_ACCESS_KEY_ID.slice(0, 4) + ")" : "MISSING",
-      R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY ? "Configured (starts with " + process.env.R2_SECRET_ACCESS_KEY.slice(0, 4) + ")" : "MISSING",
-      R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID ? "Configured (starts with " + process.env.R2_ACCOUNT_ID.slice(0, 4) + ")" : "MISSING",
-      R2_BUCKET_NAME: process.env.R2_BUCKET_NAME || "MISSING",
-      R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || "MISSING",
+      R2_ACCESS_KEY_ID: R2_ACCESS_KEY_ID ? "Configured (starts with " + R2_ACCESS_KEY_ID.slice(0, 4) + ")" : "MISSING",
+      R2_SECRET_ACCESS_KEY: R2_SECRET_ACCESS_KEY ? "Configured (starts with " + R2_SECRET_ACCESS_KEY.slice(0, 4) + ")" : "MISSING",
+      R2_ACCOUNT_ID: R2_ACCOUNT_ID ? "Configured (starts with " + R2_ACCOUNT_ID.slice(0, 4) + ")" : "MISSING",
+      R2_BUCKET_NAME: R2_BUCKET_NAME || "MISSING",
+      R2_PUBLIC_URL: R2_PUBLIC_URL || "MISSING",
     },
     testWrite: null,
     testRead: null,
     overall: "Unknown",
   };
 
-  if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_ACCOUNT_ID || !process.env.R2_BUCKET_NAME) {
+  if (!R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_ACCOUNT_ID || !R2_BUCKET_NAME) {
     diagnostics.overall = "Failed: Missing Environment Variables";
     return NextResponse.json(diagnostics, { status: 400 });
   }
@@ -26,10 +32,10 @@ export async function GET() {
   try {
     r2Client = new S3Client({
       region: "auto",
-      endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
       credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+        accessKeyId: R2_ACCESS_KEY_ID,
+        secretAccessKey: R2_SECRET_ACCESS_KEY,
       },
     });
   } catch (err) {
@@ -43,7 +49,7 @@ export async function GET() {
   const testData = { success: true, timestamp: new Date().toISOString() };
   try {
     await r2Client.send(new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
+      Bucket: R2_BUCKET_NAME,
       Key: testKey,
       Body: JSON.stringify(testData, null, 2),
       ContentType: "application/json",
@@ -63,7 +69,7 @@ export async function GET() {
   if (diagnostics.testWrite === "Success") {
     try {
       const res = await r2Client.send(new GetObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME,
+        Bucket: R2_BUCKET_NAME,
         Key: testKey,
       }));
       const text = await res.Body.transformToString("utf-8");
