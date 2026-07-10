@@ -34,6 +34,8 @@ export default function OrderTrackerBanner() {
               if (res.ok) {
                 const fresh = await res.json();
                 return { ...order, status: fresh.status };
+              } else if (res.status === 404) {
+                return { ...order, status: "deleted" };
               }
             } catch (err) {
               console.error(`Failed to fetch status for order ${order.orderId}`, err);
@@ -42,11 +44,13 @@ export default function OrderTrackerBanner() {
           })
         );
 
-        // Update localStorage with fresh statuses
-        const freshStored = stored.map((o) => {
-          const match = updated.find((u) => u.orderId === o.orderId);
-          return match ? { ...o, status: match.status } : o;
-        });
+        // Update localStorage with fresh statuses (filtering out deleted ones)
+        const freshStored = stored
+          .map((o) => {
+            const match = updated.find((u) => u.orderId === o.orderId);
+            return match ? { ...o, status: match.status } : o;
+          })
+          .filter((o) => o.status !== "deleted");
         localStorage.setItem("crown_coffee_placed_orders", JSON.stringify(freshStored));
 
         // Set active orders state with currently active ones

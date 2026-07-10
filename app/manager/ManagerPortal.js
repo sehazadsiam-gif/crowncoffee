@@ -149,18 +149,18 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
             <button
               onClick={(e) => { e.stopPropagation(); patch({ status: "kot_printed" }); }}
               disabled={updating}
-              className="rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer"
+              className="rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
             >
-              🖨 KOT
+              {updating ? "⏳ Wait..." : "🖨 KOT"}
             </button>
           )}
           {order.status === "kot_printed" && (
             <button
               onClick={(e) => { e.stopPropagation(); patch({ status: "done" }); }}
               disabled={updating}
-              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer"
+              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
             >
-              ✅ Serve
+              {updating ? "⏳ Wait..." : "✅ Serve"}
             </button>
           )}
           <span className="font-display text-lg font-bold text-[var(--accent)] ml-2">৳{order.totalPrice}</span>
@@ -246,24 +246,24 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                 <button
                   onClick={() => patch({ status: "kot_printed" })}
                   disabled={updating}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-black text-white transition hover:brightness-105 active:scale-95 disabled:opacity-50 shadow-md"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-black text-white transition hover:brightness-105 active:scale-95 disabled:opacity-50 shadow-md cursor-pointer"
                   style={{ background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)" }}
                 >
-                  🖨 KOT Printed
+                  {updating ? "⏳ Wait..." : "🖨 KOT Printed"}
                 </button>
                 <button
                   onClick={() => patch({ status: "done" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-green-400 bg-green-50 px-4 py-2.5 text-sm font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-full border border-green-400 bg-green-50 px-4 py-2.5 text-sm font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-50 cursor-pointer"
                 >
-                  ✅ Done
+                  {updating ? "⏳ Wait..." : "✅ Done"}
                 </button>
                 <button
                   onClick={() => patch({ status: "cancelled" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-red-300 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-full border border-red-300 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition disabled:opacity-50 cursor-pointer"
                 >
-                  ❌ Cancel
+                  {updating ? "⏳ Wait..." : "❌ Cancel"}
                 </button>
               </>
             )}
@@ -273,23 +273,23 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                 <button
                   onClick={() => patch({ status: "done" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full bg-green-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-green-700 transition disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-full bg-green-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-green-700 transition disabled:opacity-50 cursor-pointer"
                 >
-                  ✅ Mark Done
+                  {updating ? "⏳ Wait..." : "✅ Mark Done"}
                 </button>
                 <button
                   onClick={() => patch({ status: "cancelled" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-full border border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer"
                 >
-                  ❌ Cancel
+                  {updating ? "⏳ Wait..." : "❌ Cancel"}
                 </button>
                 <button
                   onClick={() => patch({ status: "pending" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 ml-auto"
+                  className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 ml-auto cursor-pointer"
                 >
-                  🔓 Unlock Ticket
+                  {updating ? "⏳ Wait..." : "🔓 Unlock Ticket"}
                 </button>
               </>
             )}
@@ -298,9 +298,9 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
               <button
                 onClick={() => patch({ status: "pending" })}
                 disabled={updating}
-                className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 cursor-pointer"
               >
-                🔓 Unlock Ticket
+                {updating ? "⏳ Wait..." : "🔓 Unlock Ticket"}
               </button>
             )}
             <button
@@ -494,7 +494,7 @@ export default function ManagerPortal({ initialOrders }) {
             
             // Skip updating state if we just updated this locally to prevent latency overwrite
             const lastAction = updatingOrderIdsRef.current.get(order.orderId);
-            if (lastAction && Date.now() - lastAction < 5000) {
+            if (lastAction && Date.now() - lastAction < 10000) {
               return;
             }
 
@@ -538,7 +538,7 @@ export default function ManagerPortal({ initialOrders }) {
               }
 
               const lastAction = updatingOrderIdsRef.current.get(fresh.orderId);
-              if (lastAction && Date.now() - lastAction < 5000) {
+              if (lastAction && Date.now() - lastAction < 10000) {
                 const local = prev.find((o) => o.orderId === fresh.orderId);
                 return local ? local : fresh;
               }
