@@ -645,10 +645,11 @@ export default function ManagerPortal({ initialOrders }) {
             setTimeout(() => setNewOrderIds((prev) => { const n = new Set(prev); n.delete(order.orderId); return n; }), 8000);
           } else if (msg.type === "order_updated") {
             const order = msg.order;
-            const last = updatingOrderIdsRef.current.get(order.orderId);
-            if (last && Date.now() - last < 10000) return;
+            // SSE updates always apply — they come from OTHER devices/tabs.
+            // Don't check the local lock here.
             setOrders((prev) => prev.map((o) => o.orderId === order.orderId ? order : o));
             if (order.status !== "pending") setPendingKotIds((prev) => { const n = new Set(prev); n.delete(order.orderId); return n; });
+            if (order.status === "pending") setPendingKotIds((prev) => new Set([...prev, order.orderId]));
           }
         } catch { }
       };
@@ -660,36 +661,57 @@ export default function ManagerPortal({ initialOrders }) {
   useEffect(() => {
     const poll = async () => {
       try {
-        const res = await fetch("/api/orders");
+        // cache: no-store ensures Vercel's edge cache never serves stale data
+        const res = await fetch("/api/orders", { cache: "no-store" });
         if (!res.ok) return;
         const fresh = await res.json();
-        setOrders((prev) => fresh.map((f) => {
-          if (!prev.some((o) => o.orderId === f.orderId) && f.status === "pending")
-            sendDesktopNotification(`New Order ${f.orderNumber || ""}`, `${f.items?.length || 0} item(s).`);
-          const last = updatingOrderIdsRef.current.get(f.orderId);
-          if (last && Date.now() - last < 10000) return prev.find((o) => o.orderId === f.orderId) || f;
-          return f;
-        }));
+        setOrders((prev) => {
+          const prevMap = Object.fromEntries(prev.map((o) => [o.orderId, o]));
+          let hasNew = false;
+          const merged = fresh.map((f) => {
+            // Detect truly new orders for desktop notification
+            if (!prevMap[f.orderId] && f.status === "pending") {
+              sendDesktopNotification(`New Order ${f.orderNumber || ""}`, `${f.items?.length || 0} item(s).`);
+              hasNew = true;
+            }
+            // Short lock (2s): suppress the very next poll after a local PATCH
+            // so our optimistic update isn't overwritten before R2 saves.
+            const last = updatingOrderIdsRef.current.get(f.orderId);
+            if (last && Date.now() - last < 2000) return prevMap[f.orderId] || f;
+            return f;
+          });
+          // Clear expired locks
+          for (const [id, ts] of updatingOrderIdsRef.current) {
+            if (Date.now() - ts >= 2000) updatingOrderIdsRef.current.delete(id);
+          }
+          return merged;
+        });
         setPendingKotIds(new Set(fresh.filter((o) => o.status === "pending").map((o) => o.orderId)));
       } catch { }
     };
-    const t = setInterval(poll, 4000);
+    // Poll every 2.5 seconds — fast enough to feel live, slow enough to not spam R2
+    const t = setInterval(poll, 2500);
     return () => clearInterval(t);
   }, [sendDesktopNotification]);
 
   const handleStatusChange = useCallback(async (orderId, p) => {
-    updatingOrderIdsRef.current.set(orderId, Date.now());
+    // Optimistic update — show the change immediately in the UI
     setOrders((prev) => prev.map((o) => o.orderId === orderId ? { ...o, ...p } : o));
     if (p.status && p.status !== "pending") setPendingKotIds((prev) => { const n = new Set(prev); n.delete(orderId); return n; });
     if (p.status === "pending") setPendingKotIds((prev) => new Set([...prev, orderId]));
+    // Set a short 2-second lock so the next poll doesn't overwrite our optimistic state
+    updatingOrderIdsRef.current.set(orderId, Date.now());
     try {
       const res = await fetch(`/api/orders/${orderId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(p) });
       if (res.ok) {
         const data = await res.json();
+        // Confirm with the actual server response, then clear the lock
         setOrders((prev) => prev.map((o) => o.orderId === orderId ? data.order : o));
+        updatingOrderIdsRef.current.delete(orderId);
       } else throw new Error();
     } catch {
       alert("Failed to save. Please try again.");
+      // Revert the optimistic update on failure
       updatingOrderIdsRef.current.delete(orderId);
     }
   }, []);
