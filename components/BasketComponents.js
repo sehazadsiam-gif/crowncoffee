@@ -213,11 +213,27 @@ export function BasketDrawer() {
       const data = await res.json();
       setOrderNumber(data.order.orderNumber);
       setOrderStatus("success");
+      
+      // Save placed order to localStorage for tracking
+      try {
+        const placed = JSON.parse(localStorage.getItem("crown_coffee_placed_orders") || "[]");
+        placed.push({
+          orderId: data.order.orderId,
+          orderNumber: data.order.orderNumber,
+          placedAt: data.order.placedAt,
+          status: data.order.status
+        });
+        localStorage.setItem("crown_coffee_placed_orders", JSON.stringify(placed));
+      } catch (e) {
+        console.error("Failed to save placed order to localStorage", e);
+      }
+
       clearBasket();
       setTimeout(() => {
         setIsOpen(false);
         setOrderStatus("idle");
-      }, 3500);
+        window.location.href = `/order/status?id=${data.order.orderId}`;
+      }, 3000);
     } catch {
       setOrderStatus("error");
       setTimeout(() => setOrderStatus("idle"), 3000);
@@ -305,7 +321,7 @@ export function BasketDrawer() {
 
                 <div className="divide-y divide-[var(--line)]">
                   {basket.map((item) => (
-                    <div key={item.id} className="py-4 space-y-2">
+                    <div key={item.basketItemId} className="py-4 space-y-2">
                       <div className="flex gap-4 items-center">
                         {/* Thumbnail */}
                         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--accent-soft)]">
@@ -321,13 +337,26 @@ export function BasketDrawer() {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-display text-sm font-semibold text-[var(--ink)] truncate">{item.name}</h4>
                           <p className="text-xs text-[var(--accent)] font-semibold mt-0.5">৳{item.price}</p>
+                          {item.customizations && (
+                            <p className="text-[10px] text-[var(--ink-soft)] mt-1 font-sans">
+                              {Object.entries(item.customizations)
+                                .map(([key, opt]) => {
+                                  if (Array.isArray(opt)) {
+                                    return opt.map((o) => `${o.name} (+৳${o.price || 0})`).join(", ");
+                                  }
+                                  return opt ? `${opt.name}${opt.price ? ` (+৳${opt.price})` : ""}` : "";
+                                })
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </p>
+                          )}
                         </div>
                         {/* Qty + total */}
                         <div className="flex flex-col items-end gap-2 shrink-0">
                           <div className="flex items-center rounded-full border border-[var(--line)] bg-[var(--card)] p-1">
-                            <button onClick={() => updateQuantity(item.id, -1)} className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Decrease">-</button>
+                            <button onClick={() => updateQuantity(item.basketItemId, -1)} className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Decrease">-</button>
                             <span className="w-6 text-center text-xs font-semibold text-[var(--ink)]">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, 1)} className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Increase">+</button>
+                            <button onClick={() => updateQuantity(item.basketItemId, 1)} className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Increase">+</button>
                           </div>
                           <span className="text-xs font-semibold text-[var(--ink-soft)]">৳{item.price * item.quantity}</span>
                         </div>
@@ -337,7 +366,7 @@ export function BasketDrawer() {
                         type="text"
                         placeholder={`Special request for ${item.name} (e.g. no onions)`}
                         value={item.specialRequest || ""}
-                        onChange={(e) => updateSpecialRequest(item.id, e.target.value)}
+                        onChange={(e) => updateSpecialRequest(item.basketItemId, e.target.value)}
                         className="w-full rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-xs text-[var(--ink)] placeholder-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none"
                       />
                     </div>

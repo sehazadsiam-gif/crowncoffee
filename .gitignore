@@ -42,3 +42,7 @@ next-env.d.ts
 
 # allow the example env file to be committed
 !.env.example
+
+# local databases
+data/orders.json
+data/orders/

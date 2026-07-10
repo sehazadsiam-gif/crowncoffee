@@ -4,6 +4,7 @@
   "description": "Order management portal for Crown Coffee tables",
   "start_url": "/manager",
   "display": "standalone",
+  "run_on_os_login": "run-on-os-login",
   "background_color": "#FFFBF5",
   "theme_color": "#B6862C",
   "orientation": "portrait",

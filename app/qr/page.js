@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { isValidSession, SESSION_COOKIE } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getSettings } from "@/lib/data";
 import QRGrid from "./QRGrid";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +18,12 @@ export default async function QRPage() {
     redirect("/admin/login");
   }
 
+  const settings = await getSettings();
+  const tableCount = settings.tableCount || 50;
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10 lg:px-10">
-      <QRGrid />
+      <QRGrid tableCount={tableCount} />
     </div>
   );
 }

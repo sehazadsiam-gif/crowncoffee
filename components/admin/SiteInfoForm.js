@@ -12,6 +12,7 @@ export default function SiteInfoForm({ initialSettings }) {
     phone: initialSettings.phone,
     mapUrl: initialSettings.mapUrl,
     deliveryCharge: initialSettings.deliveryCharge || 0,
+    tableCount: initialSettings.tableCount || 50,
     hours: initialSettings.hours,
   });
   const [dirty, setDirty] = useState(false);
@@ -56,6 +57,7 @@ export default function SiteInfoForm({ initialSettings }) {
         phone: saved.phone,
         mapUrl: saved.mapUrl,
         deliveryCharge: saved.deliveryCharge || 0,
+        tableCount: saved.tableCount || 50,
         hours: saved.hours,
       });
       setDirty(false);
@@ -114,6 +116,11 @@ export default function SiteInfoForm({ initialSettings }) {
             label="Delivery Charge (৳)"
             value={String(info.deliveryCharge || 0)}
             onChange={(v) => update({ deliveryCharge: Number(v) || 0 })}
+          />
+          <Field
+            label="Table Count (For QR Codes)"
+            value={String(info.tableCount || 50)}
+            onChange={(v) => update({ tableCount: Number(v) || 50 })}
           />
         </div>
       </div>

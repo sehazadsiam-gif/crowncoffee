@@ -78,20 +78,25 @@ function StatusBadge({ status }) {
 }
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
-function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
+function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscalated }) {
   const [expanded, setExpanded] = useState(true);
   const [updating, setUpdating] = useState(false);
 
   const patch = useCallback(async (payload) => {
     setUpdating(true);
-    await onStatusChange(order.orderId, payload);
+    const fullPayload = payload.status === "done"
+      ? { ...payload, completedAt: new Date().toISOString() }
+      : payload;
+    await onStatusChange(order.orderId, fullPayload);
     setUpdating(false);
   }, [order.orderId, onStatusChange]);
 
   return (
     <div className={`rounded-2xl border-2 bg-white shadow-sm transition-all duration-500 ${
       isRinging
-        ? "border-red-400 shadow-[0_0_0_3px_rgba(239,68,68,0.15)] animate-pulse"
+        ? isEscalated
+          ? "border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.45)] animate-pulse bg-red-50/5"
+          : "border-red-400 shadow-[0_0_0_3px_rgba(239,68,68,0.15)] animate-pulse"
         : isNew
         ? "border-[var(--accent)] shadow-[0_0_0_3px_rgba(182,134,44,0.12)]"
         : "border-[var(--line)]"
@@ -99,10 +104,12 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
 
       {/* Alert banner — visible only while pending (ringing) */}
       {order.status === "pending" && (
-        <div className="flex items-center gap-2 rounded-t-xl bg-red-500 px-4 py-2">
+        <div className={`flex items-center gap-2 rounded-t-xl px-4 py-2 text-white font-bold text-xs ${isEscalated ? "bg-red-700 animate-pulse" : "bg-red-500"}`}>
           <span className="animate-ping text-white text-xs">●</span>
-          <span className="text-xs font-bold text-white tracking-wide">
-            🔔 ALERT — Press KOT Printed to silence the alarm
+          <span>
+            {isEscalated 
+              ? "⚠️ ESCALATED WARNING — Order pending for > 4 minutes! Silence immediately!" 
+              : "🔔 ALERT — Press KOT Printed to silence the alarm"}
           </span>
         </div>
       )}
@@ -137,9 +144,34 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="font-display text-lg font-bold text-[var(--accent)]">৳{order.totalPrice}</span>
-          <svg className={`h-4 w-4 text-[var(--ink-soft)] transition-transform ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+          {order.status === "pending" && (
+            <button
+              onClick={(e) => { e.stopPropagation(); patch({ status: "kot_printed" }); }}
+              disabled={updating}
+              className="rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer"
+            >
+              🖨 KOT
+            </button>
+          )}
+          {order.status === "kot_printed" && (
+            <button
+              onClick={(e) => { e.stopPropagation(); patch({ status: "done" }); }}
+              disabled={updating}
+              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer"
+            >
+              ✅ Serve
+            </button>
+          )}
+          <span className="font-display text-lg font-bold text-[var(--accent)] ml-2">৳{order.totalPrice}</span>
+          <svg 
+            onClick={(e) => { e.stopPropagation(); setExpanded((ev) => !ev); }}
+            className={`h-4 w-4 text-[var(--ink-soft)] transition-transform cursor-pointer hover:text-[var(--ink)] ${expanded ? "rotate-180" : ""}`} 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            strokeWidth="2"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
@@ -271,7 +303,6 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging }) {
                 🔓 Unlock Ticket
               </button>
             )}
-
             <button
               onClick={() => onDelete(order.orderId)}
               disabled={updating}
@@ -297,34 +328,55 @@ export default function ManagerPortal({ initialOrders }) {
   const [orders, setOrders] = useState(initialOrders || []);
   const [tab, setTab] = useState("pending");
   const [newOrderIds, setNewOrderIds] = useState(new Set());
-  const soundKey = "classic_chime";
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [connected, setConnected] = useState(false);
+  const [hasEscalatedOrder, setHasEscalatedOrder] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Set of order IDs that are pending and haven't been KOT-printed yet
   // Sound loops as long as this is non-empty
   const [pendingKotIds, setPendingKotIds] = useState(new Set());
   const loopRef = useRef(null); // setInterval reference
-  const lastLocalActionTime = useRef(0); // Timestamp of the last local action to prevent polling race conditions
+  const updatingOrderIdsRef = useRef(new Map()); // Map of orderId -> lastLocalActionTimestamp
+
+  // Periodic check for escalated orders (> 4 minutes pending)
+  useEffect(() => {
+    const checkEscalation = () => {
+      const pending = orders.filter((o) => o.status === "pending");
+      const escalated = pending.some((o) => {
+        const ageMs = Date.now() - new Date(o.placedAt).getTime();
+        return ageMs > 4 * 60 * 1000;
+      });
+      setHasEscalatedOrder(escalated);
+    };
+    checkEscalation();
+    const interval = setInterval(checkEscalation, 5000);
+    return () => clearInterval(interval);
+  }, [orders]);
+
+  const currentSoundKey = hasEscalatedOrder ? "urgent_alarm" : "classic_chime";
 
   // ── Continuous loop: start/stop based on pendingKotIds ─────────────────
   useEffect(() => {
     if (pendingKotIds.size > 0 && soundEnabled) {
-      if (!loopRef.current) {
-        // Play immediately once, then every 2 seconds
-        SOUND_PRESETS[soundKey]?.fn();
-        loopRef.current = setInterval(() => {
-          SOUND_PRESETS[soundKey]?.fn();
-        }, 2000);
+      if (loopRef.current) {
+        clearInterval(loopRef.current);
+        loopRef.current = null;
       }
+      
+      const playActiveSound = () => {
+        SOUND_PRESETS[currentSoundKey]?.fn();
+      };
+      
+      playActiveSound();
+      loopRef.current = setInterval(playActiveSound, currentSoundKey === "urgent_alarm" ? 1000 : 2000);
     } else {
       if (loopRef.current) {
         clearInterval(loopRef.current);
         loopRef.current = null;
       }
     }
-    return () => {}; // cleanup in the else above
-  }, [pendingKotIds, soundEnabled, soundKey]);
+  }, [pendingKotIds, soundEnabled, currentSoundKey]);
 
   // Stop loop when component unmounts
   useEffect(() => {
@@ -365,12 +417,18 @@ export default function ManagerPortal({ initialOrders }) {
             setConnected(true);
           } else if (msg.type === "new_order") {
             const order = msg.order;
-            setOrders((prev) => [order, ...prev]);
+            setOrders((prev) => {
+              // Deduplicate order list (in case it already exists via polling)
+              if (prev.some((o) => o.orderId === order.orderId)) {
+                return prev;
+              }
+              return [order, ...prev];
+            });
             setNewOrderIds((prev) => new Set([...prev, order.orderId]));
 
             // Play sound immediately on arrival if pending & sound enabled
             if (order.status === "pending" && soundEnabled) {
-              SOUND_PRESETS[soundKey]?.fn();
+              SOUND_PRESETS[currentSoundKey]?.fn();
             }
 
             // Add to pending-KOT set → triggers sound loop
@@ -388,7 +446,8 @@ export default function ManagerPortal({ initialOrders }) {
             const order = msg.order;
             
             // Skip updating state if we just updated this locally to prevent latency overwrite
-            if (Date.now() - lastLocalActionTime.current < 5000) {
+            const lastAction = updatingOrderIdsRef.current.get(order.orderId);
+            if (lastAction && Date.now() - lastAction < 5000) {
               return;
             }
 
@@ -411,20 +470,26 @@ export default function ManagerPortal({ initialOrders }) {
       };
     }
     connect();
-  }, [soundEnabled, soundKey]); // connect dependencies handled correctly
+  }, [soundEnabled, currentSoundKey]); // connect dependencies handled correctly
 
   // ── Polling fallback (ensures cross-device sync in serverless environments) ──
   useEffect(() => {
     async function pollOrders() {
-      // Skip polling updates if we did a local status change in the last 5 seconds to avoid race conditions
-      if (Date.now() - lastLocalActionTime.current < 5000) {
-        return;
-      }
       try {
         const res = await fetch("/api/orders");
         if (res.ok) {
           const freshOrders = await res.json();
-          setOrders(freshOrders);
+          
+          setOrders((prev) => {
+            return freshOrders.map((fresh) => {
+              const lastAction = updatingOrderIdsRef.current.get(fresh.orderId);
+              if (lastAction && Date.now() - lastAction < 5000) {
+                const local = prev.find((o) => o.orderId === fresh.orderId);
+                return local ? local : fresh;
+              }
+              return fresh;
+            });
+          });
 
           // Re-calculate pendingKotIds based on fresh orders
           const ringingIds = new Set(
@@ -445,7 +510,7 @@ export default function ManagerPortal({ initialOrders }) {
 
   // ── Status update ──────────────────────────────────────────────────────
   const handleStatusChange = useCallback(async (orderId, patch) => {
-    lastLocalActionTime.current = Date.now();
+    updatingOrderIdsRef.current.set(orderId, Date.now());
 
     // 1. Optimistic Local State Update:
     setOrders((prev) =>
@@ -484,8 +549,7 @@ export default function ManagerPortal({ initialOrders }) {
     } catch (err) {
       console.error("Failed to update status on server:", err);
       alert("Failed to save changes. Please try again.");
-      // Revert status
-      lastLocalActionTime.current = 0; // force poll update to revert
+      updatingOrderIdsRef.current.delete(orderId); // clear lockout so it reverts on next poll
     }
   }, []);
 
@@ -503,8 +567,19 @@ export default function ManagerPortal({ initialOrders }) {
 
   const pendingCount = orders.filter((o) => o.status === "pending").length;
   const filteredOrders = orders.filter((o) => {
-    if (tab === "pending")  return o.status === "pending" || o.status === "kot_printed";
-    if (tab === "done")     return o.status === "done" || o.status === "cancelled";
+    // Tab filter
+    if (tab === "pending" && o.status !== "pending" && o.status !== "kot_printed") return false;
+    if (tab === "done" && o.status !== "done" && o.status !== "cancelled") return false;
+
+    // Search query filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const numMatch = o.orderNumber.toLowerCase().includes(q) || o.orderId.includes(q);
+      const tableMatch = String(o.tableNumber).toLowerCase().includes(q);
+      const nameMatch = o.customerName && o.customerName.toLowerCase().includes(q);
+      const itemMatch = o.items && o.items.some((item) => item.name.toLowerCase().includes(q));
+      return numMatch || tableMatch || nameMatch || itemMatch;
+    }
     return true;
   });
 
@@ -512,7 +587,99 @@ export default function ManagerPortal({ initialOrders }) {
     { id: "pending", label: "🔴 Active",       count: orders.filter((o) => o.status === "pending" || o.status === "kot_printed").length },
     { id: "done",    label: "✅ Completed",    count: orders.filter((o) => o.status === "done" || o.status === "cancelled").length },
     { id: "all",     label: "📋 All Orders",   count: orders.length },
+    { id: "analytics", label: "📊 Insights",   count: 0 },
   ];
+
+  // Helper component to render Analytics Dashboard
+  const renderAnalytics = () => {
+    const completedOrders = orders.filter((o) => o.status === "done");
+    const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    const avgOrderValue = completedOrders.length > 0 ? Math.round(totalRevenue / completedOrders.length) : 0;
+    
+    // Average prep time
+    const ordersWithPrep = completedOrders.filter((o) => o.completedAt);
+    let avgPrepText = "N/A";
+    if (ordersWithPrep.length > 0) {
+      const totalPrepMinutes = ordersWithPrep.reduce((sum, o) => {
+        const start = new Date(o.placedAt).getTime();
+        const end = new Date(o.completedAt).getTime();
+        return sum + (end - start) / (1000 * 60);
+      }, 0);
+      const avgPrep = Math.round(totalPrepMinutes / ordersWithPrep.length);
+      avgPrepText = `${avgPrep} min${avgPrep !== 1 ? "s" : ""}`;
+    }
+
+    // Sales by Category
+    const categorySales = {};
+    completedOrders.forEach((o) => {
+      (o.items || []).forEach((item) => {
+        const cat = item.category || "Uncategorized";
+        categorySales[cat] = (categorySales[cat] || 0) + (item.price * item.quantity);
+      });
+    });
+
+    const categoryData = Object.entries(categorySales)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5); // top 5 categories
+
+    return (
+      <div className="bg-white rounded-2xl border border-[var(--line)] p-6 space-y-8 shadow-sm">
+        <div>
+          <h3 className="font-display text-xl font-bold text-[var(--ink)]">Performance Insights</h3>
+          <p className="text-xs text-[var(--ink-soft)] mt-1">Real-time statistics of completed orders today.</p>
+        </div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
+            <p className="text-2xl font-black text-[var(--ink)]">৳{totalRevenue}</p>
+            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Total Sales</p>
+          </div>
+          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
+            <p className="text-2xl font-black text-[var(--ink)]">{completedOrders.length}</p>
+            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Completed</p>
+          </div>
+          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
+            <p className="text-2xl font-black text-[var(--ink)]">৳{avgOrderValue}</p>
+            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Avg Order Val</p>
+          </div>
+          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
+            <p className="text-2xl font-black text-[var(--ink)]">{avgPrepText}</p>
+            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Avg Prep Time</p>
+          </div>
+        </div>
+
+        {/* Top Selling Categories */}
+        <div className="space-y-4">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)]">Top Categories by Revenue</h4>
+          {categoryData.length === 0 ? (
+            <p className="text-sm text-[var(--ink-soft)] italic">No sales data available yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {categoryData.map(([category, revenue]) => {
+                const maxRevenue = Math.max(...categoryData.map((c) => c[1]));
+                const pct = maxRevenue > 0 ? (revenue / maxRevenue) * 100 : 0;
+                return (
+                  <div key={category} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-semibold text-[var(--ink)]">{category}</span>
+                      <span className="font-bold text-[var(--accent)]">৳{revenue}</span>
+                    </div>
+                    <div className="h-2 w-full bg-[var(--paper)] rounded-full overflow-hidden border border-[var(--line)]">
+                      <div 
+                        className="h-full bg-[var(--accent)] rounded-full" 
+                        style={{ width: `${pct}%` }} 
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[var(--paper)]">
@@ -563,11 +730,11 @@ export default function ManagerPortal({ initialOrders }) {
         {/* Alert Tone Indicator */}
         <div className="rounded-2xl border border-[var(--line)] bg-white p-4 flex items-center justify-between gap-3">
           <div>
-            <span className="text-sm font-semibold text-[var(--ink)]">Alert Tone: 🎶 Classic Chime</span>
+            <span className="text-sm font-semibold text-[var(--ink)]">Alert Tone: {hasEscalatedOrder ? "🚨 Urgent Alarm" : "🎶 Classic Chime"}</span>
             <p className="text-xs text-[var(--ink-soft)]">This sound will ring continuously when a new order arrives until you press KOT Printed.</p>
           </div>
           <button
-            onClick={() => SOUND_PRESETS.classic_chime.fn()}
+            onClick={() => SOUND_PRESETS[currentSoundKey].fn()}
             className="rounded-full border border-[var(--line)] px-4 py-2 text-xs font-semibold text-[var(--ink-soft)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
           >
             ▶ Test Sound
@@ -589,55 +756,79 @@ export default function ManagerPortal({ initialOrders }) {
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 border-b border-[var(--line)]">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
-                tab === t.id
-                  ? "border-[var(--accent)] text-[var(--ink)]"
-                  : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)]"
-              }`}
-            >
-              {t.label}
-              {t.count > 0 && (
-                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${tab === t.id ? "bg-[var(--accent)] text-white" : "bg-[var(--line)] text-[var(--ink-soft)]"}`}>
-                  {t.count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Order list */}
-        <div className="space-y-4">
-          {filteredOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <CrownMark className="h-12 w-12 text-[var(--accent)] opacity-20 mb-4" />
-              <p className="font-display text-xl font-bold text-[var(--ink)]">
-                {tab === "pending" ? "No active orders" : "No orders here"}
-              </p>
-              <p className="mt-2 text-sm text-[var(--ink-soft)]">
-                {tab === "pending"
-                  ? "New orders will appear here instantly. The alarm will ring automatically."
-                  : "Orders you manage will show up here."}
-              </p>
-            </div>
-          ) : (
-            filteredOrders.map((order) => (
-              <OrderCard
-                key={order.orderId}
-                order={order}
-                onStatusChange={handleStatusChange}
-                onDelete={handleDelete}
-                isNew={newOrderIds.has(order.orderId)}
-                isRinging={pendingKotIds.has(order.orderId)}
+        {/* Tabs & Search */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--line)]">
+          <div className="flex gap-1">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
+                  tab === t.id
+                    ? "border-[var(--accent)] text-[var(--ink)]"
+                    : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                }`}
+              >
+                {t.label}
+                {t.count > 0 && (
+                  <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${tab === t.id ? "bg-[var(--accent)] text-white" : "bg-[var(--line)] text-[var(--ink-soft)]"}`}>
+                    {t.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          
+          {tab !== "analytics" && (
+            <div className="relative w-full sm:w-64 pb-2 sm:pb-0">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-[var(--ink-soft)] pointer-events-none">🔍</span>
+              <input
+                type="text"
+                placeholder="Search orders..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-[var(--line)] bg-white py-1.5 pl-8 pr-4 text-xs text-[var(--ink)] placeholder-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none"
               />
-            ))
+            </div>
           )}
         </div>
+
+        {/* Order list / Analytics conditional */}
+        {tab === "analytics" ? (
+          renderAnalytics()
+        ) : (
+          <div className={`grid grid-cols-1 ${tab === "pending" ? "md:grid-cols-2 lg:grid-cols-3" : ""} gap-4`}>
+            {filteredOrders.length === 0 ? (
+              <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <CrownMark className="h-12 w-12 text-[var(--accent)] opacity-20 mb-4" />
+                <p className="font-display text-xl font-bold text-[var(--ink)]">
+                  {tab === "pending" ? "No active orders" : "No orders here"}
+                </p>
+                <p className="mt-2 text-sm text-[var(--ink-soft)]">
+                  {tab === "pending"
+                    ? "New orders will appear here instantly. The alarm will ring automatically."
+                    : "Orders you manage will show up here."}
+                </p>
+              </div>
+            ) : (
+              filteredOrders.map((order) => {
+                const ageMs = Date.now() - new Date(order.placedAt).getTime();
+                const isEscalated = order.status === "pending" && ageMs > 4 * 60 * 1000;
+                return (
+                  <OrderCard
+                    key={order.orderId}
+                    order={order}
+                    onStatusChange={handleStatusChange}
+                    onDelete={handleDelete}
+                    isNew={newOrderIds.has(order.orderId)}
+                    isRinging={pendingKotIds.has(order.orderId)}
+                    isEscalated={isEscalated}
+                  />
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

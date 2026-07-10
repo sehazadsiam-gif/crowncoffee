@@ -1,12 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
 import { useBasket } from "@/context/BasketContext";
+import { getItemCustomizations } from "@/lib/customizations";
+import CustomizationModal from "./CustomizationModal";
 
 export default function MenuCard({ item }) {
-  const { addToBasket, updateQuantity, getItemQuantity, isMounted } = useBasket();
+  const { addToBasket, decrementLastAddedCustom, getItemQuantity, isMounted } = useBasket();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const qty = isMounted ? getItemQuantity(item.id) : 0;
+  const customizations = getItemCustomizations(item);
+
+  const handleAddClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (customizations) {
+      setIsModalOpen(true);
+    } else {
+      addToBasket(item);
+    }
+  };
+
+  const handleMinusClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    decrementLastAddedCustom(item.id);
+  };
 
   return (
     <>
@@ -54,20 +75,14 @@ export default function MenuCard({ item }) {
               }}
             >
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  updateQuantity(item.id, -1);
-                }}
+                onClick={handleMinusClick}
                 className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
               >
                 -
               </button>
               <span className="w-4 text-center text-[11px] font-bold">{qty}</span>
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  updateQuantity(item.id, 1);
-                }}
+                onClick={handleAddClick}
                 className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
               >
                 +
@@ -75,10 +90,7 @@ export default function MenuCard({ item }) {
             </div>
           ) : (
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                addToBasket(item);
-              }}
+              onClick={handleAddClick}
               className="flex h-7 items-center gap-1 rounded-full bg-white px-2.5 text-[11px] font-bold text-[var(--ink)] shadow-md border border-[var(--line)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95 transition"
             >
               <span>+</span>
@@ -116,22 +128,14 @@ export default function MenuCard({ item }) {
                 }}
               >
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    updateQuantity(item.id, -1);
-                  }}
+                  onClick={handleMinusClick}
                   className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
                 >
                   -
                 </button>
                 <span className="w-5 text-center text-xs font-bold">{qty}</span>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    updateQuantity(item.id, 1);
-                  }}
+                  onClick={handleAddClick}
                   className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
                 >
                   +
@@ -139,11 +143,7 @@ export default function MenuCard({ item }) {
               </div>
             ) : (
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  addToBasket(item);
-                }}
+                onClick={handleAddClick}
                 className="flex h-8 items-center gap-1 rounded-full bg-white px-3 text-xs font-bold text-[var(--ink)] shadow-lg border border-[var(--line)] transition hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95"
               >
                 <span>+</span>
@@ -168,6 +168,15 @@ export default function MenuCard({ item }) {
           )}
         </div>
       </article>
+
+      <CustomizationModal
+        item={item}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={(selectedOpts, finalPrice) => {
+          addToBasket(item, selectedOpts, finalPrice);
+        }}
+      />
     </>
   );
 }

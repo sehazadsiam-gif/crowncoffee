@@ -88,23 +88,37 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
     }
   }, [initialDeliveryCharge]);
 
-  const addToBasket = (item) => {
+  const addToBasket = (item, customizations = null, customizedPrice = null) => {
+    const price = customizedPrice !== null ? customizedPrice : item.price;
+    const custKey = customizations ? JSON.stringify(customizations) : "";
+    const basketItemId = `${item.id}-${custKey}`;
+
     setBasket((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const existing = prev.find((i) => i.basketItemId === basketItemId);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.basketItemId === basketItemId ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prev, { ...item, quantity: 1, specialRequest: "" }];
+      return [
+        ...prev,
+        {
+          ...item,
+          basketItemId,
+          price,
+          customizations,
+          quantity: 1,
+          specialRequest: "",
+        },
+      ];
     });
   };
 
-  const updateQuantity = (itemId, change) => {
+  const updateQuantity = (basketItemId, change) => {
     setBasket((prev) =>
       prev
         .map((i) => {
-          if (i.id === itemId) {
+          if (i.basketItemId === basketItemId) {
             const newQty = i.quantity + change;
             return { ...i, quantity: newQty };
           }
@@ -114,14 +128,32 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
     );
   };
 
-  const updateSpecialRequest = (itemId, text) => {
+  const decrementLastAddedCustom = (itemId) => {
+    setBasket((prev) => {
+      // Find the index of the last added item in the basket with this base item id
+      const reversedIdx = [...prev].reverse().findIndex((i) => i.id === itemId);
+      if (reversedIdx === -1) return prev;
+
+      const idx = prev.length - 1 - reversedIdx;
+      const target = prev[idx];
+      if (target.quantity > 1) {
+        return prev.map((item, i) =>
+          i === idx ? { ...item, quantity: item.quantity - 1 } : item
+        );
+      } else {
+        return prev.filter((item, i) => i !== idx);
+      }
+    });
+  };
+
+  const updateSpecialRequest = (basketItemId, text) => {
     setBasket((prev) =>
-      prev.map((i) => (i.id === itemId ? { ...i, specialRequest: text } : i))
+      prev.map((i) => (i.basketItemId === basketItemId ? { ...i, specialRequest: text } : i))
     );
   };
 
-  const removeFromBasket = (itemId) => {
-    setBasket((prev) => prev.filter((i) => i.id !== itemId));
+  const removeFromBasket = (basketItemId) => {
+    setBasket((prev) => prev.filter((i) => i.basketItemId !== basketItemId));
   };
 
   const clearBasket = () => {
@@ -129,8 +161,10 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
   };
 
   const getItemQuantity = (itemId) => {
-    const found = basket.find((i) => i.id === itemId);
-    return found ? found.quantity : 0;
+    // Sum quantities of all customized versions of this item ID
+    return basket
+      .filter((i) => i.id === itemId)
+      .reduce((sum, i) => sum + i.quantity, 0);
   };
 
   // Calculate totals
@@ -150,6 +184,7 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
         setIsWaiterMode,
         addToBasket,
         updateQuantity,
+        decrementLastAddedCustom,
         updateSpecialRequest,
         removeFromBasket,
         clearBasket,

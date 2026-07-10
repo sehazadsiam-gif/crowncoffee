@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { getMenu, getSettings, groupMenuByCategory } from "@/lib/data";
-import MenuCard from "@/components/MenuCard";
 import TableInitializer from "@/components/TableInitializer";
+import InteractiveOrderMenu from "@/components/InteractiveOrderMenu";
+import OrderTrackerBanner from "@/components/OrderTrackerBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,8 @@ export default async function OrderPage({ searchParams }) {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10 lg:px-10">
+      <OrderTrackerBanner />
+
       {/* Delivery banner */}
       {isDelivery && (
         <div className="sticky top-0 z-30 -mx-6 px-6 py-3 mb-6 flex items-center justify-between border-b border-[var(--accent)] bg-white/95 backdrop-blur-sm shadow-sm">
@@ -95,25 +98,7 @@ export default async function OrderPage({ searchParams }) {
         <TableInitializer />
       </Suspense>
 
-      {groups.length === 0 && (
-        <p className="mt-12 text-[var(--ink-soft)]">The menu is being updated — check back soon.</p>
-      )}
-
-      <div className="mt-12 flex flex-col gap-16">
-        {groups.map((group) => (
-          <section key={group.category} id={`cat-${group.category.toLowerCase().replace(/\s+/g, "-")}`}>
-            <div className="flex items-center gap-4">
-              <h2 className="font-display text-2xl sm:text-3xl">{group.category}</h2>
-              <span className="h-px flex-1 bg-[var(--line)]" aria-hidden="true" />
-            </div>
-            <div className="mt-8 grid grid-cols-1 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {group.items.map((item) => (
-                <MenuCard key={item.id} item={item} />
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+      <InteractiveOrderMenu groups={groups} />
     </div>
   );
 }
