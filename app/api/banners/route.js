@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getBanners, saveBanners } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const data = await getBanners();
   return NextResponse.json(data);

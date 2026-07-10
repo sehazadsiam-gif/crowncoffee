@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSettings, saveSettings, DEFAULT_HOURS, DEFAULT_THEME } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const settings = await getSettings();
   return NextResponse.json(settings);
