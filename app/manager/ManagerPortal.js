@@ -77,10 +77,45 @@ function StatusBadge({ status }) {
   );
 }
 
+function ElapsedTime({ placedAt, status }) {
+  const [elapsed, setElapsed] = useState("");
+
+  useEffect(() => {
+    if (status !== "pending" && status !== "kot_printed") {
+      setElapsed("");
+      return;
+    }
+    const update = () => {
+      const diffMs = Date.now() - new Date(placedAt).getTime();
+      const mins = Math.floor(diffMs / 60000);
+      const secs = Math.floor((diffMs % 60000) / 1000);
+      setElapsed(`${mins}m ${secs}s`);
+    };
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, [placedAt, status]);
+
+  if (!elapsed) return null;
+  return (
+    <span className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-800 flex items-center gap-1 animate-pulse">
+      ⏱ {elapsed}
+    </span>
+  );
+}
+
 // ─── Order Card ───────────────────────────────────────────────────────────────
 function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscalated }) {
   const [expanded, setExpanded] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [checkedItems, setCheckedItems] = useState({});
+
+  const toggleItemCheck = (idx) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [idx]: !prev[idx]
+    }));
+  };
 
   const patch = useCallback(async (payload) => {
     setUpdating(true);
@@ -133,6 +168,7 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
               </span>
               <span className="font-mono text-sm font-bold text-[var(--accent)]">{order.orderNumber}</span>
               <StatusBadge status={order.status} />
+              <ElapsedTime placedAt={order.placedAt} status={order.status} />
               {isNew && (
                 <span className="animate-bounce rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-black text-white uppercase tracking-widest">
                   NEW
@@ -182,20 +218,48 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
         <div className="border-t border-[var(--line)] px-5 pb-5">
           {/* Item list */}
           <ul className="mt-4 divide-y divide-[var(--line)]">
-            {(order.items || []).map((item, idx) => (
-              <li key={idx} className="flex items-start justify-between py-2.5 gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[var(--ink)]">{item.name}</p>
-                  {item.specialRequest && (
-                    <p className="text-xs text-amber-700 italic mt-0.5">📝 {item.specialRequest}</p>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 shrink-0">
-                  <span className="text-xs font-bold text-[var(--ink-soft)] bg-[var(--paper)] rounded-full px-2 py-0.5">×{item.quantity}</span>
-                  <span className="text-sm font-bold text-[var(--ink)]">৳{item.price * item.quantity}</span>
-                </div>
-              </li>
-            ))}
+            {(order.items || []).map((item, idx) => {
+              const isChecked = !!checkedItems[idx];
+              return (
+                <li key={idx} className="flex items-start justify-between py-2.5 gap-3">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    {order.status !== "done" && order.status !== "cancelled" && (
+                      <input 
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleItemCheck(idx)}
+                        className="h-4 w-4 rounded border-[var(--line)] text-[var(--accent)] focus:ring-[var(--accent)] cursor-pointer"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold leading-snug transition-all duration-300 ${isChecked ? "line-through text-[var(--ink-soft)] opacity-40" : "text-[var(--ink)]"}`}>
+                        {item.name}
+                      </p>
+                      {item.customizations && (
+                        <p className={`text-[10px] mt-0.5 font-medium transition-all ${isChecked ? "text-[var(--ink-soft)]/30 opacity-30" : "text-[var(--ink-soft)]"}`}>
+                          {Object.entries(item.customizations)
+                            .map(([key, opt]) => {
+                              if (Array.isArray(opt)) {
+                                return opt.map((o) => o.name).join(", ");
+                              }
+                              return opt ? opt.name : "";
+                            })
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </p>
+                      )}
+                      {item.specialRequest && (
+                        <p className={`text-xs italic mt-0.5 transition-all ${isChecked ? "text-amber-800/40" : "text-amber-700"}`}>📝 {item.specialRequest}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className={`text-xs font-bold bg-[var(--paper)] rounded-full px-2 py-0.5 transition-all ${isChecked ? "opacity-30" : "text-[var(--ink-soft)]"}`}>×{item.quantity}</span>
+                    <span className={`text-sm font-bold transition-all ${isChecked ? "line-through text-[var(--ink-soft)] opacity-30" : "text-[var(--ink)]"}`}>৳{item.price * item.quantity}</span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
 
           {order.deliveryCharge > 0 && (
@@ -332,6 +396,7 @@ export default function ManagerPortal({ initialOrders }) {
   const [connected, setConnected] = useState(false);
   const [hasEscalatedOrder, setHasEscalatedOrder] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("oldest"); // oldest, newest, table
 
   // Set of order IDs that are pending and haven't been KOT-printed yet
   // Sound loops as long as this is non-empty
@@ -638,6 +703,21 @@ export default function ManagerPortal({ initialOrders }) {
     return true;
   });
 
+  const sortedOrders = [...filteredOrders].sort((a, b) => {
+    if (sortBy === "oldest") {
+      return new Date(a.placedAt).getTime() - new Date(b.placedAt).getTime();
+    }
+    if (sortBy === "newest") {
+      return new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime();
+    }
+    if (sortBy === "table") {
+      const tA = isNaN(a.tableNumber) ? 999 : Number(a.tableNumber);
+      const tB = isNaN(b.tableNumber) ? 999 : Number(b.tableNumber);
+      return tA - tB;
+    }
+    return 0;
+  });
+
   const tabs = [
     { id: "pending", label: "🔴 Active",       count: orders.filter((o) => o.status === "pending" || o.status === "kot_printed").length },
     { id: "done",    label: "✅ Completed",    count: orders.filter((o) => o.status === "done" || o.status === "cancelled").length },
@@ -835,15 +915,32 @@ export default function ManagerPortal({ initialOrders }) {
           </div>
           
           {tab !== "analytics" && (
-            <div className="relative w-full sm:w-64 pb-2 sm:pb-0">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-[var(--ink-soft)] pointer-events-none">🔍</span>
-              <input
-                type="text"
-                placeholder="Search orders..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-[var(--line)] bg-white py-1.5 pl-8 pr-4 text-xs text-[var(--ink)] placeholder-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none"
-              />
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto pb-2 sm:pb-0">
+              {/* Sort By Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="rounded-full border border-[var(--line)] bg-white py-1.5 pl-3 pr-8 text-xs font-semibold text-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none appearance-none cursor-pointer"
+                >
+                  <option value="oldest">⏳ Oldest First (FIFO)</option>
+                  <option value="newest">🆕 Newest First</option>
+                  <option value="table">📍 Table Number</option>
+                </select>
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[10px] text-[var(--ink-soft)]">▼</span>
+              </div>
+
+              {/* Search input */}
+              <div className="relative w-full sm:w-64">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-[var(--ink-soft)] pointer-events-none">🔍</span>
+                <input
+                  type="text"
+                  placeholder="Search orders..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-full border border-[var(--line)] bg-white py-1.5 pl-8 pr-4 text-xs text-[var(--ink)] placeholder-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none"
+                />
+              </div>
             </div>
           )}
         </div>
@@ -853,7 +950,7 @@ export default function ManagerPortal({ initialOrders }) {
           renderAnalytics()
         ) : (
           <div className={`grid grid-cols-1 ${tab === "pending" ? "md:grid-cols-2 lg:grid-cols-3" : ""} gap-4`}>
-            {filteredOrders.length === 0 ? (
+            {sortedOrders.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
                 <CrownMark className="h-12 w-12 text-[var(--accent)] opacity-20 mb-4" />
                 <p className="font-display text-xl font-bold text-[var(--ink)]">
@@ -866,7 +963,7 @@ export default function ManagerPortal({ initialOrders }) {
                 </p>
               </div>
             ) : (
-              filteredOrders.map((order) => {
+              sortedOrders.map((order) => {
                 const ageMs = Date.now() - new Date(order.placedAt).getTime();
                 const isEscalated = order.status === "pending" && ageMs > 4 * 60 * 1000;
                 return (
