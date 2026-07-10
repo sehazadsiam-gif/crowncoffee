@@ -59,19 +59,19 @@ function timeSince(isoStr) {
 
 function StatusBadge({ status }) {
   const map = {
-    pending:     "bg-red-100 text-red-800 border-red-300",
-    kot_printed: "bg-amber-100 text-amber-800 border-amber-300",
-    done:        "bg-green-100 text-green-700 border-green-300",
-    cancelled:   "bg-gray-100 text-gray-600 border-gray-300",
+    pending:     "bg-rose-950/40 text-rose-400 border-rose-800/50",
+    kot_printed: "bg-amber-950/40 text-amber-400 border-amber-800/50",
+    done:        "bg-emerald-950/40 text-emerald-400 border-emerald-800/50",
+    cancelled:   "bg-slate-800 text-slate-400 border-slate-700",
   };
   const labels = {
     pending:     "⏳ Pending",
-    kot_printed: "🖨 KOT Printed",
-    done:        "✅ Done",
+    kot_printed: "🍳 Cooking",
+    done:        "✅ Served",
     cancelled:   "❌ Cancelled",
   };
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold ${map[status] || map.pending}`}>
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider ${map[status] || map.pending}`}>
       {labels[status] || status}
     </span>
   );
@@ -127,55 +127,55 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
   }, [order.orderId, onStatusChange]);
 
   return (
-    <div className={`rounded-2xl border-2 bg-white shadow-sm transition-all duration-500 ${
+    <div className={`rounded-2xl border-2 bg-slate-900 border-slate-800 shadow-xl transition-all duration-500 ${
       isRinging
         ? isEscalated
-          ? "border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.45)] animate-pulse bg-red-50/5"
-          : "border-red-400 shadow-[0_0_0_3px_rgba(239,68,68,0.15)] animate-pulse"
+          ? "border-red-600 shadow-[0_0_20px_rgba(239,68,68,0.35)] animate-pulse bg-red-950/5"
+          : "border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.2)] animate-pulse"
         : isNew
-        ? "border-[var(--accent)] shadow-[0_0_0_3px_rgba(182,134,44,0.12)]"
-        : "border-[var(--line)]"
-    } ${order.status === "done" || order.status === "cancelled" ? "opacity-60" : ""}`}>
+        ? "border-amber-500/80 shadow-[0_0_12px_rgba(245,158,11,0.15)]"
+        : "border-slate-800"
+    } ${order.status === "done" || order.status === "cancelled" ? "opacity-50 hover:opacity-85 duration-300" : ""}`}>
 
       {/* Alert banner — visible only while pending (ringing) */}
       {order.status === "pending" && (
-        <div className={`flex items-center gap-2 rounded-t-xl px-4 py-2 text-white font-bold text-xs ${isEscalated ? "bg-red-700 animate-pulse" : "bg-red-500"}`}>
-          <span className="animate-ping text-white text-xs">●</span>
-          <span>
+        <div className={`flex items-center gap-2 rounded-t-xl px-4 py-2 text-white font-bold text-xs tracking-wider uppercase ${isEscalated ? "bg-red-700 animate-pulse" : "bg-red-600"}`}>
+          <span className="animate-ping text-white text-[10px]">●</span>
+          <span className="text-[10px]">
             {isEscalated 
-              ? "⚠️ ESCALATED WARNING — Order pending for > 4 minutes! Silence immediately!" 
-              : "🔔 ALERT — Press KOT Printed to silence the alarm"}
+              ? "⚠️ ESCALATED — Pending > 4m!" 
+              : "🔔 NEW ORDER ALERT"}
           </span>
         </div>
       )}
 
       {/* Card header */}
       <div
-        className="flex items-start justify-between gap-3 px-5 py-4 cursor-pointer"
+        className="flex items-start justify-between gap-3 px-5 py-4 cursor-pointer hover:bg-slate-800/40 rounded-t-2xl transition"
         onClick={() => setExpanded((e) => !e)}
       >
         <div className="flex items-start gap-3">
           <div
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white font-display text-lg font-black"
-            style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white font-sans text-xl font-extrabold border border-slate-700"
+            style={{ background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)" }}
           >
             {order.tableNumber === "tab" ? "💳" : order.tableNumber === "delivery" ? "🚚" : order.tableNumber}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-display text-lg font-bold text-[var(--ink)]">
+              <span className="text-base font-bold text-white tracking-tight">
                 {order.tableNumber === "tab" ? "Tab Order" : order.tableNumber === "delivery" ? "Home Delivery" : `Table ${order.tableNumber}`}
               </span>
-              <span className="font-mono text-sm font-bold text-[var(--accent)]">{order.orderNumber}</span>
+              <span className="font-mono text-sm font-extrabold text-amber-500">{order.orderNumber}</span>
               <StatusBadge status={order.status} />
               <ElapsedTime placedAt={order.placedAt} status={order.status} />
               {isNew && (
-                <span className="animate-bounce rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-black text-white uppercase tracking-widest">
+                <span className="animate-bounce rounded-full bg-red-600 px-2 py-0.5 text-[9px] font-black text-white uppercase tracking-widest">
                   NEW
                 </span>
               )}
             </div>
-            <p className="mt-0.5 text-xs text-[var(--ink-soft)]">
+            <p className="mt-1 text-xs text-slate-400 font-medium">
               {formatTime(order.placedAt)} · {timeSince(order.placedAt)} · {order.items?.length} item{order.items?.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -185,7 +185,7 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
             <button
               onClick={(e) => { e.stopPropagation(); patch({ status: "kot_printed" }); }}
               disabled={updating}
-              className="rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
+              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
             >
               {updating ? "⏳ Wait..." : "🖨 KOT"}
             </button>
@@ -194,15 +194,15 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
             <button
               onClick={(e) => { e.stopPropagation(); patch({ status: "done" }); }}
               disabled={updating}
-              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
+              className="rounded-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-[10px] px-2.5 py-1 tracking-wider uppercase transition shadow-sm cursor-pointer disabled:opacity-50"
             >
               {updating ? "⏳ Wait..." : "✅ Serve"}
             </button>
           )}
-          <span className="font-display text-lg font-bold text-[var(--accent)] ml-2">৳{order.totalPrice}</span>
+          <span className="font-sans text-lg font-extrabold text-amber-500 ml-2">৳{order.totalPrice}</span>
           <svg 
             onClick={(e) => { e.stopPropagation(); setExpanded((ev) => !ev); }}
-            className={`h-4 w-4 text-[var(--ink-soft)] transition-transform cursor-pointer hover:text-[var(--ink)] ${expanded ? "rotate-180" : ""}`} 
+            className={`h-4 w-4 text-slate-500 transition-transform cursor-pointer hover:text-white ${expanded ? "rotate-180" : ""}`} 
             fill="none" 
             viewBox="0 0 24 24" 
             stroke="currentColor" 
@@ -215,9 +215,9 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
 
       {/* Expanded content */}
       {expanded && (
-        <div className="border-t border-[var(--line)] px-5 pb-5">
+        <div className="border-t border-slate-800/80 px-5 pb-5">
           {/* Item list */}
-          <ul className="mt-4 divide-y divide-[var(--line)]">
+          <ul className="mt-4 divide-y divide-slate-800/60">
             {(order.items || []).map((item, idx) => {
               const isChecked = !!checkedItems[idx];
               return (
@@ -228,15 +228,15 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleItemCheck(idx)}
-                        className="h-4 w-4 rounded border-[var(--line)] text-[var(--accent)] focus:ring-[var(--accent)] cursor-pointer"
+                        className="h-4 w-4 rounded border-slate-700 text-amber-500 focus:ring-amber-500 cursor-pointer bg-slate-950"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-semibold leading-snug transition-all duration-300 ${isChecked ? "line-through text-[var(--ink-soft)] opacity-40" : "text-[var(--ink)]"}`}>
+                      <p className={`text-sm font-semibold leading-snug transition-all duration-300 ${isChecked ? "line-through text-slate-600 opacity-40" : "text-slate-100"}`}>
                         {item.name}
                       </p>
                       {item.customizations && (
-                        <p className={`text-[10px] mt-0.5 font-medium transition-all ${isChecked ? "text-[var(--ink-soft)]/30 opacity-30" : "text-[var(--ink-soft)]"}`}>
+                        <p className={`text-[10px] mt-0.5 font-medium transition-all ${isChecked ? "text-slate-600/40 opacity-30" : "text-slate-400"}`}>
                           {Object.entries(item.customizations)
                             .map(([key, opt]) => {
                               if (Array.isArray(opt)) {
@@ -249,13 +249,13 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                         </p>
                       )}
                       {item.specialRequest && (
-                        <p className={`text-xs italic mt-0.5 transition-all ${isChecked ? "text-amber-800/40" : "text-amber-700"}`}>📝 {item.specialRequest}</p>
+                        <p className={`text-xs italic mt-0.5 transition-all ${isChecked ? "text-amber-800/30 opacity-40" : "text-amber-500"}`}>📝 {item.specialRequest}</p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
-                    <span className={`text-xs font-bold bg-[var(--paper)] rounded-full px-2 py-0.5 transition-all ${isChecked ? "opacity-30" : "text-[var(--ink-soft)]"}`}>×{item.quantity}</span>
-                    <span className={`text-sm font-bold transition-all ${isChecked ? "line-through text-[var(--ink-soft)] opacity-30" : "text-[var(--ink)]"}`}>৳{item.price * item.quantity}</span>
+                    <span className={`text-xs font-bold bg-slate-800 border border-slate-700 rounded-full px-2 py-0.5 transition-all ${isChecked ? "opacity-30 animate-none" : "text-slate-300"}`}>×{item.quantity}</span>
+                    <span className={`text-sm font-bold transition-all ${isChecked ? "line-through text-slate-600 opacity-30" : "text-slate-200"}`}>৳{item.price * item.quantity}</span>
                   </div>
                 </li>
               );
@@ -263,17 +263,17 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
           </ul>
 
           {order.deliveryCharge > 0 && (
-            <div className="mt-2 text-right text-xs text-[var(--ink-soft)] font-medium">
+            <div className="mt-2 text-right text-xs text-slate-400 font-medium">
               Items: ৳{order.totalPrice - order.deliveryCharge} + Delivery: ৳{order.deliveryCharge}
             </div>
           )}
 
           {order.customerName && (
-            <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-left">
-              <p className="text-xs text-amber-900 leading-relaxed">
+            <div className="mt-3 rounded-lg bg-amber-950/20 border border-amber-900/40 px-3 py-2.5 text-left">
+              <p className="text-xs text-amber-300 leading-relaxed">
                 <strong>👤 Customer Tab Contact:</strong>
                 <br />
-                <span className="font-sans mt-1 block font-bold text-[var(--ink)]">
+                <span className="font-sans mt-1 block font-bold text-white">
                   {order.customerName} ({order.customerContact})
                 </span>
               </p>
@@ -281,29 +281,29 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
           )}
 
           {order.deliveryAddress && (
-            <div className="mt-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-left">
-              <p className="text-xs text-red-900 leading-relaxed">
+            <div className="mt-3 rounded-lg bg-rose-950/20 border border-rose-900/40 px-3 py-2.5 text-left">
+              <p className="text-xs text-rose-300 leading-relaxed">
                 <strong>📍 Delivery Address & Contact:</strong>
                 <br />
-                <span className="whitespace-pre-wrap font-sans mt-1 block">{order.deliveryAddress}</span>
+                <span className="whitespace-pre-wrap font-sans mt-1 block text-white">{order.deliveryAddress}</span>
               </p>
             </div>
           )}
 
           {order.specialNote && (
-            <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
-              <p className="text-xs text-amber-800"><strong>Order note:</strong> {order.specialNote}</p>
+            <div className="mt-3 rounded-lg bg-amber-950/20 border border-amber-900/40 px-3 py-2">
+              <p className="text-xs text-amber-400"><strong>Order note:</strong> {order.specialNote}</p>
             </div>
           )}
 
-          <div className="mt-3 rounded-lg bg-blue-50 border border-blue-200 px-3 py-2">
-            <p className="text-xs text-blue-800 font-semibold">
+          <div className="mt-3 rounded-lg bg-sky-950/20 border border-sky-900/40 px-3 py-2">
+            <p className="text-xs text-sky-400 font-semibold">
               {order.tableNumber === "delivery" ? "⏱ Estimated delivery: 30–45 minutes" : "⏱ Estimated prep: 15–20 minutes"}
             </p>
           </div>
 
           {/* ─── Action buttons ─────────────────────────────── */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             {order.status === "pending" && (
               <>
                 {/* KOT Printed — primary, stops sound */}
@@ -311,21 +311,21 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                   onClick={() => patch({ status: "kot_printed" })}
                   disabled={updating}
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-black text-white transition hover:brightness-105 active:scale-95 disabled:opacity-50 shadow-md cursor-pointer"
-                  style={{ background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)" }}
+                  style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
                 >
                   {updating ? "⏳ Wait..." : "🖨 KOT Printed"}
                 </button>
                 <button
                   onClick={() => patch({ status: "done" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-green-400 bg-green-50 px-4 py-2.5 text-sm font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-emerald-500 bg-emerald-950/20 px-4 py-2.5 text-sm font-bold text-emerald-400 hover:bg-emerald-950/40 transition disabled:opacity-50 cursor-pointer"
                 >
                   {updating ? "⏳ Wait..." : "✅ Done"}
                 </button>
                 <button
                   onClick={() => patch({ status: "cancelled" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-red-300 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-rose-900 bg-rose-950/20 px-4 py-2.5 text-sm font-bold text-rose-400 hover:bg-rose-950/40 transition disabled:opacity-50 cursor-pointer"
                 >
                   {updating ? "⏳ Wait..." : "❌ Cancel"}
                 </button>
@@ -337,21 +337,21 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
                 <button
                   onClick={() => patch({ status: "done" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full bg-green-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-green-700 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 transition disabled:opacity-50 cursor-pointer"
                 >
                   {updating ? "⏳ Wait..." : "✅ Mark Done"}
                 </button>
                 <button
                   onClick={() => patch({ status: "cancelled" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-rose-900 bg-rose-950/20 px-4 py-2.5 text-sm font-bold text-rose-400 hover:bg-rose-950/40 transition disabled:opacity-50 cursor-pointer"
                 >
                   {updating ? "⏳ Wait..." : "❌ Cancel"}
                 </button>
                 <button
                   onClick={() => patch({ status: "pending" })}
                   disabled={updating}
-                  className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 ml-auto cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-amber-900 bg-amber-950/20 px-4 py-2.5 text-sm font-bold text-amber-400 hover:bg-amber-950/40 transition disabled:opacity-50 ml-auto cursor-pointer"
                 >
                   {updating ? "⏳ Wait..." : "🔓 Unlock Ticket"}
                 </button>
@@ -362,7 +362,7 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
               <button
                 onClick={() => patch({ status: "pending" })}
                 disabled={updating}
-                className="flex items-center gap-1.5 rounded-full border border-amber-300 px-4 py-2.5 text-sm font-bold text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-1.5 rounded-full border border-amber-900 bg-amber-950/20 px-4 py-2.5 text-sm font-bold text-amber-400 hover:bg-amber-950/40 transition disabled:opacity-50 cursor-pointer"
               >
                 {updating ? "⏳ Wait..." : "🔓 Unlock Ticket"}
               </button>
@@ -370,15 +370,15 @@ function OrderCard({ order, onStatusChange, onDelete, isNew, isRinging, isEscala
             <button
               onClick={() => onDelete(order.orderId)}
               disabled={updating}
-              className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-4 py-2.5 text-xs font-bold text-[var(--ink-soft)] hover:border-red-300 hover:text-red-600 transition disabled:opacity-50 ml-auto"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-slate-800 bg-slate-950 text-slate-400 hover:border-red-900 hover:text-red-400 transition disabled:opacity-50 ml-auto cursor-pointer"
             >
               🗑
             </button>
           </div>
 
           {order.status === "pending" && (
-            <p className="mt-2 text-center text-[10px] text-red-500 font-semibold">
-              🔊 Alarm is ringing — KOT Printed will silence it
+            <p className="mt-2 text-center text-[10px] text-red-400 font-semibold animate-pulse">
+              🔊 Alarm is active — press KOT Printed to silence
             </p>
           )}
         </div>
@@ -758,37 +758,37 @@ export default function ManagerPortal({ initialOrders }) {
       .slice(0, 5); // top 5 categories
 
     return (
-      <div className="bg-white rounded-2xl border border-[var(--line)] p-6 space-y-8 shadow-sm">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-8 shadow-lg">
         <div>
-          <h3 className="font-display text-xl font-bold text-[var(--ink)]">Performance Insights</h3>
-          <p className="text-xs text-[var(--ink-soft)] mt-1">Real-time statistics of completed orders today.</p>
+          <h3 className="text-xl font-bold text-white tracking-tight">Performance Insights</h3>
+          <p className="text-xs text-slate-400 mt-1">Real-time statistics of completed orders today.</p>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
-            <p className="text-2xl font-black text-[var(--ink)]">৳{totalRevenue}</p>
-            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Total Sales</p>
+          <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
+            <p className="text-2xl font-black text-white font-mono">৳{totalRevenue}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Total Sales</p>
           </div>
-          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
-            <p className="text-2xl font-black text-[var(--ink)]">{completedOrders.length}</p>
-            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Completed</p>
+          <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
+            <p className="text-2xl font-black text-white font-mono">{completedOrders.length}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Completed</p>
           </div>
-          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
-            <p className="text-2xl font-black text-[var(--ink)]">৳{avgOrderValue}</p>
-            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Avg Order Val</p>
+          <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
+            <p className="text-2xl font-black text-white font-mono">৳{avgOrderValue}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Avg Order Val</p>
           </div>
-          <div className="bg-[var(--paper)] rounded-xl p-4 border border-[var(--line)]">
-            <p className="text-2xl font-black text-[var(--ink)]">{avgPrepText}</p>
-            <p className="text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mt-1">Avg Prep Time</p>
+          <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
+            <p className="text-2xl font-black text-white font-mono">{avgPrepText}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Avg Prep Time</p>
           </div>
         </div>
 
         {/* Top Selling Categories */}
         <div className="space-y-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)]">Top Categories by Revenue</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Top Categories by Revenue</h4>
           {categoryData.length === 0 ? (
-            <p className="text-sm text-[var(--ink-soft)] italic">No sales data available yet.</p>
+            <p className="text-sm text-slate-500 italic">No sales data available yet.</p>
           ) : (
             <div className="space-y-3">
               {categoryData.map(([category, revenue]) => {
@@ -797,12 +797,12 @@ export default function ManagerPortal({ initialOrders }) {
                 return (
                   <div key={category} className="space-y-1">
                     <div className="flex justify-between text-sm">
-                      <span className="font-semibold text-[var(--ink)]">{category}</span>
-                      <span className="font-bold text-[var(--accent)]">৳{revenue}</span>
+                      <span className="font-semibold text-slate-200">{category}</span>
+                      <span className="font-bold text-amber-500">৳{revenue}</span>
                     </div>
-                    <div className="h-2 w-full bg-[var(--paper)] rounded-full overflow-hidden border border-[var(--line)]">
+                    <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800">
                       <div 
-                        className="h-full bg-[var(--accent)] rounded-full" 
+                        className="h-full bg-amber-500 rounded-full" 
                         style={{ width: `${pct}%` }} 
                       />
                     </div>
@@ -817,44 +817,44 @@ export default function ManagerPortal({ initialOrders }) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--paper)]">
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans pb-24">
       {/* Ringing alert banner (top of page) */}
       {pendingKotIds.size > 0 && soundEnabled && (
-        <div className="sticky top-0 z-50 flex items-center justify-center gap-3 bg-red-600 py-2 px-4 shadow-lg">
+        <div className="sticky top-0 z-50 flex items-center justify-center gap-3 bg-red-600 py-3.5 px-4 shadow-lg border-b border-red-500/20">
           <span className="animate-ping h-2.5 w-2.5 rounded-full bg-white opacity-80 inline-block" />
-          <span className="text-sm font-black text-white tracking-wide">
-            🔊 ALARM — {pendingKotIds.size} unacknowledged order{pendingKotIds.size > 1 ? "s" : ""} — Press KOT Printed to silence
+          <span className="text-sm font-black text-white tracking-wide uppercase">
+            🔊 ALARM — {pendingKotIds.size} active order{pendingKotIds.size > 1 ? "s" : ""} requiring attention — press KOT Printed to silence
           </span>
         </div>
       )}
 
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-white/95 backdrop-blur-sm shadow-sm">
+      <header className="sticky top-0 z-40 border-b border-slate-850 bg-slate-900/90 backdrop-blur-md shadow-md">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <CrownMark className="h-6 w-6 text-[var(--accent)]" />
+            <CrownMark className="h-6 w-6 text-amber-500" />
             <div>
-              <p className="font-display text-lg font-bold text-[var(--ink)] leading-none">Manager Portal</p>
-              <p className="text-xs text-[var(--ink-soft)]">Crown Coffee</p>
+              <p className="font-display text-lg font-bold text-white leading-none">Manager Portal</p>
+              <p className="text-xs text-slate-400 mt-1">Crown Coffee Terminal</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Connection */}
-            <div className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold ${connected ? "border-green-300 bg-green-50 text-green-700" : "border-red-300 bg-red-50 text-red-700"}`}>
-              <span className={`h-2 w-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
-              {connected ? "Live" : "Reconnecting…"}
+            <div className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold ${connected ? "border-emerald-800 bg-emerald-950/20 text-emerald-400" : "border-red-950/40 bg-red-950/20 text-red-400"}`}>
+              <span className={`h-2 w-2 rounded-full ${connected ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
+              {connected ? "Live" : "Offline"}
             </div>
 
             {/* Sound toggle */}
             <button
               onClick={() => setSoundEnabled((s) => !s)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${soundEnabled ? "border-red-400 bg-red-50 text-red-700" : "border-[var(--line)] text-[var(--ink-soft)]"}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition cursor-pointer ${soundEnabled ? "border-rose-900 bg-rose-950/25 text-rose-400 hover:bg-rose-950/40" : "border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"}`}
             >
               {soundEnabled ? "🔊 Sound ON" : "🔕 Muted"}
             </button>
 
-            <button onClick={handleLogout} className="rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-semibold hover:border-red-300 hover:text-red-600 transition">
+            <button onClick={handleLogout} className="rounded-full border border-slate-800 px-3 py-1.5 text-xs font-semibold hover:border-rose-900 hover:text-rose-400 transition cursor-pointer">
               Log out
             </button>
           </div>
@@ -863,14 +863,14 @@ export default function ManagerPortal({ initialOrders }) {
 
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 space-y-6">
         {/* Alert Tone Indicator */}
-        <div className="rounded-2xl border border-[var(--line)] bg-white p-4 flex items-center justify-between gap-3">
+        <div className="rounded-2xl border border-slate-850 bg-slate-900/60 p-4 flex items-center justify-between gap-3 shadow-md backdrop-blur-xs">
           <div>
-            <span className="text-sm font-semibold text-[var(--ink)]">Alert Tone: {hasEscalatedOrder ? "🚨 Urgent Alarm" : "🎶 Classic Chime"}</span>
-            <p className="text-xs text-[var(--ink-soft)]">This sound will ring continuously when a new order arrives until you press KOT Printed.</p>
+            <span className="text-sm font-semibold text-white">Alert Tone: {hasEscalatedOrder ? "🚨 Urgent Alarm" : "🎶 Classic Chime"}</span>
+            <p className="text-xs text-slate-400 mt-0.5">This sound will ring continuously when a new order arrives until you press KOT Printed.</p>
           </div>
           <button
             onClick={() => SOUND_PRESETS[currentSoundKey].fn()}
-            className="rounded-full border border-[var(--line)] px-4 py-2 text-xs font-semibold text-[var(--ink-soft)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
+            className="rounded-full border border-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-amber-500 hover:text-amber-500 transition cursor-pointer"
           >
             ▶ Test Sound
           </button>
@@ -879,34 +879,34 @@ export default function ManagerPortal({ initialOrders }) {
         {/* Stats */}
         <div className="grid grid-cols-4 gap-3">
           {[
-            { label: "🔴 Ringing",  value: pendingKotIds.size, color: "text-red-600",          bg: "bg-red-50 border-red-200" },
-            { label: "⏳ Pending",  value: pendingCount,        color: "text-amber-600",         bg: "bg-amber-50 border-amber-200" },
-            { label: "✅ Done",     value: orders.filter((o) => o.status === "done").length, color: "text-green-600", bg: "bg-green-50 border-green-200" },
-            { label: "📋 Total",    value: orders.length,       color: "text-[var(--accent)]",   bg: "bg-[var(--accent-soft)] border-[var(--line)]" },
+            { label: "🔴 Ringing",  value: pendingKotIds.size, color: "text-rose-400",          bg: "bg-rose-950/20 border-rose-900/40 shadow-rose-950/10" },
+            { label: "⏳ Pending",  value: pendingCount,        color: "text-amber-400",         bg: "bg-amber-950/20 border-amber-900/40 shadow-amber-950/10" },
+            { label: "✅ Done",     value: orders.filter((o) => o.status === "done").length, color: "text-emerald-400", bg: "bg-emerald-950/20 border-emerald-900/40 shadow-emerald-950/10" },
+            { label: "📋 Total",    value: orders.length,       color: "text-slate-300",         bg: "bg-slate-900/60 border-slate-800" },
           ].map((s) => (
-            <div key={s.label} className={`rounded-2xl border p-4 text-center ${s.bg}`}>
-              <p className={`font-display text-3xl font-black ${s.color}`}>{s.value}</p>
-              <p className="mt-1 text-[10px] font-semibold text-[var(--ink-soft)] uppercase tracking-wider">{s.label}</p>
+            <div key={s.label} className={`rounded-2xl border p-4 text-center shadow-md ${s.bg}`}>
+              <p className={`font-mono text-3xl font-extrabold ${s.color}`}>{s.value}</p>
+              <p className="mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Tabs & Search */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--line)]">
-          <div className="flex gap-1">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-850 pb-3">
+          <div className="flex gap-1.5 bg-slate-900 border border-slate-800/80 p-1 rounded-full">
             {tabs.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-xs font-black uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer ${
                   tab === t.id
-                    ? "border-[var(--accent)] text-[var(--ink)]"
-                    : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                    ? "bg-slate-800 text-white shadow-sm border border-slate-700"
+                    : "border border-transparent text-slate-400 hover:text-white"
                 }`}
               >
                 {t.label}
                 {t.count > 0 && (
-                  <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${tab === t.id ? "bg-[var(--accent)] text-white" : "bg-[var(--line)] text-[var(--ink-soft)]"}`}>
+                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-extrabold ${tab === t.id ? "bg-amber-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}>
                     {t.count}
                   </span>
                 )}
@@ -921,24 +921,24 @@ export default function ManagerPortal({ initialOrders }) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-full border border-[var(--line)] bg-white py-1.5 pl-3 pr-8 text-xs font-semibold text-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none appearance-none cursor-pointer"
+                  className="rounded-full border border-slate-800 bg-slate-900 py-1.5 pl-3 pr-8 text-xs font-semibold text-slate-400 focus:border-slate-700 focus:outline-none appearance-none cursor-pointer"
                 >
                   <option value="oldest">⏳ Oldest First (FIFO)</option>
                   <option value="newest">🆕 Newest First</option>
                   <option value="table">📍 Table Number</option>
                 </select>
-                <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[10px] text-[var(--ink-soft)]">▼</span>
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[10px] text-slate-500">▼</span>
               </div>
 
               {/* Search input */}
               <div className="relative w-full sm:w-64">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-[var(--ink-soft)] pointer-events-none">🔍</span>
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-500 pointer-events-none">🔍</span>
                 <input
                   type="text"
                   placeholder="Search orders..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-full border border-[var(--line)] bg-white py-1.5 pl-8 pr-4 text-xs text-[var(--ink)] placeholder-[var(--ink-soft)] focus:border-[var(--accent)] focus:outline-none"
+                  className="w-full rounded-full border border-slate-800 bg-slate-900 py-1.5 pl-8 pr-4 text-xs text-slate-100 placeholder-slate-500 focus:border-slate-700 focus:outline-none"
                 />
               </div>
             </div>
@@ -952,11 +952,11 @@ export default function ManagerPortal({ initialOrders }) {
           <div className={`grid grid-cols-1 ${tab === "pending" ? "md:grid-cols-2 lg:grid-cols-3" : ""} gap-4`}>
             {sortedOrders.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
-                <CrownMark className="h-12 w-12 text-[var(--accent)] opacity-20 mb-4" />
-                <p className="font-display text-xl font-bold text-[var(--ink)]">
+                <CrownMark className="h-12 w-12 text-slate-700 mb-4" />
+                <p className="font-display text-xl font-bold text-white">
                   {tab === "pending" ? "No active orders" : "No orders here"}
                 </p>
-                <p className="mt-2 text-sm text-[var(--ink-soft)]">
+                <p className="mt-2 text-sm text-slate-400">
                   {tab === "pending"
                     ? "New orders will appear here instantly. The alarm will ring automatically."
                     : "Orders you manage will show up here."}

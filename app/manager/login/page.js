@@ -34,21 +34,21 @@ export default function ManagerLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--paper)]">
-      <div className="w-full max-w-sm">
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-8 shadow-xl">
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-100 antialiased font-sans">
+      <div className="w-full max-w-sm px-4">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
           {/* Logo */}
           <div className="mb-8 flex flex-col items-center gap-2">
             <div className="flex h-14 w-14 items-center justify-center rounded-full" style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}>
               <CrownMark className="h-7 w-7 text-white" />
             </div>
-            <h1 className="font-display text-2xl font-bold text-[var(--ink)]">Manager Portal</h1>
-            <p className="text-sm text-[var(--ink-soft)]">Crown Coffee — Staff Access</p>
+            <h1 className="font-display text-2xl font-bold text-white">Manager Portal</h1>
+            <p className="text-sm text-slate-400">Crown Coffee — Staff Access</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="pin" className="block text-sm font-semibold text-[var(--ink)] mb-1.5">
+              <label htmlFor="pin" className="block text-sm font-semibold text-slate-300 mb-1.5">
                 Manager PIN
               </label>
               <input
@@ -60,13 +60,13 @@ export default function ManagerLoginPage() {
                 placeholder="••••••"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="w-full rounded-xl border-2 border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-center text-2xl font-bold tracking-widest text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none transition"
+                className="w-full rounded-xl border-2 border-slate-800 bg-slate-950 px-4 py-3 text-center text-2xl font-bold tracking-widest text-white focus:border-amber-500 focus:outline-none transition"
                 required
               />
             </div>
 
             {error && (
-              <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700 text-center font-semibold">
+              <p className="rounded-lg bg-red-950/25 border border-red-900/50 px-3 py-2 text-sm text-red-400 text-center font-semibold">
                 {error}
               </p>
             )}
@@ -74,7 +74,7 @@ export default function ManagerLoginPage() {
             <button
               type="submit"
               disabled={loading || pin.length < 4}
-              className="w-full rounded-xl py-3.5 text-sm font-bold tracking-wide text-white transition hover:brightness-105 active:scale-98 disabled:opacity-50"
+              className="w-full rounded-xl py-3.5 text-sm font-bold tracking-wide text-white transition hover:brightness-105 active:scale-98 disabled:opacity-50 cursor-pointer"
               style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
             >
               {loading ? "Verifying…" : "Access Portal"}
