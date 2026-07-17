@@ -45,6 +45,18 @@ export default function BannerStrip({ initialBanners = [] }) {
     setDismissed(true);
   }, [banners]);
 
+  // Manage CSS variable for floating button adjustment
+  useEffect(() => {
+    if (visible && !dismissed && banners.length > 0) {
+      document.documentElement.style.setProperty('--banner-height', '52px');
+    } else {
+      document.documentElement.style.setProperty('--banner-height', '0px');
+    }
+    return () => {
+      document.documentElement.style.setProperty('--banner-height', '0px');
+    };
+  }, [visible, dismissed, banners.length]);
+
   if (!visible || dismissed || banners.length === 0) return null;
 
   // Stitch all banner texts together for the ticker

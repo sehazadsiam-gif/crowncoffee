@@ -241,8 +241,9 @@ export function FloatingBasketButton() {
   return (
     <button
       onClick={() => setIsOpen(true)}
-      className="fixed bottom-6 right-6 z-40 flex h-14 w-14 scale-100 items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none"
+      className="fixed right-6 z-[110] flex h-14 w-14 scale-100 items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none"
       style={{
+        bottom: "calc(1.5rem + var(--banner-height, 0px))",
         background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
         boxShadow: "0 10px 25px -5px rgba(182, 134, 44, 0.5)",
       }}
