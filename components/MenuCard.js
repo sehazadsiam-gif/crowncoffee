@@ -4,23 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
 import { useBasket } from "@/context/BasketContext";
-import { getItemCustomizations } from "@/lib/customizations";
-import CustomizationModal from "./CustomizationModal";
 
 export default function MenuCard({ item }) {
   const { addToBasket, decrementLastAddedCustom, getItemQuantity, isMounted } = useBasket();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const qty = isMounted ? getItemQuantity(item.id) : 0;
-  const customizations = getItemCustomizations(item);
 
   const handleAddClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (customizations) {
-      setIsModalOpen(true);
-    } else {
-      addToBasket(item);
-    }
+    addToBasket(item);
   };
 
   const handleMinusClick = (e) => {
@@ -168,15 +160,6 @@ export default function MenuCard({ item }) {
           )}
         </div>
       </article>
-
-      <CustomizationModal
-        item={item}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={(selectedOpts, finalPrice) => {
-          addToBasket(item, selectedOpts, finalPrice);
-        }}
-      />
     </>
   );
 }
