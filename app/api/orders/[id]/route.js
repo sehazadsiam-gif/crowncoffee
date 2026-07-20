@@ -1,5 +1,5 @@
 import { updateOrder, deleteOrder, getOrders } from "@/lib/data";
-import { broadcastOrderUpdate } from "@/lib/orders";
+import { broadcastOrderUpdate, broadcastOrderDeleted } from "@/lib/orders";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +42,8 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
     await deleteOrder(id);
+    // Notify all connected SSE clients (managers + customers) that this order was removed
+    broadcastOrderDeleted(id);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("DELETE /api/orders/[id] error:", err);

@@ -44,11 +44,11 @@ export default function MenuCard({ item }) {
 
         {/* Center: Info */}
         <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <h3 className="font-display text-sm font-bold text-[var(--ink)] leading-snug truncate">
+          <h3 className="font-display text-sm font-bold text-[var(--ink)] leading-snug">
             {item.name}
           </h3>
           {item.description && (
-            <p className="text-[10px] leading-relaxed text-[var(--ink-soft)] line-clamp-2 mt-0.5">
+            <p className="text-[10px] leading-relaxed text-[var(--ink-soft)] mt-0.5">
               {item.description}
             </p>
           )}
@@ -58,7 +58,7 @@ export default function MenuCard({ item }) {
         </div>
 
         {/* Right: Quantity / Add button */}
-        <div className="shrink-0 flex items-center justify-end w-20">
+        <div className="shrink-0 flex items-center justify-end">
           {qty > 0 ? (
             <div
               className="flex items-center rounded-full text-white shadow-md p-0.5 border border-white/20 transition-all duration-300"

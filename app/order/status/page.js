@@ -85,6 +85,7 @@ function StatusContent() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [removedByManager, setRemovedByManager] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -93,6 +94,7 @@ function StatusContent() {
       return;
     }
 
+    // Initial fetch + polling fallback
     const fetchStatus = async () => {
       try {
         const res = await fetch(`/api/orders/${orderId}`);
@@ -100,6 +102,9 @@ function StatusContent() {
           const data = await res.json();
           setOrder(data);
           setError("");
+        } else if (res.status === 404) {
+          setRemovedByManager(true);
+          setOrder(null);
         } else {
           setError("Order not found or has been removed.");
         }
@@ -111,9 +116,30 @@ function StatusContent() {
     };
 
     fetchStatus();
-    // Poll status every 5 seconds
     const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
+
+    // SSE for instant real-time updates
+    const es = new EventSource(`/api/orders/${orderId}/stream`);
+    es.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.type === "order_updated" && msg.order?.orderId === orderId) {
+          setOrder(msg.order);
+          setError("");
+          setLoading(false);
+        } else if (msg.type === "order_deleted" && msg.orderId === orderId) {
+          setRemovedByManager(true);
+          setOrder(null);
+          clearInterval(interval);
+        }
+      } catch { }
+    };
+    es.onerror = () => es.close();
+
+    return () => {
+      clearInterval(interval);
+      es.close();
+    };
   }, [orderId]);
 
   if (loading) {
@@ -121,6 +147,35 @@ function StatusContent() {
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <div className="animate-spin text-4xl mb-4 text-[var(--accent)]">⟳</div>
         <p className="text-sm text-[var(--ink-soft)] font-medium">Connecting to kitchen...</p>
+      </div>
+    );
+  }
+
+  // Removed by manager — clear, friendly notification
+  if (removedByManager) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-50 border-2 border-red-200">
+          <span className="text-4xl">🚫</span>
+        </div>
+        <div className="space-y-2">
+          <h3 className="font-display text-2xl font-bold text-[var(--ink)]">Order Removed</h3>
+          <p className="text-sm text-[var(--ink-soft)] max-w-xs leading-relaxed">
+            We&apos;re sorry — this order was removed by our staff, likely due to item unavailability.
+            Please approach a staff member or place a new order.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-4 max-w-xs text-center">
+          <p className="text-xs font-semibold text-amber-800">
+            💬 Apologies for the inconvenience. Our staff will assist you shortly.
+          </p>
+        </div>
+        <Link
+          href="/order"
+          className="rounded-full bg-[var(--accent)] px-8 py-3 text-sm font-semibold text-white transition hover:opacity-90 active:scale-95"
+        >
+          Place a New Order
+        </Link>
       </div>
     );
   }
