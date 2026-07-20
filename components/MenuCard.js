@@ -5,7 +5,7 @@ import Image from "next/image";
 import CrownMark from "./CrownMark";
 import { useBasket } from "@/context/BasketContext";
 
-export default function MenuCard({ item }) {
+export default function MenuCard({ item, viewOnly = false }) {
   const { addToBasket, decrementLastAddedCustom, getItemQuantity, isMounted } = useBasket();
   const qty = isMounted ? getItemQuantity(item.id) : 0;
 
@@ -24,7 +24,7 @@ export default function MenuCard({ item }) {
   return (
     <>
       {/* ─── Mobile View: Horizontal List Row (shows 4-5 items at once) ─── */}
-      <article className="flex md:hidden gap-3.5 items-center p-3 rounded-2xl border border-[var(--line)] bg-[var(--card)]">
+      <article className="flex md:hidden gap-3.5 items-center p-3 rounded-2xl border border-[var(--line)] bg-[var(--card)]" aria-label={item.name}>
         {/* Left: Thumbnail image */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--accent-soft)]">
           {item.image ? (
@@ -57,39 +57,41 @@ export default function MenuCard({ item }) {
           </span>
         </div>
 
-        {/* Right: Quantity / Add button */}
-        <div className="shrink-0 flex items-center justify-end">
-          {qty > 0 ? (
-            <div
-              className="flex items-center rounded-full text-white shadow-md p-0.5 border border-white/20 transition-all duration-300"
-              style={{
-                background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
-              }}
-            >
-              <button
-                onClick={handleMinusClick}
-                className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
+        {/* Right: Quantity / Add button (hidden in view-only mode) */}
+        {!viewOnly && (
+          <div className="shrink-0 flex items-center justify-end">
+            {qty > 0 ? (
+              <div
+                className="flex items-center rounded-full text-white shadow-md p-0.5 border border-white/20 transition-all duration-300"
+                style={{
+                  background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
+                }}
               >
-                -
-              </button>
-              <span className="w-4 text-center text-[11px] font-bold">{qty}</span>
+                <button
+                  onClick={handleMinusClick}
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
+                >
+                  -
+                </button>
+                <span className="w-4 text-center text-[11px] font-bold">{qty}</span>
+                <button
+                  onClick={handleAddClick}
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
               <button
                 onClick={handleAddClick}
-                className="flex h-6 w-6 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-xs font-bold"
+                className="flex h-7 items-center gap-1 rounded-full bg-white px-2.5 text-[11px] font-bold text-[var(--ink)] shadow-md border border-[var(--line)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95 transition"
               >
-                +
+                <span>+</span>
+                <span>Add</span>
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleAddClick}
-              className="flex h-7 items-center gap-1 rounded-full bg-white px-2.5 text-[11px] font-bold text-[var(--ink)] shadow-md border border-[var(--line)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95 transition"
-            >
-              <span>+</span>
-              <span>Add</span>
-            </button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </article>
 
       {/* ─── Desktop View: Classic Grid Card ─── */}
@@ -110,39 +112,41 @@ export default function MenuCard({ item }) {
             </div>
           )}
 
-          {/* Basket Overlay Controls */}
-          <div className="absolute bottom-2.5 right-2.5 z-10">
-            {qty > 0 ? (
-              <div
-                className="flex items-center rounded-full text-white shadow-lg p-0.5 border border-white/20 transition-all duration-300"
-                style={{
-                  background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
-                }}
-              >
-                <button
-                  onClick={handleMinusClick}
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
+          {/* Basket Overlay Controls (hidden in view-only mode) */}
+          {!viewOnly && (
+            <div className="absolute bottom-2.5 right-2.5 z-10">
+              {qty > 0 ? (
+                <div
+                  className="flex items-center rounded-full text-white shadow-lg p-0.5 border border-white/20 transition-all duration-300"
+                  style={{
+                    background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
+                  }}
                 >
-                  -
-                </button>
-                <span className="w-5 text-center text-xs font-bold">{qty}</span>
+                  <button
+                    onClick={handleMinusClick}
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
+                  >
+                    -
+                  </button>
+                  <span className="w-5 text-center text-xs font-bold">{qty}</span>
+                  <button
+                    onClick={handleAddClick}
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
                 <button
                   onClick={handleAddClick}
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10 active:scale-90 text-sm font-bold"
+                  className="flex h-8 items-center gap-1 rounded-full bg-white px-3 text-xs font-bold text-[var(--ink)] shadow-lg border border-[var(--line)] transition hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95"
                 >
-                  +
+                  <span>+</span>
+                  <span>Add</span>
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleAddClick}
-                className="flex h-8 items-center gap-1 rounded-full bg-white px-3 text-xs font-bold text-[var(--ink)] shadow-lg border border-[var(--line)] transition hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] active:scale-95"
-              >
-                <span>+</span>
-                <span>Add</span>
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Card Content */}

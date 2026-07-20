@@ -24,7 +24,7 @@ export default async function MenuPage() {
         </p>
       </div>
 
-      <InteractiveMenu groups={groups} />
+      <InteractiveMenu groups={groups} viewOnly />
     </div>
   );
 }

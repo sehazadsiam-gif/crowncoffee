@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import MenuCard from "./MenuCard";
 
-export default function InteractiveMenu({ groups }) {
+export default function InteractiveMenu({ groups, viewOnly = false }) {
   const [activeCategory, setActiveCategory] = useState(groups[0]?.category || "");
   const sectionRefs = useRef({});
 
@@ -112,7 +112,7 @@ export default function InteractiveMenu({ groups }) {
               </div>
               <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
                 {group.items.map((item) => (
-                  <MenuCard key={item.id} item={item} />
+                  <MenuCard key={item.id} item={item} viewOnly={viewOnly} />
                 ))}
               </div>
             </section>
