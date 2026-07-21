@@ -46,3 +46,7 @@ next-env.d.ts
 # local databases
 data/orders.json
 data/orders/
+
+# opennext & wrangler
+.open-next
+.wrangler

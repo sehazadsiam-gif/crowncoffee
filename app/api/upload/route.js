@@ -3,6 +3,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { cookies } from "next/headers";
+import { isValidSession, SESSION_COOKIE } from "@/lib/auth";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
@@ -28,6 +30,12 @@ function getR2() {
 }
 
 export async function POST(request) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!(await isValidSession(token))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const formData = await request.formData();
   const file = formData.get("file");
 
