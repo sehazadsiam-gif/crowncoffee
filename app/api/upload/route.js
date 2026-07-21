@@ -9,11 +9,19 @@ import { isValidSession, SESSION_COOKIE } from "@/lib/auth";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
 
-// When R2_ACCESS_KEY_ID is set, uploaded images are stored in Cloudflare R2
-// so they persist on Vercel's read-only filesystem. Locally, images are saved
-// to /public/uploads as before.
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+
+function getNativeR2() {
+  try {
+    const ctx = getCloudflareContext();
+    return ctx?.env?.R2_BUCKET || null;
+  } catch {
+    return null;
+  }
+}
+
 function useBlob() {
-  return Boolean(process.env.R2_ACCESS_KEY_ID?.trim());
+  return Boolean(getNativeR2() || process.env.R2_ACCESS_KEY_ID?.trim());
 }
 
 let _r2 = null;
@@ -54,12 +62,19 @@ export async function POST(request) {
 
   if (useBlob()) {
     const key = `uploads/${filename}`;
-    await getR2().send(new PutObjectCommand({
-      Bucket:      process.env.R2_BUCKET_NAME?.trim(),
-      Key:         key,
-      Body:        buffer,
-      ContentType: "image/jpeg",
-    }));
+    const nativeR2 = getNativeR2();
+    if (nativeR2) {
+      await nativeR2.put(key, buffer, {
+        httpMetadata: { contentType: "image/jpeg" },
+      });
+    } else {
+      await getR2().send(new PutObjectCommand({
+        Bucket:      process.env.R2_BUCKET_NAME?.trim(),
+        Key:         key,
+        Body:        buffer,
+        ContentType: "image/jpeg",
+      }));
+    }
     // Return the public R2 URL (requires public access enabled on the bucket)
     return NextResponse.json({ url: `${process.env.R2_PUBLIC_URL?.trim()}/${key}` });
   }

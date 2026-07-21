@@ -20,6 +20,10 @@
 		}
 	],
 	"r2_buckets": [
+		{
+			"binding": "R2_BUCKET",
+			"bucket_name": "crown-coffee"
+		},
 		// Use R2 incremental cache
 		// See https://opennext.js.org/cloudflare/caching
 		{
