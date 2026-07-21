@@ -12,7 +12,9 @@ const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
 // When R2_ACCESS_KEY_ID is set, uploaded images are stored in Cloudflare R2
 // so they persist on Vercel's read-only filesystem. Locally, images are saved
 // to /public/uploads as before.
-const USE_BLOB = Boolean(process.env.R2_ACCESS_KEY_ID?.trim());
+function useBlob() {
+  return Boolean(process.env.R2_ACCESS_KEY_ID?.trim());
+}
 
 let _r2 = null;
 function getR2() {
@@ -50,7 +52,7 @@ export async function POST(request) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const filename = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}.jpg`;
 
-  if (USE_BLOB) {
+  if (useBlob()) {
     const key = `uploads/${filename}`;
     await getR2().send(new PutObjectCommand({
       Bucket:      process.env.R2_BUCKET_NAME?.trim(),
