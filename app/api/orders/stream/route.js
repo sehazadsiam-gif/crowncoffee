@@ -25,7 +25,11 @@ export async function GET() {
       // Build a writer-like object that lib/orders.js can call .write() on
       const writer = {
         write(text) {
-          controller.enqueue(encoder.encode(text));
+          try {
+            controller.enqueue(encoder.encode(text));
+          } catch {
+            removeOrderClient(writer);
+          }
         },
       };
 

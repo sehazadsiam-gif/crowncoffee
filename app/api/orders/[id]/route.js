@@ -1,4 +1,4 @@
-import { updateOrder, deleteOrder, getOrders } from "@/lib/data";
+import { updateOrder, deleteOrder, getOrders, readJsonBlob } from "@/lib/data";
 import { broadcastOrderUpdate, broadcastOrderDeleted } from "@/lib/orders";
 import { NextResponse } from "next/server";
 
@@ -8,6 +8,15 @@ export const dynamic = "force-dynamic";
 export async function GET(request, { params }) {
   try {
     const { id } = await params;
+    
+    // Fast path: try reading isolated single order file directly (sub-millisecond R2 lookup)
+    const singleKey = `data/orders/order-${id}.json`;
+    const singleOrder = await readJsonBlob(singleKey, null);
+    if (singleOrder && singleOrder.status !== "deleted") {
+      return NextResponse.json(singleOrder);
+    }
+
+    // Fallback path: search compiled store
     const store = await getOrders();
     const order = store.orders.find((o) => o.orderId === id);
     if (!order) {
