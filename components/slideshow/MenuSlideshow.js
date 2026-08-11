@@ -401,7 +401,7 @@ export default function MenuSlideshow({ menu, settings }) {
                 )}
               </div>
 
-              {/* Price Tag & Direct Order / Customize Button */}
+              {/* Price Tag in BDT */}
               <div className="shrink-0 flex items-center gap-4">
                 <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-8 py-4 rounded-3xl shadow-xl border-2 border-white/40 font-black">
                   <span className="text-2xl sm:text-3xl font-extrabold">৳</span>
@@ -409,18 +409,6 @@ export default function MenuSlideshow({ menu, settings }) {
                     {currentSlide.item.price}
                   </span>
                 </div>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCustomizingItem(currentSlide.item);
-                  }}
-                  className="hidden md:flex items-center gap-2 bg-white hover:bg-amber-50 text-black px-6 py-4 rounded-3xl font-extrabold text-sm uppercase tracking-wider shadow-2xl active:scale-95 transition-transform"
-                  title="Customize & Order Item"
-                >
-                  <span>♛</span>
-                  <span>Order Now</span>
-                </button>
               </div>
             </div>
           </div>
@@ -703,16 +691,6 @@ export default function MenuSlideshow({ menu, settings }) {
           </div>
         </div>
       </footer>
-
-      {/* ─── DIRECT CUSTOMIZATION MODAL (If customer taps "Order Now") ─── */}
-      {customizingItem && (
-        <CustomizationModal
-          item={customizingItem}
-          isOpen={Boolean(customizingItem)}
-          onClose={() => setCustomizingItem(null)}
-          onConfirm={(selectedOptions, price) => addToBasket(customizingItem, selectedOptions, price)}
-        />
-      )}
 
       {/* ─── SCAN TO ORDER QR MODAL ─── */}
       {showQrModal && (
