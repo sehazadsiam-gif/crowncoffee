@@ -163,26 +163,39 @@ export default function MenuSlideshow({ menu, settings }) {
     setDragStartX(null);
   };
 
-  // ─── Timer / Progress Loop ──────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isPlaying || activeSlides.length === 0 || customizingItem) return;
+  // ─── Timer / Progress Loop (Bulletproof Auto-Advance) ──────────────────────
+  const startTimeRef = useRef(Date.now());
 
-    const stepMs = 50;
+  // Reset timer start time whenever currentIndex changes or duration/isPlaying changes
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+    setProgress(0);
+  }, [currentIndex, duration, isPlaying]);
+
+  useEffect(() => {
+    if (!isPlaying || activeSlides.length <= 1 || customizingItem) {
+      setProgress(0);
+      return;
+    }
+
     const totalMs = duration * 1000;
-    const increment = (stepMs / totalMs) * 100;
 
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          nextSlide();
-          return 0;
-        }
-        return prev + increment;
-      });
-    }, stepMs);
+      const elapsed = Date.now() - startTimeRef.current;
+      const pct = Math.min(100, (elapsed / totalMs) * 100);
+      setProgress(pct);
+
+      if (elapsed >= totalMs) {
+        startTimeRef.current = Date.now();
+        setProgress(0);
+        setPrevIndex(currentIndex);
+        setDirection("next");
+        setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
+      }
+    }, 50);
 
     return () => clearInterval(timer);
-  }, [isPlaying, duration, nextSlide, activeSlides.length, customizingItem]);
+  }, [isPlaying, duration, activeSlides.length, customizingItem, currentIndex]);
 
   // ─── Fullscreen Toggle ─────────────────────────────────────────────────────
   const toggleFullscreen = () => {
