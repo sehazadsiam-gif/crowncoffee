@@ -339,41 +339,23 @@ export default function MenuSlideshow({ menu, settings }) {
         </div>
       </header>
 
-      {/* ─── DUAL-LAYER IMAGE CANVAS WITH INTERACTIVE SWIPE TRANSITION ─── */}
-      <main
-        className="relative z-10 h-full w-full"
-        style={{
-          transform: isDragging ? `translateX(${dragOffsetX}px)` : "translateX(0)",
-          transition: isDragging ? "none" : "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
-      >
-        {/* Outgoing Background Layer for Smooth Photo Crossfade */}
-        {previousSlide && previousSlide.item?.image && (
-          <div className="absolute inset-0 z-0 bg-[#070504] opacity-50 transition-opacity duration-700">
-            <Image
-              src={previousSlide.item.image}
-              alt=""
-              fill
-              className="object-cover"
-            />
-          </div>
-        )}
-
+      {/* ─── SINGLE FULL-SCREEN PICTURE CANVAS (LIGHTWEIGHT & LAG-FREE) ─── */}
+      <main className="relative z-10 h-full w-full">
         {/* ─── TYPE A: ITEM SPOTLIGHT SLIDE ─── */}
         {currentSlide.type === "item" && (
-          <div key={currentSlide.id} className="relative h-full w-full overflow-hidden bg-[#070504] animate-crossfade">
-            {/* 100% Full-Screen Photo with Slow Ken Burns Pan */}
+          <div key={currentSlide.id} className="relative h-full w-full overflow-hidden bg-[#070504]">
+            {/* 100% Full-Screen Photo */}
             {currentSlide.item.image ? (
               <Image
                 src={currentSlide.item.image}
                 alt={currentSlide.item.name}
                 fill
                 priority
-                className="object-cover animate-kenburns"
+                className="object-cover"
               />
             ) : (
-              <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#070504] h-full w-full animate-crossfade">
-                <div className="h-40 w-40 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mb-8 shadow-2xl animate-pulse">
+              <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#070504] h-full w-full">
+                <div className="h-40 w-40 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mb-8 shadow-2xl">
                   <CrownMark className="h-24 w-24 text-[#f3d37c]" />
                 </div>
                 <h4 className="font-display text-5xl sm:text-7xl font-black text-white tracking-wide">
@@ -386,30 +368,30 @@ export default function MenuSlideshow({ menu, settings }) {
             )}
 
             {/* Floating Top Category & Chef Badges */}
-            <div className={`absolute top-24 left-8 flex flex-wrap gap-3 z-20 ${slideAnimationClass}`}>
-              <span className="bg-[#b6862c] text-black text-xs sm:text-sm font-black uppercase px-6 py-2.5 rounded-2xl shadow-2xl tracking-widest border border-white/30 transition-spring hover:scale-105">
+            <div className="absolute top-24 left-8 flex flex-wrap gap-3 z-20">
+              <span className="bg-[#b6862c] text-black text-xs sm:text-sm font-black uppercase px-6 py-2.5 rounded-2xl shadow-xl tracking-widest border border-white/30">
                 {currentSlide.category}
               </span>
               {currentSlide.item.bestSeller && (
-                <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs sm:text-sm font-black uppercase px-6 py-2.5 rounded-2xl shadow-2xl tracking-widest">
+                <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs sm:text-sm font-black uppercase px-6 py-2.5 rounded-2xl shadow-xl tracking-widest">
                   ★ Best Seller
                 </span>
               )}
             </div>
 
-            <div className={`absolute top-24 right-8 bg-black/75 backdrop-blur-2xl px-5 py-2 rounded-2xl border border-white/20 text-xs font-black text-white/90 z-20 shadow-2xl ${slideAnimationClass}`}>
+            <div className="absolute top-24 right-8 bg-black/80 px-5 py-2 rounded-2xl border border-white/20 text-xs font-black text-white/90 z-20 shadow-xl">
               {currentSlide.itemIndex} / {currentSlide.totalCategoryItems}
             </div>
 
-            {/* Glass Gradient Overlay: Directional Slide Title & Price Tag & Order Button */}
+            {/* Bottom Gradient Overlay: Name & Price */}
             <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black via-black/85 to-transparent pt-28 pb-36 px-8 sm:px-14 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
               {/* Item Name */}
-              <div className={`max-w-4xl ${slideAnimationClass}`}>
+              <div className="max-w-4xl">
                 <div className="flex items-center gap-2.5 mb-2.5 text-[#f3d37c] font-black text-xs sm:text-base tracking-[0.25em] uppercase">
                   <CrownMark className="h-5 w-5" />
                   <span>{currentSlide.category}</span>
                 </div>
-                <h2 className="font-display text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-none tracking-tight drop-shadow-[0_10px_30px_rgba(0,0,0,1)]">
+                <h2 className="font-display text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-none tracking-tight drop-shadow-md">
                   {currentSlide.item.name}
                 </h2>
                 {currentSlide.item.description && (
@@ -420,8 +402,8 @@ export default function MenuSlideshow({ menu, settings }) {
               </div>
 
               {/* Price Tag & Direct Order / Customize Button */}
-              <div className={`shrink-0 flex items-center gap-4 ${slideAnimationClass}`}>
-                <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-8 py-4 rounded-3xl shadow-[0_20px_50px_rgba(182,134,44,0.9)] border-2 border-white/40 font-black transition-spring hover:scale-105">
+              <div className="shrink-0 flex items-center gap-4">
+                <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-8 py-4 rounded-3xl shadow-xl border-2 border-white/40 font-black">
                   <span className="text-2xl sm:text-3xl font-extrabold">৳</span>
                   <span className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight">
                     {currentSlide.item.price}
@@ -433,7 +415,7 @@ export default function MenuSlideshow({ menu, settings }) {
                     e.stopPropagation();
                     setCustomizingItem(currentSlide.item);
                   }}
-                  className="hidden md:flex items-center gap-2 bg-white/95 hover:bg-white text-black px-6 py-4 rounded-3xl font-extrabold text-sm uppercase tracking-wider shadow-2xl transition-spring active:scale-90 hover:scale-105"
+                  className="hidden md:flex items-center gap-2 bg-white hover:bg-amber-50 text-black px-6 py-4 rounded-3xl font-extrabold text-sm uppercase tracking-wider shadow-2xl active:scale-95 transition-transform"
                   title="Customize & Order Item"
                 >
                   <span>♛</span>
@@ -446,25 +428,25 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE B: CATEGORY INTRO SLIDE ─── */}
         {currentSlide.type === "category_intro" && (
-          <div key={currentSlide.id} className="relative h-full w-full bg-[#070504] p-8 sm:p-16 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden animate-crossfade">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,134,44,0.35)_0%,transparent_75%)] pointer-events-none animate-pulse" />
+          <div key={currentSlide.id} className="relative h-full w-full bg-[#070504] p-8 sm:p-16 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,134,44,0.25)_0%,transparent_75%)] pointer-events-none" />
 
-            <div className={`inline-flex items-center gap-3 bg-[#b6862c]/30 border-2 border-[#b6862c]/70 text-[#f3d37c] px-8 py-3 rounded-full text-base sm:text-lg font-black uppercase tracking-widest mb-6 shadow-2xl ${slideAnimationClass}`}>
+            <div className="inline-flex items-center gap-3 bg-[#b6862c]/30 border-2 border-[#b6862c]/70 text-[#f3d37c] px-8 py-3 rounded-full text-base sm:text-lg font-black uppercase tracking-widest mb-6 shadow-2xl">
               <CrownMark className="h-6 w-6" />
               <span>Menu Section</span>
             </div>
 
-            <h2 className={`font-display text-6xl sm:text-8xl font-black text-white tracking-tight leading-none mb-4 drop-shadow-[0_15px_30px_rgba(0,0,0,1)] ${slideAnimationClass}`}>
+            <h2 className="font-display text-6xl sm:text-8xl font-black text-white tracking-tight leading-none mb-4 drop-shadow-md">
               {currentSlide.category}
             </h2>
 
-            <p className={`text-2xl sm:text-3xl text-[#e8c04a] font-extrabold max-w-4xl mb-12 ${slideAnimationClass}`}>
+            <p className="text-2xl sm:text-3xl text-[#e8c04a] font-extrabold max-w-4xl mb-12">
               {currentSlide.totalItems} Specialty Selections
             </p>
 
             {/* Collage of item photos */}
             <div className="flex items-center justify-center gap-5 flex-wrap max-w-5xl">
-              {currentSlide.items.slice(0, 4).map((item, idx) => (
+              {currentSlide.items.slice(0, 4).map((item) => (
                 <div
                   key={item.id}
                   onClick={(e) => {
@@ -472,10 +454,10 @@ export default function MenuSlideshow({ menu, settings }) {
                     const targetIdx = activeSlides.findIndex((s) => s.item?.id === item.id);
                     if (targetIdx !== -1) goToSlide(targetIdx, "next");
                   }}
-                  className={`relative h-40 w-40 sm:h-52 sm:w-52 rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-[#1c1612] transition-spring hover:scale-105 hover:border-[#b6862c] cursor-pointer ${slideAnimationClass}`}
+                  className="relative h-40 w-40 sm:h-52 sm:w-52 rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-[#1c1612] cursor-pointer hover:border-[#b6862c] transition-colors"
                 >
                   {item.image ? (
-                    <Image src={item.image} alt={item.name} fill className="object-cover transition-transform duration-700 hover:scale-110" />
+                    <Image src={item.image} alt={item.name} fill className="object-cover" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center bg-[#2a211b]">
                       <CrownMark className="h-12 w-12 text-[#b6862c]/60" />
@@ -493,8 +475,8 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE C: CATEGORY OVERVIEW GRID SLIDE ─── */}
         {currentSlide.type === "category_grid" && (
-          <div key={currentSlide.id} className="relative h-full w-full bg-[#070504] p-8 sm:p-14 flex flex-col justify-center shadow-2xl pt-28 pb-36 animate-crossfade">
-            <div className={`flex items-center justify-between border-b border-white/20 pb-5 mb-8 ${slideAnimationClass}`}>
+          <div key={currentSlide.id} className="relative h-full w-full bg-[#070504] p-8 sm:p-14 flex flex-col justify-center shadow-2xl pt-28 pb-36">
+            <div className="flex items-center justify-between border-b border-white/20 pb-5 mb-8">
               <div>
                 <span className="text-xs font-black text-[#f3d37c] tracking-widest uppercase">
                   Section Overview
@@ -518,11 +500,11 @@ export default function MenuSlideshow({ menu, settings }) {
                     const targetIdx = activeSlides.findIndex((s) => s.item?.id === item.id);
                     if (targetIdx !== -1) goToSlide(targetIdx, "next");
                   }}
-                  className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 border border-white/20 backdrop-blur-xl hover:border-[#b6862c] transition-spring hover:scale-[1.02] shadow-xl cursor-pointer"
+                  className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 border border-white/20 hover:border-[#b6862c] shadow-xl cursor-pointer transition-colors"
                 >
                   <div className="relative h-24 w-24 shrink-0 rounded-2xl overflow-hidden bg-[#1c1612] border border-white/25">
                     {item.image ? (
-                      <Image src={item.image} alt={item.name} fill className="object-cover transition-transform duration-500 hover:scale-110" />
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center">
                         <CrownMark className="h-9 w-9 text-[#b6862c]/60" />
