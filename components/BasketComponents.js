@@ -236,23 +236,40 @@ function Suggestions({ basket, addToBasket, getItemQuantity, getFoodImage, loadi
 
 // ─── Floating basket button ─────────────────────────────────────────────────
 export function FloatingBasketButton() {
-  const { totalItems, setIsOpen, isMounted } = useBasket();
+  const { totalItems, setIsOpen, isMounted, bumpCount } = useBasket();
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    if (bumpCount > 0) {
+      setAnimating(true);
+      const timer = setTimeout(() => setAnimating(false), 550);
+      return () => clearTimeout(timer);
+    }
+  }, [bumpCount]);
+
   if (!isMounted || totalItems === 0) return null;
+
   return (
     <button
       onClick={() => setIsOpen(true)}
-      className="fixed right-6 z-[110] flex h-14 w-14 scale-100 items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none"
+      className={`fixed right-6 z-[110] flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-spring hover:scale-110 active:scale-90 focus:outline-none ${
+        animating ? "animate-cart-bounce" : ""
+      }`}
       style={{
         bottom: "calc(1.5rem + var(--banner-height, 0px))",
         background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
-        boxShadow: "0 10px 25px -5px rgba(182, 134, 44, 0.5)",
+        boxShadow: "0 12px 28px -4px rgba(182, 134, 44, 0.55)",
       }}
       aria-label={`Open Basket with ${totalItems} items`}
     >
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+      <svg className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
       </svg>
-      <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold shadow-md" style={{ color: "var(--accent)" }}>
+      <span
+        key={totalItems}
+        className={`absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-extrabold shadow-md animate-badge-pop`}
+        style={{ color: "var(--accent)" }}
+      >
         {totalItems}
       </span>
     </button>
@@ -343,25 +360,35 @@ export function BasketDrawer() {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-300" onClick={() => setIsOpen(false)} />
-      <div className="relative z-10 flex h-full w-full flex-col bg-[var(--paper)] shadow-2xl sm:max-w-md">
+      {/* Backdrop with smooth blur fade */}
+      <div 
+        className="fixed inset-0 bg-black/45 backdrop-blur-sm animate-backdrop-in" 
+        onClick={() => setIsOpen(false)} 
+      />
+
+      {/* Drawer Container with Smooth Slide-in */}
+      <div className="relative z-10 flex h-full w-full flex-col bg-[var(--paper)] shadow-2xl sm:max-w-md animate-drawer-in">
         {/* Header */}
         <div className="flex h-20 items-center justify-between border-b border-[var(--line)] bg-[var(--card)] px-6">
-          <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <div className="flex items-center gap-2.5">
+            <svg className="h-5.5 w-5.5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h2 className="font-display text-lg font-bold text-[var(--ink)]">
+            <h2 className="font-display text-lg font-bold text-[var(--ink)] flex items-center gap-2">
               Basket ({totalItems})
               {tableNumber && (
-                <span className="ml-2 text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 rounded-full border border-[var(--accent)]/20">
                   {isDelivery ? "Home Delivery" : isTab ? "Tab Order" : `Table ${tableNumber}`}
                 </span>
               )}
             </h2>
           </div>
-          <button onClick={() => setIsOpen(false)} className="rounded-full p-2 text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)]">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <button 
+            onClick={() => setIsOpen(false)} 
+            className="rounded-full p-2 text-[var(--ink-soft)] hover:bg-[var(--paper)] hover:text-[var(--ink)] transition-spring active:scale-90"
+            aria-label="Close basket"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

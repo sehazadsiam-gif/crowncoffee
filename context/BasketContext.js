@@ -88,10 +88,18 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
     }
   }, [initialDeliveryCharge]);
 
+  const [bumpCount, setBumpCount] = useState(0);
+
+  const triggerBump = () => {
+    setBumpCount((prev) => prev + 1);
+  };
+
   const addToBasket = (item, customizations = null, customizedPrice = null) => {
     const price = customizedPrice !== null ? customizedPrice : item.price;
     const custKey = customizations ? JSON.stringify(customizations) : "";
     const basketItemId = `${item.id}-${custKey}`;
+
+    triggerBump();
 
     setBasket((prev) => {
       const existing = prev.find((i) => i.basketItemId === basketItemId);
@@ -115,6 +123,7 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
   };
 
   const updateQuantity = (basketItemId, change) => {
+    if (change > 0) triggerBump();
     setBasket((prev) =>
       prev
         .map((i) => {
@@ -204,6 +213,8 @@ export function BasketProvider({ children, deliveryCharge: initialDeliveryCharge
         customerContact,
         setCustomerContact,
         isTab,
+        bumpCount,
+        triggerBump,
       }}
     >
       {children}

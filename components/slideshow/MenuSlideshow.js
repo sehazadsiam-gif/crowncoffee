@@ -262,22 +262,22 @@ export default function MenuSlideshow({ menu, settings }) {
       </header>
 
       {/* ─── 100% FULL-SCREEN PICTURE CANVAS & OVERLAY DATA ─── */}
-      <main className="relative z-10 h-full w-full">
+      <main key={currentSlide.id} className="relative z-10 h-full w-full animate-slide-up-fade">
         {/* ─── TYPE A: ITEM SPOTLIGHT SLIDE (100% PICTURE + FLOATING OVERLAY DATA) ─── */}
         {currentSlide.type === "item" && (
           <div className="relative h-full w-full overflow-hidden bg-[#070504]">
-            {/* 100% Full-Screen Photo */}
+            {/* 100% Full-Screen Photo with Continuous Ken Burns Pan */}
             {currentSlide.item.image ? (
               <Image
                 src={currentSlide.item.image}
                 alt={currentSlide.item.name}
                 fill
                 priority
-                className="object-cover transition-transform duration-1000 ease-out"
+                className="object-cover animate-kenburns"
               />
             ) : (
-              <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#070504] h-full w-full">
-                <div className="h-40 w-40 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mb-8 shadow-2xl">
+              <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#070504] h-full w-full animate-slide-up-fade">
+                <div className="h-40 w-40 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mb-8 shadow-2xl animate-pulse">
                   <CrownMark className="h-24 w-24 text-[#f3d37c]" />
                 </div>
                 <h4 className="font-display text-5xl sm:text-7xl font-black text-white tracking-wide">
@@ -290,23 +290,23 @@ export default function MenuSlideshow({ menu, settings }) {
             )}
 
             {/* Top Badges overlay floating on 100% image */}
-            <div className="absolute top-28 left-8 flex flex-wrap gap-3 z-20">
-              <span className="bg-[#b6862c] text-black text-base sm:text-lg font-black uppercase px-7 py-3 rounded-2xl shadow-2xl tracking-widest border border-white/30">
+            <div className="absolute top-28 left-8 flex flex-wrap gap-3 z-20 animate-slide-up-fade">
+              <span className="bg-[#b6862c] text-black text-base sm:text-lg font-black uppercase px-7 py-3 rounded-2xl shadow-2xl tracking-widest border border-white/30 transition-spring hover:scale-105">
                 {currentSlide.category}
               </span>
               {currentSlide.item.kiosk && (
-                <span className="bg-white text-black text-base sm:text-lg font-black uppercase px-7 py-3 rounded-2xl shadow-2xl tracking-widest">
+                <span className="bg-white text-black text-base sm:text-lg font-black uppercase px-7 py-3 rounded-2xl shadow-2xl tracking-widest transition-spring hover:scale-105">
                   ★ Chef Special
                 </span>
               )}
             </div>
 
-            <div className="absolute top-28 right-8 bg-black/75 backdrop-blur-2xl px-6 py-2.5 rounded-2xl border-2 border-white/20 text-sm font-black text-white/90 z-20 shadow-2xl">
+            <div className="absolute top-28 right-8 bg-black/75 backdrop-blur-2xl px-6 py-2.5 rounded-2xl border-2 border-white/20 text-sm font-black text-white/90 z-20 shadow-2xl animate-slide-up-fade">
               Item {currentSlide.itemIndex} / {currentSlide.totalCategoryItems}
             </div>
 
             {/* 100% Picture Floating Bottom Glass Gradient Overlay: Giant Name & Price */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black via-black/85 to-transparent pt-28 pb-20 px-8 sm:px-14 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black via-black/85 to-transparent pt-28 pb-20 px-8 sm:px-14 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 animate-slide-up-fade">
               {/* Item Name */}
               <div className="max-w-5xl">
                 <div className="flex items-center gap-2.5 mb-3 text-[#f3d37c] font-black text-base sm:text-lg tracking-[0.25em] uppercase">
@@ -320,7 +320,7 @@ export default function MenuSlideshow({ menu, settings }) {
 
               {/* Giant Price Tag in BDT */}
               <div className="shrink-0 flex items-center gap-4">
-                <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-10 py-5 rounded-3xl shadow-[0_20px_50px_rgba(182,134,44,0.9)] border-2 border-white/40 font-black">
+                <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-10 py-5 rounded-3xl shadow-[0_20px_50px_rgba(182,134,44,0.9)] border-2 border-white/40 font-black transition-spring hover:scale-105">
                   <span className="text-3xl sm:text-4xl font-extrabold">৳</span>
                   <span className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight">
                     {currentSlide.item.price}
@@ -333,10 +333,10 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE B: CATEGORY INTRO SLIDE ─── */}
         {currentSlide.type === "category_intro" && (
-          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-16 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,134,44,0.35)_0%,transparent_75%)] pointer-events-none" />
+          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-16 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden animate-slide-up-fade">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,134,44,0.35)_0%,transparent_75%)] pointer-events-none animate-pulse" />
 
-            <div className="inline-flex items-center gap-3 bg-[#b6862c]/30 border-2 border-[#b6862c]/70 text-[#f3d37c] px-8 py-3 rounded-full text-lg font-black uppercase tracking-widest mb-8 shadow-2xl">
+            <div className="inline-flex items-center gap-3 bg-[#b6862c]/30 border-2 border-[#b6862c]/70 text-[#f3d37c] px-8 py-3 rounded-full text-lg font-black uppercase tracking-widest mb-8 shadow-2xl transition-spring hover:scale-105">
               <CrownMark className="h-7 w-7" />
               <span>Menu Section</span>
             </div>
@@ -351,13 +351,14 @@ export default function MenuSlideshow({ menu, settings }) {
 
             {/* Collage of item photos */}
             <div className="flex items-center justify-center gap-6 flex-wrap max-w-5xl">
-              {currentSlide.items.slice(0, 4).map((item) => (
+              {currentSlide.items.slice(0, 4).map((item, idx) => (
                 <div
                   key={item.id}
-                  className="relative h-44 w-44 sm:h-56 sm:w-56 rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-[#1c1612]"
+                  className="relative h-44 w-44 sm:h-56 sm:w-56 rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-[#1c1612] transition-spring hover:scale-105 hover:border-[#b6862c]"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
                 >
                   {item.image ? (
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    <Image src={item.image} alt={item.name} fill className="object-cover transition-transform duration-700 hover:scale-110" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center bg-[#2a211b]">
                       <CrownMark className="h-14 w-14 text-[#b6862c]/60" />
@@ -374,7 +375,7 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE C: CATEGORY OVERVIEW GRID SLIDE ─── */}
         {currentSlide.type === "category_grid" && (
-          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-14 flex flex-col justify-center shadow-2xl pt-28 pb-24">
+          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-14 flex flex-col justify-center shadow-2xl pt-28 pb-24 animate-slide-up-fade">
             <div className="flex items-center justify-between border-b-2 border-white/20 pb-6 mb-8">
               <div>
                 <span className="text-base font-black text-[#f3d37c] tracking-widest uppercase">
@@ -384,7 +385,7 @@ export default function MenuSlideshow({ menu, settings }) {
                   {currentSlide.category}
                 </h2>
               </div>
-              <span className="bg-[#b6862c] text-black px-7 py-3 rounded-full text-base font-black uppercase tracking-wider">
+              <span className="bg-[#b6862c] text-black px-7 py-3 rounded-full text-base font-black uppercase tracking-wider shadow-lg">
                 {currentSlide.items.length} Items
               </span>
             </div>
@@ -394,11 +395,11 @@ export default function MenuSlideshow({ menu, settings }) {
               {currentSlide.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/20 backdrop-blur-xl hover:border-[#b6862c] transition"
+                  className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/20 backdrop-blur-xl hover:border-[#b6862c] transition-spring hover:scale-[1.02] shadow-xl"
                 >
                   <div className="relative h-28 w-28 shrink-0 rounded-2xl overflow-hidden bg-[#1c1612] border border-white/25">
                     {item.image ? (
-                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                      <Image src={item.image} alt={item.name} fill className="object-cover transition-transform duration-500 hover:scale-110" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center">
                         <CrownMark className="h-10 w-10 text-[#b6862c]/60" />
@@ -409,7 +410,7 @@ export default function MenuSlideshow({ menu, settings }) {
                     <h3 className="font-display text-2xl font-black text-white truncate">
                       {item.name}
                     </h3>
-                    <span className="inline-block mt-3 text-xl font-black text-[#f3d37c] bg-white/10 px-4 py-1.5 rounded-xl">
+                    <span className="inline-block mt-3 text-xl font-black text-[#f3d37c] bg-white/10 px-4 py-1.5 rounded-xl border border-white/10">
                       ৳{item.price}
                     </span>
                   </div>
@@ -422,8 +423,8 @@ export default function MenuSlideshow({ menu, settings }) {
 
       {/* ─── BOTTOM CONTROLS & NAVIGATION BAR ─── */}
       <footer
-        className={`absolute bottom-4 left-6 right-6 z-40 transition-opacity duration-300 pointer-events-auto ${
-          showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`absolute bottom-4 left-6 right-6 z-40 transition-all duration-300 pointer-events-auto ${
+          showControls ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/80 backdrop-blur-2xl p-3.5 sm:px-6 rounded-3xl border border-white/20 shadow-2xl">
@@ -435,7 +436,7 @@ export default function MenuSlideshow({ menu, settings }) {
                 <button
                   key={cat}
                   onClick={() => jumpToCategory(cat)}
-                  className={`px-4 py-2 rounded-2xl text-xs font-black whitespace-nowrap transition ${
+                  className={`px-4 py-2 rounded-2xl text-xs font-black whitespace-nowrap transition-spring active:scale-90 ${
                     isCurrentCat
                       ? "bg-[#b6862c] text-black shadow-lg font-black scale-105"
                       : "bg-white/10 hover:bg-white/20 text-white/80"
@@ -452,7 +453,7 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Prev */}
             <button
               onClick={prevSlide}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-spring active:scale-80"
               title="Previous Slide (Left Arrow)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -463,7 +464,7 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Play / Pause */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="p-3.5 rounded-full bg-gradient-to-r from-[#b6862c] to-[#d4a017] text-black shadow-xl hover:brightness-110 transition active:scale-95"
+              className="p-3.5 rounded-full bg-gradient-to-r from-[#b6862c] to-[#d4a017] text-black shadow-xl hover:brightness-110 transition-spring active:scale-80"
               title={isPlaying ? "Pause (Spacebar)" : "Play (Spacebar)"}
             >
               {isPlaying ? (
@@ -480,7 +481,7 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Next */}
             <button
               onClick={nextSlide}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-spring active:scale-80"
               title="Next Slide (Right Arrow)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -497,7 +498,7 @@ export default function MenuSlideshow({ menu, settings }) {
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="bg-white/15 border border-white/20 text-white text-xs font-bold rounded-2xl px-3 py-2 outline-none cursor-pointer hover:bg-white/25"
+              className="bg-white/15 border border-white/20 text-white text-xs font-bold rounded-2xl px-3 py-2 outline-none cursor-pointer hover:bg-white/25 transition-spring"
               title="Slide Duration"
             >
               <option value={5} className="bg-[#1c1612] text-white">5s</option>
@@ -512,7 +513,7 @@ export default function MenuSlideshow({ menu, settings }) {
                 setViewMode((prev) => (prev === "all" ? "items_only" : "all"));
                 setCurrentIndex(0);
               }}
-              className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition ${
+              className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-spring active:scale-90 ${
                 viewMode === "items_only"
                   ? "bg-[#54614a] text-white shadow-md"
                   : "bg-white/10 hover:bg-white/20 text-white/80"
@@ -525,7 +526,7 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-spring active:scale-80"
               title={isFullscreen ? "Exit Fullscreen (F)" : "Enter Fullscreen (F)"}
             >
               {isFullscreen ? (
@@ -544,22 +545,22 @@ export default function MenuSlideshow({ menu, settings }) {
 
       {/* ─── SCAN TO ORDER QR MODAL ─── */}
       {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl p-4">
-          <div className="relative w-full max-w-sm rounded-3xl bg-[#1c1612] border-2 border-[#b6862c]/60 p-8 text-center shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-backdrop-in">
+          <div className="relative w-full max-w-sm rounded-3xl bg-[#1c1612] border-2 border-[#b6862c]/60 p-8 text-center shadow-2xl animate-modal-pop">
             <button
               onClick={() => setShowQrModal(false)}
-              className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition text-lg font-bold"
+              className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition-spring text-lg font-bold active:scale-90"
             >
               ✕
             </button>
-            <div className="h-14 w-14 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mx-auto mb-4">
+            <div className="h-14 w-14 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mx-auto mb-4 animate-pulse">
               <CrownMark className="h-7 w-7 text-[#f3d37c]" />
             </div>
             <h3 className="font-display text-2xl font-black text-white">Order From Table</h3>
             <p className="text-xs text-white/70 mt-1">
               Scan with your mobile camera to view full menu & order live.
             </p>
-            <div className="mt-6 p-4 bg-white rounded-2xl inline-block shadow-inner">
+            <div className="mt-6 p-4 bg-white rounded-2xl inline-block shadow-inner transition-spring hover:scale-105">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
                   typeof window !== "undefined"

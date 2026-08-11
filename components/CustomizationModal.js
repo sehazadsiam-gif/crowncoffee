@@ -75,16 +75,16 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/55 backdrop-blur-xs transition-opacity" 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-backdrop-in" 
         onClick={onClose} 
       />
       
       {/* Modal Card */}
-      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-[var(--paper)] shadow-2xl border border-[var(--line)] flex flex-col max-h-[85vh]">
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-[var(--paper)] shadow-2xl border border-[var(--line)] flex flex-col max-h-[85vh] animate-modal-pop">
         {/* Header */}
         <div className="bg-[var(--card)] px-6 py-4 border-b border-[var(--line)] flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--accent)]">
+            <span className="text-[10px] font-extrabold tracking-widest uppercase text-[var(--accent)]">
               Customize Item
             </span>
             <h3 className="font-display text-lg font-bold text-[var(--ink)] mt-0.5">
@@ -93,7 +93,7 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
           </div>
           <button 
             onClick={onClose} 
-            className="rounded-full p-1.5 text-[var(--ink-soft)] hover:bg-white hover:text-[var(--ink)] transition"
+            className="rounded-full p-1.5 text-[var(--ink-soft)] hover:bg-white hover:text-[var(--ink)] transition-spring active:scale-90"
             aria-label="Close modal"
           >
             ✕
@@ -130,18 +130,18 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
                         <label
                           key={opt.name}
                           onClick={() => handleSingleSelect(custom.id, opt)}
-                          className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition ${
+                          className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition-spring active:scale-98 ${
                             isSelected
-                              ? "border-[var(--accent)] bg-amber-50/15"
+                              ? "border-[var(--accent)] bg-amber-50/30 shadow-[0_0_12px_rgba(182,134,44,0.2)] scale-[1.01]"
                               : "border-[var(--line)] bg-white hover:border-[var(--ink-soft)]"
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center shrink-0 ${
-                              isSelected ? "border-[var(--accent)]" : "border-[var(--line)]"
+                            <span className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center shrink-0 transition-spring ${
+                              isSelected ? "border-[var(--accent)] bg-[var(--accent)]/10" : "border-[var(--line)]"
                             }`}>
                               {isSelected && (
-                                <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
+                                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-badge-pop" />
                               )}
                             </span>
                             <span className="text-sm font-semibold text-[var(--ink)]">{opt.name}</span>
@@ -158,18 +158,18 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
                         <label
                           key={opt.name}
                           onClick={() => handleMultiSelect(custom.id, opt)}
-                          className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition ${
+                          className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition-spring active:scale-98 ${
                             isChecked
-                              ? "border-[var(--accent)] bg-amber-50/15"
+                              ? "border-[var(--accent)] bg-amber-50/30 shadow-[0_0_12px_rgba(182,134,44,0.2)] scale-[1.01]"
                               : "border-[var(--line)] bg-white hover:border-[var(--ink-soft)]"
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center shrink-0 ${
+                            <span className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center shrink-0 transition-spring ${
                               isChecked ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--line)]"
                             }`}>
                               {isChecked && (
-                                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                <svg className="h-3 w-3 animate-badge-pop" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                               )}
@@ -191,11 +191,11 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
         <div className="bg-[var(--card)] px-6 py-4 border-t border-[var(--line)] flex items-center justify-between">
           <div>
             <p className="text-[10px] text-[var(--ink-soft)] font-medium">Total Price</p>
-            <p className="text-lg font-extrabold text-[var(--accent)]">৳{unitPrice}</p>
+            <p className="text-lg font-extrabold text-[var(--accent)] transition-all duration-300">৳{unitPrice}</p>
           </div>
           <button
             onClick={handleAdd}
-            className="rounded-full bg-[var(--ink)] hover:bg-[var(--accent)] text-white font-semibold text-sm px-6 py-2.5 transition active:scale-95 shadow-md"
+            className="rounded-full bg-[var(--ink)] hover:bg-[var(--accent)] text-white font-semibold text-sm px-7 py-3 transition-spring active:scale-90 shadow-md hover:shadow-lg"
           >
             Add to Basket
           </button>

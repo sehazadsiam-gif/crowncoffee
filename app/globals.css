@@ -39,7 +39,7 @@ a {
 /* ── Menu nav highlight ──────────────────────────────────── */
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
-  50%       { box-shadow: 0 0 12px 4px rgba(182, 134, 44, 0.32); }
+  50%       { box-shadow: 0 0 14px 4px rgba(182, 134, 44, 0.38); }
 }
 
 .nav-highlight {
@@ -50,6 +50,10 @@ a {
   padding: 0.18em 0.8em;
   animation: pulse-glow 3s ease-in-out infinite;
   font-weight: 700;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-highlight:hover {
+  transform: scale(1.05);
 }
 
 /* ── Membership nav badge ─────────────────────────────────── */
@@ -60,7 +64,7 @@ a {
 
 @keyframes membership-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
-  50%       { box-shadow: 0 0 14px 5px rgba(182, 134, 44, 0.45); }
+  50%       { box-shadow: 0 0 16px 6px rgba(182, 134, 44, 0.5); }
 }
 
 .membership-highlight {
@@ -85,11 +89,12 @@ a {
   animation:
     membership-shine 3s linear infinite,
     membership-pulse 2.5s ease-in-out infinite;
-  transition: filter 0.2s;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
 }
 
 .membership-highlight:hover {
   filter: brightness(1.12);
+  transform: translateY(-1px) scale(1.04);
 }
 
 /* ── BestSellerCard shimmer ──────────────────────────────── */
@@ -112,6 +117,128 @@ a {
   animation-play-state: paused;
 }
 
+/* ── Rich Dynamic Animations & Motion Tokens ─────────────── */
+
+/* 1. Modal Pop & Scale In */
+@keyframes modal-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 2. Drawer Slide In from Right */
+@keyframes drawer-slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 3. Backdrop Fade In */
+@keyframes backdrop-fade-in {
+  0% { opacity: 0; backdrop-filter: blur(0px); }
+  100% { opacity: 1; backdrop-filter: blur(4px); }
+}
+
+/* 4. Cart Button Spring Bounce */
+@keyframes cart-bounce {
+  0%   { transform: scale(1) rotate(0deg); }
+  25%  { transform: scale(1.25) rotate(-8deg); }
+  50%  { transform: scale(0.92) rotate(4deg); }
+  75%  { transform: scale(1.08) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* 5. Cart Badge Spring Pop */
+@keyframes badge-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+/* 6. Text / Overlay Slide Up Fade */
+@keyframes slide-up-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 7. Subtle Ken Burns Pan for Slideshow */
+@keyframes kenburns-slow {
+  0% { transform: scale(1) translate(0%, 0%); }
+  50% { transform: scale(1.06) translate(-1%, -1%); }
+  100% { transform: scale(1.02) translate(0.5%, 0.5%); }
+}
+
+/* 8. Ripple Expand Effect */
+@keyframes ripple-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0.4); }
+  70% { box-shadow: 0 0 0 14px rgba(182, 134, 44, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
+}
+
+/* Custom Animation Classes */
+.animate-modal-pop {
+  animation: modal-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-drawer-in {
+  animation: drawer-slide-in-right 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-backdrop-in {
+  animation: backdrop-fade-in 0.3s ease-out forwards;
+}
+
+.animate-cart-bounce {
+  animation: cart-bounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-badge-pop {
+  animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-slide-up-fade {
+  animation: slide-up-fade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-kenburns {
+  animation: kenburns-slow 12s ease-out infinite alternate;
+}
+
+/* Smooth Spring Utility Transitions */
+.transition-spring {
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Card Hover Elevation */
+.card-hover-effect {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px -12px rgba(182, 134, 44, 0.28);
+}
+
 /* ── Utilities ───────────────────────────────────────────── */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -131,3 +258,4 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
