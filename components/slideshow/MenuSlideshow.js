@@ -31,7 +31,7 @@ export default function MenuSlideshow({ menu, settings }) {
         items: categoryItems,
       });
 
-      // b) Individual Item Slides (Picture, Name, Description, Price)
+      // b) Individual Item Slides (100% Full-Screen Picture + Overlay Text)
       categoryItems.forEach((item, idx) => {
         slideDeck.push({
           type: "item",
@@ -65,7 +65,7 @@ export default function MenuSlideshow({ menu, settings }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [showQrModal, setShowQrModal] = useState(false);
-  const [viewMode, setViewMode] = useState("all"); // 'all' | 'items_only'
+  const [viewMode, setViewMode] = useState("items_only"); // default to items_only for TV
   const [clockTime, setClockTime] = useState("");
 
   const containerRef = useRef(null);
@@ -202,7 +202,7 @@ export default function MenuSlideshow({ menu, settings }) {
 
   if (!currentSlide) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0c0a09] text-white">
+      <div className="flex min-h-screen items-center justify-center bg-[#070504] text-white">
         <p className="text-xl">Loading Crown Coffee Menu...</p>
       </div>
     );
@@ -212,176 +212,119 @@ export default function MenuSlideshow({ menu, settings }) {
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative h-screen w-screen overflow-hidden bg-[#0a0806] text-[#faf6ef] select-none font-sans"
+      className="relative h-screen w-screen overflow-hidden bg-[#070504] text-[#faf6ef] select-none font-sans"
     >
-      {/* ─── Ambient Glow & Blurred Backdrop ─── */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none transition-all duration-1000 ease-out">
-        {currentSlide.type === "item" && currentSlide.item.image ? (
-          <Image
-            src={currentSlide.item.image}
-            alt=""
-            fill
-            className="object-cover blur-3xl scale-125"
-            priority
-          />
-        ) : (
-          <div className="h-full w-full bg-[radial-gradient(circle_at_50%_40%,rgba(182,134,44,0.35)_0%,rgba(15,12,10,0.95)_70%)]" />
-        )}
-      </div>
-
-      {/* Subtle floating gold aura particles */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,rgba(182,134,44,0.15),transparent_60%)] pointer-events-none" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(84,97,74,0.2),transparent_60%)] pointer-events-none" />
-
       {/* ─── Top Timer Progress Line ─── */}
-      <div className="absolute top-0 left-0 right-0 z-50 h-1.5 bg-black/40">
+      <div className="absolute top-0 left-0 right-0 z-50 h-2 bg-black/50">
         <div
-          className="h-full bg-gradient-to-r from-[#b6862c] via-[#f3d37c] to-[#b6862c] transition-all duration-75 ease-linear shadow-[0_0_12px_rgba(243,211,124,0.8)]"
+          className="h-full bg-gradient-to-r from-[#b6862c] via-[#f3d37c] to-[#b6862c] transition-all duration-75 ease-linear shadow-[0_0_15px_rgba(243,211,124,0.9)]"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* ─── Top Header Overlay (Branding & Live Clock) ─── */}
-      <header className="absolute top-4 left-6 right-6 z-40 flex items-center justify-between pointer-events-auto">
-        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#b6862c] to-[#785417] text-white shadow-md">
-            <CrownMark className="h-5 w-5 text-white" />
+      <header className="absolute top-5 left-6 right-6 z-40 flex items-center justify-between pointer-events-auto">
+        <div className="flex items-center gap-3.5 bg-black/60 backdrop-blur-xl px-5 py-2.5 rounded-full border border-white/20 shadow-2xl">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#b6862c] to-[#785417] text-white shadow-md">
+            <CrownMark className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="font-display text-sm font-bold tracking-wider uppercase text-white leading-none">
+            <h1 className="font-display text-base font-extrabold tracking-wider uppercase text-white leading-none">
               {settings.siteName || "Crown Coffee"}
             </h1>
-            <p className="text-[10px] text-[#e8c04a] font-medium tracking-widest uppercase mt-0.5">
-              Bangladesh • Digital Menu Board
+            <p className="text-[11px] text-[#e8c04a] font-bold tracking-widest uppercase mt-0.5">
+              Digital Menu Board • Uttara
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Status pill */}
-          <div className="hidden sm:flex items-center gap-2 bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 text-xs text-white/80">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Live Display</span>
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-2 bg-black/60 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 text-xs font-bold text-white">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>TV Display</span>
           </div>
 
-          {/* Clock */}
-          <div className="bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#b6862c]/40 text-xs font-mono font-bold text-[#f3d37c] shadow-lg">
+          <div className="bg-black/70 backdrop-blur-xl px-5 py-2 rounded-full border border-[#b6862c]/60 text-sm font-mono font-extrabold text-[#f3d37c] shadow-2xl">
             {clockTime}
           </div>
 
-          {/* Quick Exit / Back button */}
           <Link
             href="/menu"
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-2 rounded-full border border-white/15 text-white transition hover:scale-105"
+            className="bg-white/15 hover:bg-white/25 backdrop-blur-xl p-2.5 rounded-full border border-white/20 text-white transition hover:scale-105"
             title="Return to Menu"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </Link>
         </div>
       </header>
 
-      {/* ─── SLIDE CONTENT DISPLAY CONTAINER ─── */}
-      <main className="relative z-10 h-full w-full flex items-center justify-center px-6 py-20 lg:px-16 lg:py-24">
-        {/* ─── TYPE A: ITEM SPOTLIGHT SLIDE ─── */}
+      {/* ─── 100% FULL-SCREEN PICTURE CANVAS & OVERLAY DATA ─── */}
+      <main className="relative z-10 h-full w-full">
+        {/* ─── TYPE A: ITEM SPOTLIGHT SLIDE (100% PICTURE + FLOATING TEXT OVERLAY) ─── */}
         {currentSlide.type === "item" && (
-          <div className="w-full max-w-7xl h-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
-            {/* Left: Product Image Showcase */}
-            <div className="relative w-full lg:w-1/2 h-[45vh] lg:h-[70vh] rounded-3xl overflow-hidden border border-white/15 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#14100c]/80 group flex items-center justify-center">
-              {currentSlide.item.image ? (
-                <Image
-                  src={currentSlide.item.image}
-                  alt={currentSlide.item.name}
-                  fill
-                  priority
-                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#120e0c] h-full w-full">
-                  <div className="h-24 w-24 rounded-full bg-[#b6862c]/20 border border-[#b6862c]/40 flex items-center justify-center mb-6 shadow-inner">
-                    <CrownMark className="h-12 w-12 text-[#f3d37c]" />
-                  </div>
-                  <h4 className="font-display text-2xl font-bold text-white tracking-wide">
-                    {currentSlide.item.name}
-                  </h4>
-                  <p className="text-xs text-[#b6862c] uppercase tracking-widest mt-2 font-semibold">
-                    Crown Coffee House Signature
-                  </p>
+          <div className="relative h-full w-full overflow-hidden bg-[#070504]">
+            {/* 100% Full-Screen Photo */}
+            {currentSlide.item.image ? (
+              <Image
+                src={currentSlide.item.image}
+                alt={currentSlide.item.name}
+                fill
+                priority
+                className="object-cover transition-transform duration-1000 ease-out"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-[#1c1612] via-[#2a211b] to-[#070504] h-full w-full">
+                <div className="h-36 w-36 rounded-full bg-[#b6862c]/25 border-2 border-[#b6862c]/60 flex items-center justify-center mb-8 shadow-2xl">
+                  <CrownMark className="h-20 w-20 text-[#f3d37c]" />
                 </div>
-              )}
+                <h4 className="font-display text-5xl sm:text-6xl font-black text-white tracking-wide">
+                  {currentSlide.item.name}
+                </h4>
+                <p className="text-base text-[#b6862c] uppercase tracking-widest mt-4 font-extrabold">
+                  Crown Coffee House Specialty
+                </p>
+              </div>
+            )}
 
-              {/* Badges on image */}
-              <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-20">
-                <span className="bg-[#b6862c] text-black text-xs font-extrabold uppercase px-3.5 py-1.5 rounded-full shadow-lg tracking-wider">
-                  {currentSlide.category}
+            {/* Top Badges overlay floating on 100% image */}
+            <div className="absolute top-24 left-8 flex flex-wrap gap-3 z-20">
+              <span className="bg-[#b6862c] text-black text-sm sm:text-base font-black uppercase px-6 py-2.5 rounded-full shadow-2xl tracking-widest border border-white/20">
+                {currentSlide.category}
+              </span>
+              {currentSlide.item.kiosk && (
+                <span className="bg-white text-black text-sm sm:text-base font-black uppercase px-6 py-2.5 rounded-full shadow-2xl tracking-widest">
+                  ★ Chef Special
                 </span>
-                {currentSlide.item.kiosk && (
-                  <span className="bg-white/90 text-black text-xs font-bold uppercase px-3.5 py-1.5 rounded-full shadow-lg tracking-wider">
-                    ★ Kiosk Favorite
-                  </span>
-                )}
-              </div>
-
-              <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10 text-xs font-medium text-white/80">
-                Item {currentSlide.itemIndex} of {currentSlide.totalCategoryItems}
-              </div>
+              )}
             </div>
 
-            {/* Right: Item Details */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center text-left">
-              {/* Category Breadcrumb */}
-              <div className="flex items-center gap-2 mb-3 text-[#f3d37c] font-medium text-sm tracking-wider uppercase">
-                <CrownMark className="h-4 w-4" />
-                <span>{currentSlide.category}</span>
+            <div className="absolute top-24 right-8 bg-black/70 backdrop-blur-xl px-5 py-2 rounded-full border border-white/20 text-xs sm:text-sm font-bold text-white/90 z-20 shadow-2xl">
+              Item {currentSlide.itemIndex} / {currentSlide.totalCategoryItems}
+            </div>
+
+            {/* 100% Picture Floating Bottom Glass Gradient Overlay: Giant Name & Price */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black via-black/80 to-transparent pt-24 pb-20 px-8 sm:px-14 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+              {/* Item Name */}
+              <div className="max-w-5xl">
+                <div className="flex items-center gap-2 mb-3 text-[#f3d37c] font-black text-sm sm:text-base tracking-[0.25em] uppercase">
+                  <CrownMark className="h-5 w-5" />
+                  <span>{currentSlide.category}</span>
+                </div>
+                <h2 className="font-display text-6xl sm:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight drop-shadow-[0_10px_25px_rgba(0,0,0,1)]">
+                  {currentSlide.item.name}
+                </h2>
               </div>
 
-              {/* Item Name */}
-              <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight drop-shadow-md">
-                {currentSlide.item.name}
-              </h2>
-
-              {/* Price Tag */}
-              <div className="mt-4 flex items-center gap-4">
-                <div className="inline-flex items-baseline gap-1 bg-gradient-to-r from-[#b6862c] to-[#d4a017] text-black px-6 py-2.5 rounded-2xl shadow-[0_10px_25px_-5px_rgba(182,134,44,0.5)] font-bold">
-                  <span className="text-lg font-medium">৳</span>
-                  <span className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              {/* Giant Price Tag in BDT */}
+              <div className="shrink-0 flex items-center gap-4">
+                <div className="inline-flex items-baseline gap-2 bg-gradient-to-r from-[#b6862c] via-[#e8c04a] to-[#d4a017] text-black px-10 py-5 rounded-3xl shadow-[0_20px_50px_rgba(182,134,44,0.8)] border-2 border-white/40 font-black">
+                  <span className="text-3xl sm:text-4xl font-extrabold">৳</span>
+                  <span className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight">
                     {currentSlide.item.price}
                   </span>
                 </div>
-                <span className="text-xs text-white/60 uppercase tracking-widest font-semibold">
-                  VAT Included
-                </span>
-              </div>
-
-              {/* Description */}
-              {currentSlide.item.description && (
-                <p className="mt-6 text-lg sm:text-xl text-[#d4cbbe] leading-relaxed font-light max-w-xl border-l-2 border-[#b6862c]/60 pl-4 py-1">
-                  {currentSlide.item.description}
-                </p>
-              )}
-
-              {/* Footer Info / Mobile Order Prompt */}
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-                <div className="flex items-center gap-3 text-sm text-white/70">
-                  <div className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#f3d37c]">
-                    ☕
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">Freshly Prepared</p>
-                    <p className="text-xs text-white/50">Made to order by our expert baristas & chefs</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowQrModal(true)}
-                  className="hidden sm:flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2 rounded-xl text-xs font-semibold text-white transition"
-                >
-                  <svg className="w-4 h-4 text-[#f3d37c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                  </svg>
-                  <span>Scan to Order</span>
-                </button>
               </div>
             </div>
           </div>
@@ -389,36 +332,38 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE B: CATEGORY INTRO SLIDE ─── */}
         {currentSlide.type === "category_intro" && (
-          <div className="w-full max-w-4xl text-center flex flex-col items-center justify-center py-12">
-            <div className="inline-flex items-center gap-2 bg-[#b6862c]/20 border border-[#b6862c]/50 text-[#f3d37c] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-              <CrownMark className="h-4 w-4" />
+          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-16 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,134,44,0.35)_0%,transparent_75%)] pointer-events-none" />
+
+            <div className="inline-flex items-center gap-3 bg-[#b6862c]/30 border-2 border-[#b6862c]/70 text-[#f3d37c] px-7 py-2.5 rounded-full text-base font-black uppercase tracking-widest mb-8 shadow-2xl">
+              <CrownMark className="h-6 w-6" />
               <span>Menu Section</span>
             </div>
 
-            <h2 className="font-display text-5xl sm:text-7xl font-bold text-white tracking-tight leading-none mb-6">
+            <h2 className="font-display text-7xl sm:text-9xl font-black text-white tracking-tight leading-none mb-6 drop-shadow-[0_15px_30px_rgba(0,0,0,1)]">
               {currentSlide.category}
             </h2>
 
-            <p className="text-xl sm:text-2xl text-[#d4cbbe] max-w-2xl font-light mb-10">
-              Featuring {currentSlide.totalItems} exquisite selections hand-crafted for Crown Coffee patrons.
+            <p className="text-3xl sm:text-4xl text-[#e8c04a] font-extrabold max-w-4xl mb-14">
+              {currentSlide.totalItems} Specialty Selections
             </p>
 
             {/* Collage of item photos */}
-            <div className="flex items-center justify-center gap-4 flex-wrap max-w-3xl">
+            <div className="flex items-center justify-center gap-6 flex-wrap max-w-5xl">
               {currentSlide.items.slice(0, 4).map((item) => (
                 <div
                   key={item.id}
-                  className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-2xl overflow-hidden border border-white/20 shadow-xl bg-[#1c1612]"
+                  className="relative h-44 w-44 sm:h-52 sm:w-52 rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-[#1c1612]"
                 >
                   {item.image ? (
                     <Image src={item.image} alt={item.name} fill className="object-cover" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center bg-[#2a211b]">
-                      <CrownMark className="h-8 w-8 text-[#b6862c]/50" />
+                      <CrownMark className="h-12 w-12 text-[#b6862c]/60" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
-                    <p className="text-[11px] font-bold text-white truncate">{item.name}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-4">
+                    <p className="text-sm sm:text-base font-black text-white truncate">{item.name}</p>
                   </div>
                 </div>
               ))}
@@ -428,51 +373,44 @@ export default function MenuSlideshow({ menu, settings }) {
 
         {/* ─── TYPE C: CATEGORY OVERVIEW GRID SLIDE ─── */}
         {currentSlide.type === "category_grid" && (
-          <div className="w-full max-w-6xl flex flex-col h-full justify-center">
-            <div className="flex items-center justify-between border-b border-white/15 pb-4 mb-6">
+          <div className="relative h-full w-full bg-[#070504] p-8 sm:p-14 flex flex-col justify-center shadow-2xl pt-24 pb-24">
+            <div className="flex items-center justify-between border-b-2 border-white/20 pb-6 mb-8">
               <div>
-                <span className="text-xs font-bold text-[#f3d37c] tracking-widest uppercase">
-                  Category Overview
+                <span className="text-sm font-black text-[#f3d37c] tracking-widest uppercase">
+                  TV Section Overview
                 </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
-                  {currentSlide.category} Selection
+                <h2 className="font-display text-5xl sm:text-6xl font-black text-white">
+                  {currentSlide.category}
                 </h2>
               </div>
-              <span className="bg-white/10 px-4 py-1.5 rounded-full text-xs font-semibold text-white/80">
-                {currentSlide.items.length} Items Available
+              <span className="bg-[#b6862c] text-black px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-wider">
+                {currentSlide.items.length} Items
               </span>
             </div>
 
             {/* Grid of Menu Items */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 overflow-y-auto max-h-[60vh] pr-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto max-h-[70vh] pr-4">
               {currentSlide.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:border-[#b6862c]/60 transition"
+                  className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/20 backdrop-blur-xl hover:border-[#b6862c] transition"
                 >
-                  <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden bg-[#1c1612] border border-white/10">
+                  <div className="relative h-28 w-28 shrink-0 rounded-2xl overflow-hidden bg-[#1c1612] border border-white/25">
                     {item.image ? (
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center">
-                        <CrownMark className="h-6 w-6 text-[#b6862c]/50" />
+                        <CrownMark className="h-10 w-10 text-[#b6862c]/60" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-display text-base font-bold text-white truncate">
-                        {item.name}
-                      </h3>
-                      <span className="text-sm font-extrabold text-[#f3d37c] shrink-0">
-                        ৳{item.price}
-                      </span>
-                    </div>
-                    {item.description && (
-                      <p className="text-xs text-white/60 line-clamp-2 mt-1 font-light">
-                        {item.description}
-                      </p>
-                    )}
+                    <h3 className="font-display text-2xl font-black text-white truncate">
+                      {item.name}
+                    </h3>
+                    <span className="inline-block mt-3 text-xl font-black text-[#f3d37c] bg-white/10 px-4 py-1.5 rounded-xl">
+                      ৳{item.price}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -487,7 +425,7 @@ export default function MenuSlideshow({ menu, settings }) {
           showControls ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/60 backdrop-blur-xl p-3 sm:px-6 sm:py-3 rounded-2xl border border-white/15 shadow-2xl">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/80 backdrop-blur-2xl p-3.5 sm:px-6 rounded-3xl border border-white/20 shadow-2xl">
           {/* Category Quick Navigation Pills */}
           <div className="flex items-center gap-2 overflow-x-auto max-w-full sm:max-w-xl pb-1 sm:pb-0 scrollbar-none">
             {categoriesList.map((cat) => {
@@ -496,10 +434,10 @@ export default function MenuSlideshow({ menu, settings }) {
                 <button
                   key={cat}
                   onClick={() => jumpToCategory(cat)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+                  className={`px-4 py-2 rounded-2xl text-xs font-black whitespace-nowrap transition ${
                     isCurrentCat
-                      ? "bg-[#b6862c] text-black shadow-md font-bold"
-                      : "bg-white/5 hover:bg-white/15 text-white/80"
+                      ? "bg-[#b6862c] text-black shadow-lg font-black scale-105"
+                      : "bg-white/10 hover:bg-white/20 text-white/80"
                   }`}
                 >
                   {cat}
@@ -513,18 +451,18 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Prev */}
             <button
               onClick={prevSlide}
-              className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
               title="Previous Slide (Left Arrow)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
             {/* Play / Pause */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="p-3 rounded-full bg-gradient-to-r from-[#b6862c] to-[#d4a017] text-black shadow-lg hover:brightness-110 transition active:scale-95"
+              className="p-3.5 rounded-full bg-gradient-to-r from-[#b6862c] to-[#d4a017] text-black shadow-xl hover:brightness-110 transition active:scale-95"
               title={isPlaying ? "Pause (Spacebar)" : "Play (Spacebar)"}
             >
               {isPlaying ? (
@@ -541,16 +479,16 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Next */}
             <button
               onClick={nextSlide}
-              className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
               title="Next Slide (Right Arrow)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
               </svg>
             </button>
 
             {/* Slide Counter */}
-            <span className="text-xs font-mono text-white/70 px-2">
+            <span className="text-xs font-mono font-bold text-white/80 px-2">
               {currentIndex + 1} / {activeSlides.length}
             </span>
 
@@ -558,7 +496,7 @@ export default function MenuSlideshow({ menu, settings }) {
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="bg-white/10 border border-white/15 text-white text-xs font-semibold rounded-xl px-2.5 py-1.5 outline-none cursor-pointer hover:bg-white/20"
+              className="bg-white/15 border border-white/20 text-white text-xs font-bold rounded-2xl px-3 py-2 outline-none cursor-pointer hover:bg-white/25"
               title="Slide Duration"
             >
               <option value={5} className="bg-[#1c1612] text-white">5s</option>
@@ -573,9 +511,9 @@ export default function MenuSlideshow({ menu, settings }) {
                 setViewMode((prev) => (prev === "all" ? "items_only" : "all"));
                 setCurrentIndex(0);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+              className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition ${
                 viewMode === "items_only"
-                  ? "bg-[#54614a] text-white"
+                  ? "bg-[#54614a] text-white shadow-md"
                   : "bg-white/10 hover:bg-white/20 text-white/80"
               }`}
               title="Toggle View Mode"
@@ -586,7 +524,7 @@ export default function MenuSlideshow({ menu, settings }) {
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
               title={isFullscreen ? "Exit Fullscreen (F)" : "Enter Fullscreen (F)"}
             >
               {isFullscreen ? (
@@ -605,20 +543,20 @@ export default function MenuSlideshow({ menu, settings }) {
 
       {/* ─── SCAN TO ORDER QR MODAL ─── */}
       {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-sm rounded-3xl bg-[#1c1612] border border-[#b6862c]/40 p-8 text-center shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl p-4">
+          <div className="relative w-full max-w-sm rounded-3xl bg-[#1c1612] border-2 border-[#b6862c]/60 p-8 text-center shadow-2xl">
             <button
               onClick={() => setShowQrModal(false)}
-              className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition"
+              className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition text-lg font-bold"
             >
               ✕
             </button>
-            <div className="h-12 w-12 rounded-full bg-[#b6862c]/20 border border-[#b6862c]/50 flex items-center justify-center mx-auto mb-4">
-              <CrownMark className="h-6 w-6 text-[#f3d37c]" />
+            <div className="h-14 w-14 rounded-full bg-[#b6862c]/30 border-2 border-[#b6862c]/70 flex items-center justify-center mx-auto mb-4">
+              <CrownMark className="h-7 w-7 text-[#f3d37c]" />
             </div>
-            <h3 className="font-display text-2xl font-bold text-white">Order From Your Table</h3>
+            <h3 className="font-display text-2xl font-black text-white">Order From Table</h3>
             <p className="text-xs text-white/70 mt-1">
-              Scan with your phone camera to view menu & place your order live.
+              Scan with your mobile camera to view full menu & order live.
             </p>
             <div className="mt-6 p-4 bg-white rounded-2xl inline-block shadow-inner">
               <img
@@ -631,7 +569,7 @@ export default function MenuSlideshow({ menu, settings }) {
                 className="w-44 h-44 mx-auto"
               />
             </div>
-            <p className="mt-4 text-xs font-semibold text-[#f3d37c]">
+            <p className="mt-4 text-xs font-black text-[#f3d37c]">
               crowncoffeebangladesh.xyz/menu
             </p>
           </div>
