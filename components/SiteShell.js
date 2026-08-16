@@ -15,10 +15,11 @@ export default function SiteShell({ children, settings, activeBanners }) {
   const pathname = usePathname();
   const isManager = pathname.startsWith("/manager");
   const isSlideshow = pathname.startsWith("/slideshow");
+  const isNotice = pathname.startsWith("/notice");
   const isMenuPage = pathname === "/menu"; // Public browse-only menu — no basket needed
 
-  if (isManager || isSlideshow) {
-    // Portal & Slideshow get full viewport, no site chrome
+  if (isManager || isSlideshow || isNotice) {
+    // Portal, Slideshow & Notice Desk get full viewport, no site chrome
     return <>{children}</>;
   }
 
