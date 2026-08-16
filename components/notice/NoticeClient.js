@@ -261,7 +261,7 @@ export default function NoticeClient({ initialNotices = [] }) {
           </div>
 
           {/* Return to site */}
-          <Link
+          <a
             href="/"
             className="bg-white/15 hover:bg-white/25 backdrop-blur-2xl p-2.5 rounded-2xl border border-white/30 text-white transition hover:scale-105 shadow-2xl"
             title="Return to Main Site"
@@ -269,7 +269,7 @@ export default function NoticeClient({ initialNotices = [] }) {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </Link>
+          </a>
         </div>
       </header>
 
