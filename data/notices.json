@@ -1,0 +1,46 @@
+{
+  "notices": [
+    {
+      "id": "ramadan-hours-2026",
+      "title": "Adjusted Operating Hours and Special Iftar Platter",
+      "summary": "Crown Coffee will observe modified opening hours during Ramadan. Join us for curated artisanal coffee and fresh savory platters.",
+      "content": "Dear Valued Guests,\n\nIn observance of the holy month of Ramadan, Crown Coffee Bangladesh will operate under updated daily schedules. Our doors will be open from 3:00 PM until 1:00 AM daily.\n\nWe are delighted to introduce our Signature Iftar Platter, pairing roasted specialty espresso beverages with gourmet dates, house-made pastries, and savory delights.\n\nFor reservations or advance table bookings, please contact our team directly.",
+      "category": "hours",
+      "badgeText": "IMPORTANT",
+      "pinned": true,
+      "active": true,
+      "date": "2026-08-15",
+      "link": "/menu",
+      "linkLabel": "Explore Seasonal Menu",
+      "imageUrl": ""
+    },
+    {
+      "id": "single-origin-ethiopia",
+      "title": "New Arrival: Ethiopian Yirgacheffe Single Origin Beans",
+      "summary": "Experience vibrant floral aromas and subtle citrus undertones in our latest micro-lot single origin release.",
+      "content": "We are excited to present our newest micro-lot roast: Ethiopian Yirgacheffe Grade 1. Hand-picked at high altitudes and light-medium roasted in-house to highlight elegant notes of jasmine, bergamot, and wild honey.\n\nAvailable now for pour-over brewing, espresso extractions, and whole bean retail bags at our counter.",
+      "category": "offer",
+      "badgeText": "NEW ARRIVAL",
+      "pinned": false,
+      "active": true,
+      "date": "2026-08-10",
+      "link": "/menu",
+      "linkLabel": "View Coffee Menu",
+      "imageUrl": ""
+    },
+    {
+      "id": "barista-workshop-august",
+      "title": "Weekend Barista Masterclass and Latte Art Workshop",
+      "summary": "Join our lead baristas for an intimate hands-on session exploring espresso extraction techniques and milk texturing.",
+      "content": "Crown Coffee is hosting a weekend masterclass designed for coffee enthusiasts and home baristas.\n\nWhat you will learn:\n- Dialing in espresso parameters and extraction ratios\n- Micro-foaming technique and pour mechanics for latte art\n- Cupping and sensory evaluation of high-score specialty beans\n\nLimited to 8 participants per session. Advance registration is required.",
+      "category": "event",
+      "badgeText": "SPECIAL EVENT",
+      "pinned": false,
+      "active": true,
+      "date": "2026-08-05",
+      "link": "/contact",
+      "linkLabel": "Reserve Your Seat",
+      "imageUrl": ""
+    }
+  ]
+}

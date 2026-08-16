@@ -8,6 +8,7 @@ import StatusBadge from "./StatusBadge";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
+  { href: "/notice", label: "Notice" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -20,6 +21,17 @@ export default function Header({ settings }) {
   function renderLabel(link) {
     if (link.href === "/menu") {
       return <span className="nav-highlight">Menu</span>;
+    }
+    if (link.href === "/notice") {
+      return (
+        <span className="relative inline-flex items-center gap-1">
+          Notice
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75"></span>
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--accent)]"></span>
+          </span>
+        </span>
+      );
     }
     return link.label;
   }

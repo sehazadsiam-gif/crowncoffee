@@ -1,4 +1,4 @@
-import { getMenu, getSettings, getBanners } from "@/lib/data";
+import { getMenu, getSettings, getBanners, getNotices } from "@/lib/data";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -19,10 +19,11 @@ export default async function AdminPage() {
     redirect("/admin/login?from=/admin");
   }
 
-  const [menu, settings, banners] = await Promise.all([
+  const [menu, settings, banners, noticesData] = await Promise.all([
     getMenu(),
     getSettings(),
     getBanners(),
+    getNotices(),
   ]);
 
   return (
@@ -30,6 +31,7 @@ export default async function AdminPage() {
       initialMenu={menu}
       initialSettings={settings}
       initialBanners={banners}
+      initialNotices={noticesData.notices}
     />
   );
 }

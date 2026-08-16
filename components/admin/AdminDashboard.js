@@ -8,16 +8,18 @@ import MenuManager from "./MenuManager";
 import AppearanceForm from "./AppearanceForm";
 import SiteInfoForm from "./SiteInfoForm";
 import BannerManager from "./BannerManager";
+import NoticeManager from "./NoticeManager";
 
 const TABS = [
   { id: "menu", label: "Menu" },
   { id: "appearance", label: "Appearance" },
   { id: "info", label: "Site info" },
   { id: "banners", label: "Banners" },
+  { id: "notices", label: "Notices" },
   { id: "qr", label: "Tables & QR" },
 ];
 
-export default function AdminDashboard({ initialMenu, initialSettings, initialBanners }) {
+export default function AdminDashboard({ initialMenu, initialSettings, initialBanners, initialNotices }) {
   const [tab, setTab] = useState("menu");
   const [activeVisits, setActiveVisits] = useState(0);
   const router = useRouter();
@@ -110,6 +112,7 @@ export default function AdminDashboard({ initialMenu, initialSettings, initialBa
         {tab === "appearance" && <AppearanceForm initialTheme={initialSettings.theme} />}
         {tab === "info" && <SiteInfoForm initialSettings={initialSettings} />}
         {tab === "banners" && <BannerManager initialBanners={initialBanners} />}
+        {tab === "notices" && <NoticeManager initialNotices={initialNotices} />}
         {tab === "qr" && (
           <div className="space-y-4">
             <p className="text-sm text-[var(--ink-soft)]">Print QR codes to place on your tables. Customers scan to order directly.</p>

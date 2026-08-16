@@ -42,8 +42,11 @@ export default function Footer({ settings }) {
           <Link href="/contact" className="font-medium text-[var(--accent)] hover:underline">
             Contact page
           </Link>
-          <Link href="/slideshow" className="font-medium text-[var(--accent)] hover:underline flex items-center gap-1">
-            <span>📺</span> TV Slideshow
+          <Link href="/notice" className="font-medium text-[var(--accent)] hover:underline">
+            Customer Notices
+          </Link>
+          <Link href="/slideshow" className="font-medium text-[var(--accent)] hover:underline">
+            TV Slideshow
           </Link>
         </div>
       </div>
