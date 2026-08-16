@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import Link from "next/link";
 import CrownMark from "@/components/CrownMark";
 
 const GOLD = "#b6862c";
@@ -32,9 +31,7 @@ export default function NoticeClient({ initialNotices = [] }) {
   const [duration, setDuration]         = useState(8); // seconds
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  const [selectedNotice, setSelectedNotice] = useState(null);
   const [clockTime, setClockTime]       = useState("");
-  const [copiedId, setCopiedId]         = useState(null);
   const [viewMode, setViewMode]         = useState("all"); // "all" | category id
   const [dragStartX, setDragStartX]     = useState(null);
   const [dragOffsetX, setDragOffsetX]   = useState(0);
@@ -114,7 +111,7 @@ export default function NoticeClient({ initialNotices = [] }) {
   }, [currentIndex, duration, isPlaying]);
 
   useEffect(() => {
-    if (!isPlaying || filteredNotices.length <= 1 || selectedNotice) {
+    if (!isPlaying || filteredNotices.length <= 1) {
       setProgress(0);
       return;
     }
@@ -150,7 +147,6 @@ export default function NoticeClient({ initialNotices = [] }) {
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
-      if (selectedNotice) { if (e.key === "Escape") setSelectedNotice(null); return; }
       if (e.key === " " || e.code === "Space")          { e.preventDefault(); setIsPlaying((p) => !p); }
       else if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); nextSlide(); }
       else if (e.key === "ArrowLeft"  || e.key === "PageUp")   { e.preventDefault(); prevSlide(); }
@@ -158,7 +154,7 @@ export default function NoticeClient({ initialNotices = [] }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [nextSlide, prevSlide, selectedNotice]);
+  }, [nextSlide, prevSlide]);
 
   // Thumbnail scroll to active
   useEffect(() => {
@@ -166,12 +162,7 @@ export default function NoticeClient({ initialNotices = [] }) {
     active?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }, [currentIndex]);
 
-  function handleCopyLink(notice, e) {
-    e?.stopPropagation();
-    navigator.clipboard.writeText(`${window.location.origin}/notice#${notice.id}`);
-    setCopiedId(notice.id);
-    setTimeout(() => setCopiedId(null), 2500);
-  }
+
 
   const categories = useMemo(() => {
     const cats = new Set(notices.map((n) => n.category));
@@ -287,15 +278,15 @@ export default function NoticeClient({ initialNotices = [] }) {
         {currentNotice && (
           <div key={currentNotice.id} className="max-w-6xl w-full mx-auto">
             {/* Top badges row */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+            <div className="flex flex-wrap items-center gap-3 mb-8">
               {/* Category badge */}
               <span
-                className="inline-flex items-center px-6 py-2.5 rounded-2xl text-sm sm:text-base font-black uppercase tracking-widest border-2 shadow-xl"
+                className="inline-flex items-center px-7 py-3 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest border-2 shadow-xl"
                 style={{
-                  background: `${col.bg}99`,
+                  background: `${col.bg}bb`,
                   color: col.accent,
-                  borderColor: `${col.accent}80`,
-                  boxShadow: `0 0 24px ${col.glow}`,
+                  borderColor: `${col.accent}90`,
+                  boxShadow: `0 0 32px ${col.glow}`,
                 }}
               >
                 {col.label}
@@ -303,7 +294,7 @@ export default function NoticeClient({ initialNotices = [] }) {
 
               {currentNotice.pinned && (
                 <span
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-black uppercase tracking-widest border-2 shadow-xl text-black"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-black uppercase tracking-widest border-2 shadow-xl text-black"
                   style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_MID})`, borderColor: GOLD_LIGHT }}
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -315,8 +306,8 @@ export default function NoticeClient({ initialNotices = [] }) {
 
               {currentNotice.badgeText && (
                 <span
-                  className="px-5 py-2.5 rounded-2xl text-sm font-black uppercase tracking-widest border-2 shadow-xl"
-                  style={{ background: "#450a0a99", color: "#f87171", borderColor: "#f8717180" }}
+                  className="px-6 py-3 rounded-2xl text-base font-black uppercase tracking-widest border-2 shadow-xl"
+                  style={{ background: "#450a0abb", color: "#f87171", borderColor: "#f8717190" }}
                 >
                   {currentNotice.badgeText}
                 </span>
@@ -327,13 +318,13 @@ export default function NoticeClient({ initialNotices = [] }) {
               </span>
             </div>
 
-            {/* MASSIVE TITLE */}
+            {/* MASSIVE TITLE — the hero */}
             <h1
-              className="font-display font-black text-white leading-[1.02] tracking-tight mb-6"
+              className="font-display font-black text-white tracking-tight mb-8"
               style={{
-                fontSize: "clamp(2.5rem, 7vw, 7rem)",
-                textShadow: `0 8px 40px rgba(0,0,0,0.7)`,
-                lineHeight: 1.05,
+                fontSize: "clamp(3rem, 9vw, 9rem)",
+                lineHeight: 1.0,
+                textShadow: `0 0 80px ${col.glow}, 0 4px 60px rgba(0,0,0,0.9)`,
               }}
             >
               {currentNotice.title}
@@ -341,63 +332,26 @@ export default function NoticeClient({ initialNotices = [] }) {
 
             {/* Divider Line */}
             <div
-              className="w-24 h-1.5 rounded-full mb-8"
-              style={{ background: `linear-gradient(90deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 0 16px ${GOLD_LIGHT}` }}
+              className="h-1.5 rounded-full mb-8"
+              style={{
+                width: "min(480px, 60%)",
+                background: `linear-gradient(90deg, ${col.accent}, ${GOLD_LIGHT}, transparent)`,
+                boxShadow: `0 0 24px ${col.glow}`,
+              }}
             />
 
-            {/* LARGE SUMMARY TEXT */}
+            {/* LARGE SUMMARY — prominent, bright */}
             <p
-              className="text-white/85 leading-relaxed font-light mb-10 max-w-4xl"
-              style={{ fontSize: "clamp(1.1rem, 2.2vw, 1.75rem)", lineHeight: 1.65 }}
+              className="font-medium max-w-5xl"
+              style={{
+                fontSize: "clamp(1.35rem, 3vw, 2.4rem)",
+                lineHeight: 1.6,
+                color: "rgba(255,255,255,0.92)",
+                textShadow: `0 2px 20px rgba(0,0,0,0.7)`,
+              }}
             >
               {currentNotice.summary || currentNotice.content}
             </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setSelectedNotice(currentNotice)}
-                className="inline-flex items-center gap-3 rounded-2xl text-black font-black text-base sm:text-lg px-8 py-4 shadow-2xl uppercase tracking-wider transition hover:brightness-110 hover:scale-105 active:scale-95"
-                style={{
-                  background: `linear-gradient(135deg, ${GOLD}, ${GOLD_MID}, #d4a017)`,
-                  boxShadow: `0 0 40px ${GOLD}80`,
-                }}
-              >
-                Read Full Announcement
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
-
-              {currentNotice.link && (
-                <Link
-                  href={currentNotice.link}
-                  className="inline-flex items-center gap-2 rounded-2xl border-2 border-white/30 bg-white/10 px-7 py-4 text-base sm:text-lg font-black text-white hover:bg-white/20 hover:border-white transition uppercase tracking-wider"
-                >
-                  {currentNotice.linkLabel || "View Offer"}
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </Link>
-              )}
-
-              <button
-                type="button"
-                onClick={(e) => handleCopyLink(currentNotice, e)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/5 px-6 py-4 text-sm font-bold text-white/80 hover:text-white hover:bg-white/10 transition uppercase tracking-wider"
-              >
-                {copiedId === currentNotice.id
-                  ? <span className="text-emerald-400 font-black">Copied!</span>
-                  : <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9a3 3 0 100-2.684 3 3 0 000 2.684z" />
-                      </svg>
-                      Share Link
-                    </>
-                }
-              </button>
-            </div>
           </div>
         )}
       </main>
@@ -549,98 +503,6 @@ export default function NoticeClient({ initialNotices = [] }) {
         </div>
       </footer>
 
-      {/* ── FULL NOTICE DETAIL MODAL ── */}
-      {selectedNotice && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
-          onClick={() => setSelectedNotice(null)}
-        >
-          <div
-            className="relative w-full max-w-3xl rounded-3xl border-2 p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] text-white"
-            style={{
-              background: BG_SURFACE,
-              borderColor: `${GOLD}70`,
-              boxShadow: `0 0 60px ${GOLD}40`,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setSelectedNotice(null)}
-              className="absolute top-6 right-6 rounded-full p-2.5 bg-white/10 hover:bg-white/20 text-white transition"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {(() => {
-              const c = getCategoryColor(selectedNotice.category);
-              return (
-                <>
-                  <div className="flex flex-wrap items-center gap-3 mb-5">
-                    <span
-                      className="inline-block rounded-2xl border-2 px-5 py-2 text-sm font-black tracking-widest uppercase"
-                      style={{ background: `${c.bg}99`, color: c.accent, borderColor: `${c.accent}80` }}
-                    >
-                      {c.label}
-                    </span>
-                    <span className="text-sm font-mono font-bold" style={{ color: `${GOLD_LIGHT}80` }}>
-                      Published {selectedNotice.date}
-                    </span>
-                  </div>
-
-                  <h2
-                    className="font-display font-black text-white mb-6 leading-tight"
-                    style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)" }}
-                  >
-                    {selectedNotice.title}
-                  </h2>
-
-                  <div
-                    className="text-white/85 leading-relaxed whitespace-pre-line border-t pt-6 mb-8 font-light"
-                    style={{ fontSize: "clamp(1rem, 1.6vw, 1.25rem)", borderColor: "rgba(255,255,255,0.1)" }}
-                  >
-                    {selectedNotice.content}
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-6" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-                    {selectedNotice.link ? (
-                      <Link
-                        href={selectedNotice.link}
-                        className="inline-flex items-center gap-2 rounded-2xl font-black text-black px-7 py-3 text-sm shadow-lg hover:brightness-110 transition uppercase tracking-wider"
-                        style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_MID})` }}
-                      >
-                        {selectedNotice.linkLabel || "View Action"}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </Link>
-                    ) : <div />}
-
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={(e) => handleCopyLink(selectedNotice, e)}
-                        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-2.5 text-xs font-black text-white hover:bg-white/20 transition uppercase tracking-wider"
-                      >
-                        {copiedId === selectedNotice.id ? "Copied!" : "Copy Link"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedNotice(null)}
-                        className="rounded-2xl border border-white/15 px-5 py-2.5 text-xs font-bold text-white/60 hover:text-white transition uppercase tracking-wider"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
