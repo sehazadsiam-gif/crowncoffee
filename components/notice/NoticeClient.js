@@ -127,7 +127,7 @@ export default function NoticeClient({ initialNotices = [] }) {
       }
     }, 50);
     return () => clearInterval(id);
-  }, [isPlaying, duration, filteredNotices.length, selectedNotice, currentIndex]);
+  }, [isPlaying, duration, filteredNotices.length, currentIndex]);
 
   // Fullscreen
   const toggleFullscreen = () => {
@@ -175,7 +175,7 @@ export default function NoticeClient({ initialNotices = [] }) {
         <div className="space-y-4">
           <CrownMark className="h-16 w-16 text-[#b6862c] mx-auto opacity-40" />
           <p className="font-display text-3xl font-black text-white">No Notices Published</p>
-          <Link href="/" className="inline-flex items-center gap-2 text-[#b6862c] hover:underline text-sm">Return to Main Site</Link>
+          <a href="/" className="inline-flex items-center gap-2 text-[#b6862c] hover:underline text-sm">Return to Main Site</a>
         </div>
       </div>
     );
