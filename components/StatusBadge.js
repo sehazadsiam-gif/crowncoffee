@@ -92,13 +92,15 @@ export default function StatusBadge({ hours, className = "" }) {
 
   return (
     <span
+      suppressHydrationWarning
       className={`inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--card)] px-3.5 py-1.5 text-xs font-medium tracking-wide text-[var(--ink-soft)] ${className}`}
     >
       <span
+        suppressHydrationWarning
         className={`h-2 w-2 rounded-full ${status.open ? "bg-[var(--secondary)]" : "bg-[var(--mute)]"}`}
         aria-hidden="true"
       />
-      {status.label}
+      <span suppressHydrationWarning>{status.label}</span>
     </span>
   );
 }

@@ -7,6 +7,7 @@ import "@fontsource/spectral/400.css";
 import "@fontsource/spectral/500.css";
 import "@fontsource/spectral/600.css";
 import "@fontsource/spectral/700.css";
+import Script from "next/script";
 import "./globals.css";
 import { getSettings, getBanners } from "@/lib/data";
 import { FONT_PAIRS } from "@/lib/fonts";
@@ -35,9 +36,6 @@ export default async function RootLayout({ children }) {
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#B6862C" />
-        <script dangerouslySetInnerHTML={{
-          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}`
-        }} />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
         <BasketProvider deliveryCharge={settings.deliveryCharge}>
@@ -45,6 +43,13 @@ export default async function RootLayout({ children }) {
             {children}
           </SiteShell>
         </BasketProvider>
+        <Script
+          id="sw-register"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}`,
+          }}
+        />
       </body>
     </html>
   );
