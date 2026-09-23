@@ -85,7 +85,7 @@ export default function InteractiveOrderMenu({ groups }) {
   return (
     <div className="w-full">
       {/* Search Input Section */}
-      <div className="sticky top-[73px] z-30 -mx-6 bg-[var(--paper)]/95 px-6 py-3 border-b border-[var(--line)] backdrop-blur-md shadow-xs">
+      <div className="sticky top-[73px] z-30 -mx-6 bg-[var(--paper)] px-6 py-3 border-b border-[var(--line)] shadow-sm">
         <div className="relative mx-auto max-w-xl">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[var(--ink-soft)]">
             🔍
@@ -95,12 +95,12 @@ export default function InteractiveOrderMenu({ groups }) {
             placeholder="Search coffee, burger, pasta..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-2xl border border-[var(--line)] bg-[var(--card)] py-2.5 pl-10 pr-10 text-sm font-medium text-[var(--ink)] placeholder-[var(--mute)] shadow-inner transition focus:border-[var(--accent)] focus:outline-none"
+            className="w-full rounded-full border border-[var(--line)] bg-white py-2.5 pl-10 pr-10 text-sm text-[var(--ink)] placeholder-[var(--ink-soft)] shadow-inner transition focus:border-[var(--accent)] focus:outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs font-bold text-[var(--ink-soft)] hover:text-[var(--accent)]"
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-[var(--ink-soft)] hover:text-[var(--ink)]"
               aria-label="Clear search"
             >
               ✕
@@ -113,9 +113,9 @@ export default function InteractiveOrderMenu({ groups }) {
       {!searchQuery && filteredGroups.length > 0 && (
         <nav
           ref={categoryNavRef}
-          className="sticky top-[129px] z-30 -mx-6 w-screen overflow-x-auto border-b border-[var(--line)] bg-[var(--paper)]/95 px-6 py-2.5 backdrop-blur-sm scrollbar-none shadow-xs"
+          className="sticky top-[129px] z-30 -mx-6 w-screen overflow-x-auto border-b border-[var(--line)] bg-[var(--paper)]/95 px-6 py-3.5 backdrop-blur-sm scrollbar-none shadow-xs"
         >
-          <ul className="flex gap-2 min-w-max">
+          <ul className="flex gap-2.5 min-w-max">
             {filteredGroups.map((group) => {
               const id = group.category.toLowerCase().replace(/\s+/g, "-");
               const isActive = activeCategory === id;
@@ -123,10 +123,10 @@ export default function InteractiveOrderMenu({ groups }) {
                 <li key={id} id={`pill-${id}`}>
                   <button
                     onClick={() => scrollToCategory(id)}
-                    className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-spring active:scale-95 duration-200 ${
+                    className={`rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 duration-200 ${
                       isActive
                         ? "bg-[var(--accent)] text-white shadow-sm border border-[var(--accent)]"
-                        : "bg-[var(--card)] text-[var(--ink-soft)] border border-[var(--line)] hover:border-[var(--mute)]"
+                        : "bg-white text-[var(--ink-soft)] border border-[var(--line)] hover:border-[var(--mute)]"
                     }`}
                   >
                     {group.category}

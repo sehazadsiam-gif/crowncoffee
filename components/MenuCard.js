@@ -3,15 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import CrownMark from "./CrownMark";
-import DishDetailModal from "./DishDetailModal";
-import { getMenuItemImage } from "@/lib/foodImage";
 import { useBasket } from "@/context/BasketContext";
 
 export default function MenuCard({ item, viewOnly = false }) {
   const { addToBasket, decrementLastAddedCustom, getItemQuantity, isMounted } = useBasket();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const qty = isMounted ? getItemQuantity(item.id) : 0;
-  const imageUrl = getMenuItemImage(item);
 
   const handleAddClick = (e) => {
     e.preventDefault();
@@ -28,16 +24,12 @@ export default function MenuCard({ item, viewOnly = false }) {
   return (
     <>
       {/* ─── Mobile View: Horizontal List Row (shows 4-5 items at once) ─── */}
-      <article
-        onClick={() => setIsModalOpen(true)}
-        className="flex md:hidden gap-3.5 items-center p-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] transition-spring hover:border-[var(--accent)] hover:shadow-md cursor-pointer active:scale-[0.99]"
-        aria-label={item.name}
-      >
+      <article className="flex md:hidden gap-3.5 items-center p-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] transition-spring hover:border-[var(--accent)] hover:shadow-md" aria-label={item.name}>
         {/* Left: Thumbnail image */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--accent-soft)]">
-          {imageUrl ? (
+          {item.image ? (
             <Image
-              src={imageUrl}
+              src={item.image}
               alt={item.name}
               fill
               sizes="80px"
@@ -72,7 +64,7 @@ export default function MenuCard({ item, viewOnly = false }) {
               <div
                 className="flex items-center rounded-full text-white shadow-md p-0.5 border border-white/20 transition-spring scale-100"
                 style={{
-                  background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-orange, #ff670e) 100%)",
+                  background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
                 }}
               >
                 <button
@@ -103,15 +95,12 @@ export default function MenuCard({ item, viewOnly = false }) {
       </article>
 
       {/* ─── Desktop View: Classic Grid Card ─── */}
-      <article
-        onClick={() => setIsModalOpen(true)}
-        className="group hidden md:flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] card-hover-effect cursor-pointer active:scale-[0.99]"
-      >
+      <article className="group hidden md:flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] card-hover-effect">
         {/* Image / Thumbnail Container */}
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--accent-soft)]">
-          {imageUrl ? (
+          {item.image ? (
             <Image
-              src={imageUrl}
+              src={item.image}
               alt={item.name}
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
@@ -130,7 +119,7 @@ export default function MenuCard({ item, viewOnly = false }) {
                 <div
                   className="flex items-center rounded-full text-white shadow-lg p-0.5 border border-white/20 transition-spring scale-100"
                   style={{
-                    background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-orange, #ff670e) 100%)",
+                    background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
                   }}
                 >
                   <button
@@ -175,13 +164,6 @@ export default function MenuCard({ item, viewOnly = false }) {
           )}
         </div>
       </article>
-
-      {/* Dish Detail / Spotlight Modal */}
-      <DishDetailModal
-        item={item}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </>
   );
 }

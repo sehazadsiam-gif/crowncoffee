@@ -132,7 +132,7 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
                           onClick={() => handleSingleSelect(custom.id, opt)}
                           className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition-spring active:scale-98 ${
                             isSelected
-                              ? "border-[var(--accent)] bg-[var(--card-tint)] shadow-[0_0_12px_rgba(210,39,1,0.2)] scale-[1.01]"
+                              ? "border-[var(--accent)] bg-amber-50/30 shadow-[0_0_12px_rgba(182,134,44,0.2)] scale-[1.01]"
                               : "border-[var(--line)] bg-white hover:border-[var(--ink-soft)]"
                           }`}
                         >
@@ -160,7 +160,7 @@ export default function CustomizationModal({ item, isOpen, onClose, onConfirm })
                           onClick={() => handleMultiSelect(custom.id, opt)}
                           className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition-spring active:scale-98 ${
                             isChecked
-                              ? "border-[var(--accent)] bg-[var(--card-tint)] shadow-[0_0_12px_rgba(210,39,1,0.2)] scale-[1.01]"
+                              ? "border-[var(--accent)] bg-amber-50/30 shadow-[0_0_12px_rgba(182,134,44,0.2)] scale-[1.01]"
                               : "border-[var(--line)] bg-white hover:border-[var(--ink-soft)]"
                           }`}
                         >
