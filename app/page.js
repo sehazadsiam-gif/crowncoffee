@@ -3,6 +3,7 @@ import { getMenu, getSettings, groupMenuByCategory } from "@/lib/data";
 import MenuCard from "@/components/MenuCard";
 import BestSellerCard from "@/components/BestSellerCard";
 import StatusBadge from "@/components/StatusBadge";
+import HomeHero from "@/components/HomeHero";
 
 export const dynamic = "force-dynamic";
 
@@ -11,53 +12,19 @@ export default async function HomePage() {
   const groups = groupMenuByCategory(menu);
   const preview = groups.map((group) => group.items[0]).filter(Boolean).slice(0, 4);
   const bestSellers = (menu.items || []).filter((item) => item.bestSeller);
+  const heroFeatured = bestSellers[0] || (menu.items && menu.items[0]) || null;
 
   return (
     <>
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pt-16 pb-20 lg:px-10 lg:pt-24 lg:pb-28">
-        <p className="text-xs font-semibold tracking-[0.3em] text-[var(--accent)] uppercase">
-          Sector 13 &middot; Uttara, Dhaka
-        </p>
-        <h1 className="mt-6 font-display text-6xl leading-[1.05] sm:text-7xl lg:text-8xl">
-          Crown
-          <br />
-          <span className="text-[var(--accent)]">Coffee</span>
-        </h1>
-        <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--ink-soft)]">
-          {settings.tagline}
-        </p>
-
-        <div className="mt-8 sm:hidden">
-          <StatusBadge hours={settings.hours} />
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link
-            href="/menu"
-            className="rounded-full bg-[var(--ink)] px-7 py-3 text-sm font-semibold tracking-wide text-[var(--paper)] transition hover:bg-[var(--accent)]"
-          >
-            View the menu
-          </Link>
-          {settings.mapUrl && (
-            <a
-              href={settings.mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-[var(--line)] px-7 py-3 text-sm font-semibold tracking-wide text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            >
-              Get directions
-            </a>
-          )}
-        </div>
-      </section>
+      {/* Interactive Hero Showcase */}
+      <HomeHero settings={settings} featuredItem={heroFeatured} />
 
 
       {/* Best Sellers */}
       {bestSellers.length > 0 && (
         <section
-          className="border-y border-amber-100"
-          style={{ background: "linear-gradient(180deg, #fffbf0 0%, #fff8e7 100%)" }}
+          className="border-y border-[var(--line)]"
+          style={{ background: "linear-gradient(180deg, #fffaf5 0%, #fde4ce 100%)" }}
         >
           <div className="mx-auto max-w-6xl px-6 py-16 lg:px-10 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-4">

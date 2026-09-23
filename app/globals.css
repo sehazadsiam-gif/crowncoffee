@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1c1612;
-  --ink-soft: #5d534a;
-  --paper: #faf6ef;
+  --ink: #4e070c;
+  --ink-soft: #7a393e;
+  --paper: #fde4ce;
   --card: #ffffff;
-  --line: #e7decf;
-  --mute: #a39a8e;
+  --card-tint: #fff8f1;
+  --line: #e8cfb8;
+  --mute: #b29783;
+  --accent: #d22701;
+  --accent-orange: #ff670e;
+  --secondary: #aad15f;
 }
 
 * {
@@ -38,13 +42,13 @@ a {
 
 /* ── Menu nav highlight ──────────────────────────────────── */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
-  50%       { box-shadow: 0 0 14px 4px rgba(182, 134, 44, 0.38); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(210, 39, 1, 0); }
+  50%       { box-shadow: 0 0 14px 4px rgba(210, 39, 1, 0.35); }
 }
 
 .nav-highlight {
   display: inline-block;
-  background: rgba(182, 134, 44, 0.13);
+  background: rgba(210, 39, 1, 0.12);
   color: var(--accent);
   border-radius: 999px;
   padding: 0.18em 0.8em;
@@ -63,8 +67,8 @@ a {
 }
 
 @keyframes membership-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
-  50%       { box-shadow: 0 0 16px 6px rgba(182, 134, 44, 0.5); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(210, 39, 1, 0); }
+  50%       { box-shadow: 0 0 16px 6px rgba(210, 39, 1, 0.45); }
 }
 
 .membership-highlight {
@@ -73,10 +77,10 @@ a {
   gap: 0.3em;
   background: linear-gradient(
     110deg,
-    #b6862c 0%,
-    #e8c04a 40%,
-    #b6862c 60%,
-    #d4a017 100%
+    #d22701 0%,
+    #ff670e 40%,
+    #d22701 60%,
+    #ff670e 100%
   );
   background-size: 200% auto;
   color: #fff;
@@ -219,9 +223,9 @@ a {
 
 /* 8. Ripple Expand Effect */
 @keyframes ripple-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0.4); }
-  70% { box-shadow: 0 0 0 14px rgba(182, 134, 44, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(182, 134, 44, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(210, 39, 1, 0.4); }
+  70% { box-shadow: 0 0 0 14px rgba(210, 39, 1, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(210, 39, 1, 0); }
 }
 
 /* Custom Animation Classes */
@@ -281,7 +285,7 @@ a {
 
 .card-hover-effect:hover {
   transform: translateY(-5px);
-  box-shadow: 0 16px 36px -12px rgba(182, 134, 44, 0.28);
+  box-shadow: 0 16px 36px -12px rgba(210, 39, 1, 0.25);
 }
 
 /* ── Utilities ───────────────────────────────────────────── */
@@ -308,6 +312,49 @@ a {
   to {
     width: 100%;
   }
+}
+
+/* ── View Transitions (Native Smooth Page Navigation) ── */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 0.25s cubic-bezier(0.16, 1, 0.3, 1) both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 0.35s cubic-bezier(0.16, 1, 0.3, 1) both fade-in;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.99); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(1.01); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Ambient Floating & Micro-motion ── */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+.animate-float {
+  animation: float-gentle 5s ease-in-out infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
 }
 
 

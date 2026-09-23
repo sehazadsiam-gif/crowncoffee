@@ -257,8 +257,8 @@ export function FloatingBasketButton() {
       }`}
       style={{
         bottom: "calc(1.5rem + var(--banner-height, 0px))",
-        background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)",
-        boxShadow: "0 12px 28px -4px rgba(182, 134, 44, 0.55)",
+        background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-orange, #ff670e) 100%)",
+        boxShadow: "0 12px 28px -4px rgba(210, 39, 1, 0.45)",
       }}
       aria-label={`Open Basket with ${totalItems} items`}
     >
@@ -274,6 +274,72 @@ export function FloatingBasketButton() {
       </span>
     </button>
   );
+}
+
+// ─── Lightweight Canvas Confetti Cannon ────────────────────────────────────
+function launchOrderConfetti() {
+  if (typeof window === "undefined") return;
+  const canvas = document.createElement("canvas");
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
+  canvas.style.pointerEvents = "none";
+  canvas.style.zIndex = "99999";
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  const width = (canvas.width = window.innerWidth);
+  const height = (canvas.height = window.innerHeight);
+
+  const colors = ["#D22701", "#FF670E", "#AAD15F", "#4E070C", "#FDE4CE"];
+  const particles = Array.from({ length: 75 }, () => ({
+    x: width / 2 + (Math.random() * 200 - 100),
+    y: height * 0.45,
+    vx: (Math.random() - 0.5) * 16,
+    vy: (Math.random() - 0.8) * 18,
+    size: Math.random() * 8 + 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rotation: Math.random() * 360,
+    rSpeed: (Math.random() - 0.5) * 12,
+    opacity: 1,
+  }));
+
+  let animId;
+  const start = Date.now();
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+    let alive = false;
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.45;
+      p.rotation += p.rSpeed;
+      p.opacity -= 0.009;
+
+      if (p.opacity > 0) {
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+        ctx.restore();
+      }
+    });
+
+    if (alive && Date.now() - start < 3500) {
+      animId = requestAnimationFrame(render);
+    } else {
+      cancelAnimationFrame(animId);
+      canvas.remove();
+    }
+  }
+
+  render();
 }
 
 // ─── Basket drawer ───────────────────────────────────────────────────────────
@@ -329,6 +395,7 @@ export function BasketDrawer() {
       const data = await res.json();
       setOrderNumber(data.order.orderNumber);
       setOrderStatus("success");
+      launchOrderConfetti();
       
       // Save placed order to localStorage for tracking
       try {
@@ -571,7 +638,7 @@ export function BasketDrawer() {
                 onClick={handlePlaceOrder}
                 disabled={orderStatus === "placing"}
                 className="flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold tracking-wide text-white transition hover:brightness-105 active:scale-98 shadow-md disabled:opacity-60"
-                style={{ background: "linear-gradient(135deg, var(--accent) 0%, #d4a017 100%)" }}
+                style={{ background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-orange, #ff670e) 100%)" }}
               >
                 {orderStatus === "placing" ? (
                   <><span className="animate-spin">⟳</span><span>Placing Order…</span></>

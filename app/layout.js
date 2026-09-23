@@ -27,14 +27,14 @@ export default async function RootLayout({ children }) {
   const theme = settings.theme;
   const pair = FONT_PAIRS[theme.fontPair] || FONT_PAIRS.heritage;
 
-  const themeStyle = `:root{--accent:${theme.accent};--secondary:${theme.secondary};--accent-soft:color-mix(in srgb, ${theme.accent} 12%, white);--secondary-soft:color-mix(in srgb, ${theme.secondary} 14%, white);--font-display:${pair.display};--font-body:${pair.body};}`;
+  const themeStyle = `:root{--accent:${theme.accent};--secondary:${theme.secondary};--accent-orange:#FF670E;--espresso:#4E070C;--cream:#FDE4CE;--accent-soft:color-mix(in srgb, ${theme.accent} 12%, white);--secondary-soft:color-mix(in srgb, ${theme.secondary} 14%, white);--font-display:${pair.display};--font-body:${pair.body};}`;
 
   return (
     <html lang="en">
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#B6862C" />
+        <meta name="theme-color" content="#D22701" />
         <script dangerouslySetInnerHTML={{
           __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}`
         }} />

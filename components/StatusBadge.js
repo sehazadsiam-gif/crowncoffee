@@ -95,7 +95,7 @@ export default function StatusBadge({ hours, className = "" }) {
       className={`inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--card)] px-3.5 py-1.5 text-xs font-medium tracking-wide text-[var(--ink-soft)] ${className}`}
     >
       <span
-        className={`h-2 w-2 rounded-full ${status.open ? "bg-[var(--secondary)]" : "bg-[var(--mute)]"}`}
+        className={`h-2 w-2 rounded-full transition-all duration-300 ${status.open ? "bg-[var(--secondary)] animate-pulse shadow-[0_0_8px_#aad15f]" : "bg-[var(--mute)]"}`}
         aria-hidden="true"
       />
       {status.label}

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
   <!-- Clear Diamond (Outlines Only) -->
-  <g stroke="#B6862C" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
+  <g stroke="#D22701" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
     <path d="M 10 4 L 18 4 L 22 9 L 14 21 L 6 9 Z" />
     <path d="M 6 9 L 22 9" />
     <path d="M 10 4 L 10 9" />
@@ -12,7 +12,7 @@
     <path d="M 14 21 L 18 9" />
   </g>
   <!-- Solid Sparkles -->
-  <g fill="#B6862C">
+  <g fill="#D22701">
     <path d="M 6.5 11 Q 6.5 13.5 9 13.5 Q 6.5 13.5 6.5 16 Q 6.5 13.5 4 13.5 Q 6.5 13.5 6.5 11 Z" />
     <path d="M 3 8 Q 3 9.5 4.5 9.5 Q 3 9.5 3 11 Q 3 9.5 1.5 9.5 Q 3 9.5 3 8 Z" />
     <path d="M 4.5 16 Q 4.5 17.5 6 17.5 Q 4.5 17.5 4.5 19 Q 4.5 17.5 3 17.5 Q 4.5 17.5 4.5 16 Z" />

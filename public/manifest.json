@@ -5,8 +5,8 @@
   "start_url": "/manager",
   "display": "standalone",
   "run_on_os_login": "run-on-os-login",
-  "background_color": "#FFFBF5",
-  "theme_color": "#B6862C",
+  "background_color": "#FDE4CE",
+  "theme_color": "#D22701",
   "orientation": "portrait",
   "icons": [
     {
