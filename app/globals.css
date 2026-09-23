@@ -7,6 +7,10 @@
   --card: #ffffff;
   --line: #e7decf;
   --mute: #a39a8e;
+  --accent: #b6862c;
+  --secondary: #54614a;
+  --accent-soft: color-mix(in srgb, #b6862c 12%, white);
+  --secondary-soft: color-mix(in srgb, #54614a 14%, white);
 }
 
 * {
